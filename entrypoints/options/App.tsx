@@ -23,6 +23,23 @@ const App = () => {
   const [isLoading, setIsLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
   const [isModalOpen, setIsModalOpen] = useState(false)
+  const [initialContent, setInitialContent] = useState<string | null>(null)
+
+  // 从URL获取查询参数
+  useEffect(() => {
+    const queryParams = new URLSearchParams(window.location.search)
+    const action = queryParams.get('action')
+    const content = queryParams.get('content')
+    
+    // 如果是从右键菜单打开并带有文本内容
+    if (action === 'new' && content) {
+      setInitialContent(content)
+      // 稍微延迟打开模态框，确保组件已完全加载
+      setTimeout(() => {
+        setIsModalOpen(true)
+      }, 100)
+    }
+  }, [])
 
   // Load prompts from storage
   useEffect(() => {
@@ -128,6 +145,7 @@ const App = () => {
   // Cancel editing
   const cancelEdit = () => {
     setEditingPrompt(null)
+    setInitialContent(null)
     closeModal()
   }
 
@@ -140,6 +158,7 @@ const App = () => {
   // Close modal
   const closeModal = () => {
     setIsModalOpen(false)
+    setInitialContent(null)
   }
 
   if (isLoading) {
@@ -219,59 +238,73 @@ const App = () => {
           </div>
         )}
 
-        {/* 搜索和添加按钮 */}
-        <div className='bg-white rounded-xl shadow-sm border border-gray-200 p-4 mb-6'>
-          <div className='flex flex-col sm:flex-row gap-4 items-center justify-between'>
-            <div className='w-full sm:max-w-md'>
-              <SearchBar value={searchTerm} onChange={setSearchTerm} />
-            </div>
-            <button
-              onClick={openAddModal}
-              className='w-full sm:w-auto px-4 py-2.5 bg-blue-600 text-white rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-colors duration-200 font-medium flex items-center justify-center'
-            >
-              <svg className='w-5 h-5 mr-2' fill='none' stroke='currentColor' viewBox='0 0 24 24'>
-                <path
-                  strokeLinecap='round'
-                  strokeLinejoin='round'
-                  strokeWidth='2'
-                  d='M12 4v16m8-8H4'
-                />
-              </svg>
-              添加新 Prompt
-            </button>
-          </div>
+        {/* 搜索栏和添加按钮 */}
+        <div className='flex flex-col sm:flex-row gap-3 mb-6'>
+          <SearchBar value={searchTerm} onChange={setSearchTerm} />
+          <button
+            onClick={openAddModal}
+            className='flex-shrink-0 bg-blue-600 hover:bg-blue-700 text-white py-2 px-4 rounded-lg transition-colors duration-200 flex items-center justify-center sm:justify-start'
+          >
+            <svg className='w-5 h-5 mr-1' fill='none' stroke='currentColor' viewBox='0 0 24 24'>
+              <path
+                strokeLinecap='round'
+                strokeLinejoin='round'
+                strokeWidth='2'
+                d='M12 6v6m0 0v6m0-6h6m-6 0H6'
+              />
+            </svg>
+            添加新 Prompt
+          </button>
         </div>
 
-        {/* Prompts 列表 */}
-        <div className='bg-white rounded-xl shadow-sm border border-gray-200 p-6'>
-          <div className='flex justify-between items-center mb-5'>
-            <h2 className='text-xl font-semibold text-gray-800'>
-              已存 Prompts
-              <span className='ml-2 text-sm font-normal text-gray-500'>
-                ({filteredPrompts.length}
-                {searchTerm && `/${prompts.length}`})
-              </span>
-            </h2>
+        {/* Prompts列表 */}
+        <PromptList
+          prompts={filteredPrompts}
+          onEdit={startEdit}
+          onDelete={deletePrompt}
+          searchTerm={searchTerm}
+          allPromptsCount={prompts.length}
+        />
+
+        {/* 无结果提示 */}
+        {filteredPrompts.length === 0 && (
+          <div className='bg-white rounded-lg shadow-sm border border-gray-200 p-6 text-center'>
+            {searchTerm ? (
+              <div>
+                <p className='text-gray-600 mb-2'>没有找到匹配"{searchTerm}"的 Prompt</p>
+                <button
+                  onClick={() => setSearchTerm('')}
+                  className='text-blue-600 hover:text-blue-800 font-medium'
+                >
+                  清除搜索
+                </button>
+              </div>
+            ) : (
+              <div>
+                <p className='text-gray-600 mb-2'>您还没有创建任何 Prompt</p>
+                <button
+                  onClick={openAddModal}
+                  className='text-blue-600 hover:text-blue-800 font-medium'
+                >
+                  创建第一个 Prompt
+                </button>
+              </div>
+            )}
           </div>
+        )}
 
-          <PromptList
-            prompts={filteredPrompts}
-            onEdit={startEdit}
-            onDelete={deletePrompt}
-            searchTerm={searchTerm}
-            allPromptsCount={prompts.length}
-          />
-        </div>
-
-        {/* Prompt Form Modal */}
-        <Modal
-          isOpen={isModalOpen}
-          onClose={closeModal}
-          title={editingPrompt ? '编辑 Prompt' : '添加新 Prompt'}
-        >
+        {/* 添加/编辑 Prompt 模态框 */}
+        <Modal isOpen={isModalOpen} onClose={closeModal} title={editingPrompt ? '编辑 Prompt' : '新建 Prompt'}>
           <PromptForm
             onSubmit={handlePromptSubmit}
-            initialData={editingPrompt}
+            initialData={editingPrompt ? { 
+              ...editingPrompt 
+            } : initialContent ? {
+              id: '',
+              title: '',
+              content: initialContent,
+              tags: []
+            } : null}
             onCancel={cancelEdit}
             isEditing={!!editingPrompt}
           />
