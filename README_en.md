@@ -35,6 +35,8 @@ Quick Prompt offers an intuitive and user-friendly interface for managing and us
 
 ![Prompt Selector](https://github.com/user-attachments/assets/d20d493f-70d2-4420-a797-f4c00f1439f4)
 
+![Prompt Selector](https://github.com/user-attachments/assets/22d9d30c-b4c3-4e34-a0a0-8ef51e2cb942)
+
 Use the `/p` shortcut command or keyboard shortcuts to quickly bring up the prompt selector in any input field, making it easy to select and insert the prompts you need.
 
 ### Prompt Management Page
