@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import wxtLogo from '/wxt.svg'
+import Logo from '~/assets/icon.png'
 import './App.css'
 import '~/assets/tailwind.css'
 
@@ -83,7 +83,7 @@ function App() {
     <div className='p-4 w-full max-w-[300px] min-w-[250px] box-border bg-white text-gray-900 dark:bg-gray-900 dark:text-white transition-colors duration-200'>
       {/* 标题区域 */}
       <div className='flex justify-center items-center mb-3'>
-        <img src={wxtLogo} className='h-8 mr-2' alt='WXT logo' />
+        <img src={Logo} className='h-8 mr-2' alt='quick prompt logo' />
         <h1 className='text-lg font-bold whitespace-nowrap m-0 p-0 leading-normal dark:text-white'>
           快捷Prompt助手
         </h1>

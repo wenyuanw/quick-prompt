@@ -48,25 +48,27 @@ export default defineBackground(() => {
 
   // 在扩展启动时立即执行初始化
   initializeDefaultPrompts()
-  
+
   // 创建右键菜单项
   browser.contextMenus.create({
     id: 'save-prompt',
     title: '保存该提示词',
-    contexts: ['selection'],  // 仅在选中文本时显示
+    contexts: ['selection'], // 仅在选中文本时显示
   })
-  
+
   // 处理右键菜单点击事件
   browser.contextMenus.onClicked.addListener(async (info, tab) => {
     if (info.menuItemId === 'save-prompt' && info.selectionText) {
       console.log('背景脚本: 右键菜单被点击，选中文本:', info.selectionText)
-      
+
       // 获取选项页URL
       const optionsUrl = browser.runtime.getURL('/options.html')
-      
+
       // 添加查询参数，传递选中的文本
-      const urlWithParams = `${optionsUrl}?action=new&content=${encodeURIComponent(info.selectionText)}`
-      
+      const urlWithParams = `${optionsUrl}?action=new&content=${encodeURIComponent(
+        info.selectionText
+      )}`
+
       // 在新标签页打开选项页
       await browser.tabs.create({ url: urlWithParams })
     }

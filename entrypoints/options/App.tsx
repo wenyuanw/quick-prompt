@@ -30,7 +30,7 @@ const App = () => {
     const queryParams = new URLSearchParams(window.location.search)
     const action = queryParams.get('action')
     const content = queryParams.get('content')
-    
+
     // 如果是从右键菜单打开并带有文本内容
     if (action === 'new' && content) {
       setInitialContent(content)
@@ -294,17 +294,27 @@ const App = () => {
         )}
 
         {/* 添加/编辑 Prompt 模态框 */}
-        <Modal isOpen={isModalOpen} onClose={closeModal} title={editingPrompt ? '编辑 Prompt' : '新建 Prompt'}>
+        <Modal
+          isOpen={isModalOpen}
+          onClose={closeModal}
+          title={editingPrompt ? '编辑 Prompt' : '新建 Prompt'}
+        >
           <PromptForm
             onSubmit={handlePromptSubmit}
-            initialData={editingPrompt ? { 
-              ...editingPrompt 
-            } : initialContent ? {
-              id: '',
-              title: '',
-              content: initialContent,
-              tags: []
-            } : null}
+            initialData={
+              editingPrompt
+                ? {
+                    ...editingPrompt,
+                  }
+                : initialContent
+                ? {
+                    id: '',
+                    title: '',
+                    content: initialContent,
+                    tags: [],
+                  }
+                : null
+            }
             onCancel={cancelEdit}
             isEditing={!!editingPrompt}
           />

@@ -2,6 +2,10 @@
 
 English | [中文](./README.md)
 
+<p align="center">
+  <img src="./assets/icon.png" alt="Quick Prompt Logo" width="128" style="background: transparent;">
+</p>
+
 A powerful browser extension focused on prompt management and quick input. Helps users create, manage, and organize prompt libraries, and quickly insert preset prompt content in any webpage input field, boosting your productivity.
 
 ## ✨ Features
