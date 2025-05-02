@@ -111,7 +111,7 @@ const App = () => {
 
   // Handle form submission for both add and update operations
   const handlePromptSubmit = async (prompt: PromptItem | Omit<PromptItem, 'id'>) => {
-    if ('id' in prompt) {
+    if ('id' in prompt && prompt?.id) {
       // It's an update operation
       await updatePrompt(prompt as PromptItem)
     } else {
