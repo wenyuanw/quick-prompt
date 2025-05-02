@@ -7,6 +7,7 @@ function App() {
   const [promptCount, setPromptCount] = useState<number>(0)
   const [loading, setLoading] = useState<boolean>(true)
   const [error, setError] = useState<string | null>(null)
+  const [shortcutKey, setShortcutKey] = useState<string>('')
 
   // 加载提示数量
   const loadPromptCount = async () => {
@@ -36,9 +37,32 @@ function App() {
     }
   }
 
+  // 获取当前快捷键
+  const getShortcutKey = async () => {
+    try {
+      // 从浏览器API获取真实配置的快捷键
+      const commands = await browser.commands.getAll()
+      const promptCommand = commands.find(cmd => cmd.name === 'open-prompt-selector')
+      
+      if (promptCommand && promptCommand.shortcut) {
+        setShortcutKey(promptCommand.shortcut)
+      } else {
+        // 如果未找到快捷键配置或未设置，显示默认快捷键
+        const isMac = navigator.platform.toUpperCase().indexOf('MAC') >= 0
+        setShortcutKey(isMac ? 'Command+Shift+P' : 'Ctrl+Shift+P')
+      }
+    } catch (err) {
+      console.error('获取快捷键设置失败', err)
+      // 出错时使用默认值
+      const isMac = navigator.platform.toUpperCase().indexOf('MAC') >= 0
+      setShortcutKey(isMac ? 'Command+Shift+P' : 'Ctrl+Shift+P')
+    }
+  }
+
   // 首次加载
   useEffect(() => {
     loadPromptCount()
+    getShortcutKey()
 
     // 检查系统暗黑模式设置并应用
     const applySystemTheme = () => {
@@ -151,8 +175,33 @@ function App() {
           管理我的提示
         </button>
 
-        <div className='text-center text-xs text-gray-500 mt-3 dark:text-gray-400'>
-          使用 <span className='text-blue-600 dark:text-blue-400'>/p</span> 快速插入提示
+        {/* 快捷方式提示区域 */}
+        <div className='mt-3 rounded-lg bg-gray-50 dark:bg-gray-800 p-3 shadow-sm'>
+          <h3 className='text-xs font-medium text-gray-600 dark:text-gray-300 mb-2'>使用方式</h3>
+          
+          <div className='flex items-center mb-2'>
+            <div className='flex-shrink-0 text-blue-500 dark:text-blue-400 mr-2'>
+              <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 10h10a8 8 0 018 8v2M3 10l6 6m-6-6l6-6" />
+              </svg>
+            </div>
+            <span className='text-xs text-gray-600 dark:text-gray-300'>
+              输入 <kbd className='px-1.5 py-0.5 text-xs font-semibold bg-white dark:bg-gray-700 rounded border border-gray-300 dark:border-gray-600 shadow-sm text-blue-600 dark:text-blue-400'>/p</kbd> 快速插入提示
+            </span>
+          </div>
+
+          {shortcutKey && (
+            <div className='flex items-center'>
+              <div className='flex-shrink-0 text-blue-500 dark:text-blue-400 mr-2'>
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 15l-2 5L9 9l11 4-5 2zm0 0l5 5M7.188 2.239l.777 2.897M5.136 7.965l-2.898-.777M13.95 4.05l-2.122 2.122m-5.657 5.656l-2.12 2.122" />
+                </svg>
+              </div>
+              <span className='text-xs text-gray-600 dark:text-gray-300'>
+                按下 <kbd className='px-1.5 py-0.5 text-xs font-semibold bg-white dark:bg-gray-700 rounded border border-gray-300 dark:border-gray-600 shadow-sm text-blue-600 dark:text-blue-400'>{shortcutKey}</kbd> 打开选择器
+              </span>
+            </div>
+          )}
         </div>
       </div>
     </div>
