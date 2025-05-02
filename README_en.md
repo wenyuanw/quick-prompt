@@ -33,19 +33,19 @@ Quick Prompt offers an intuitive and user-friendly interface for managing and us
 
 ### Prompt Selector
 
-![Prompt Selector](./assets/screenshots/prompt-selector.png)
+![Prompt Selector](https://github.com/user-attachments/assets/d20d493f-70d2-4420-a797-f4c00f1439f4)
 
 Use the `/p` shortcut command or keyboard shortcuts to quickly bring up the prompt selector in any input field, making it easy to select and insert the prompts you need.
 
 ### Prompt Management Page
 
-![Prompt Management](./assets/screenshots/prompt-management.png)
+![Prompt Management](https://github.com/user-attachments/assets/033822b6-64a7-4994-9336-2dbba7354702)
 
 In the management page, you can create new prompts, edit existing ones, add tags, and organize them by categories. The interface is clean and straightforward to use.
 
 ### Right-click Context Menu
 
-![Context Menu](./assets/screenshots/context-menu.png)
+![Context Menu](https://github.com/user-attachments/assets/17fc3bfd-3fa4-4b0b-ae1a-5cfd0b62be2e)
 
 Simply select any text on a webpage and right-click to quickly save it as a prompt, enhancing your productivity.
 
