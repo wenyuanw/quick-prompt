@@ -8,12 +8,14 @@ export default defineBackground(() => {
       title: '吉卜力风格',
       content: '将图片转换为吉卜力风格',
       tags: ['画图', '吉卜力'],
+      enabled: true,
     },
     {
       id: crypto.randomUUID(),
       title: '代码解释',
       content: '请解释以下代码的功能和工作原理：\n\n',
       tags: ['编程'],
+      enabled: true,
     },
   ]
 
@@ -128,12 +130,15 @@ export default defineBackground(() => {
       try {
         // 从local storage获取所有prompts
         const result = await browser.storage.local.get(BROWSER_STORAGE_KEY)
-        const prompts = result[BROWSER_STORAGE_KEY] || []
+        const allPrompts = result[BROWSER_STORAGE_KEY] || []
+        
+        // 过滤只返回已启用的提示词
+        const enabledPrompts = allPrompts.filter((prompt: any) => prompt.enabled !== false)
 
-        console.log('背景脚本: 获取到', prompts.length, '个Prompts')
+        console.log('背景脚本: 获取到', allPrompts.length, '个Prompts，其中', enabledPrompts.length, '个已启用')
         return {
           success: true,
-          data: prompts,
+          data: enabledPrompts,
         }
       } catch (error) {
         console.error('背景脚本: 获取Prompts时出错:', error)

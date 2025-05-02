@@ -13,6 +13,7 @@ export interface PromptItem {
   title: string
   content: string
   tags: string[]
+  enabled: boolean
 }
 
 const App = () => {
@@ -95,6 +96,7 @@ const App = () => {
     const newPrompt: PromptItem = {
       ...prompt,
       id: crypto.randomUUID(),
+      enabled: prompt.enabled !== undefined ? prompt.enabled : true // 确保新建的提示词默认启用
     }
 
     const newPrompts = [...prompts, newPrompt]
@@ -171,6 +173,14 @@ const App = () => {
   const closeModal = () => {
     setIsModalOpen(false)
     setInitialContent(null)
+  }
+
+  // 添加切换启用状态的函数
+  const togglePromptEnabled = async (id: string, enabled: boolean) => {
+    const newPrompts = prompts.map((p) => 
+      p.id === id ? { ...p, enabled } : p
+    )
+    await savePrompts(newPrompts)
   }
 
   if (isLoading) {
@@ -276,6 +286,7 @@ const App = () => {
           onDelete={deletePrompt}
           searchTerm={searchTerm}
           allPromptsCount={prompts.length}
+          onToggleEnabled={togglePromptEnabled}
         />
 
         {/* 无结果提示 */}
@@ -324,6 +335,7 @@ const App = () => {
                     title: '',
                     content: initialContent,
                     tags: [],
+                    enabled: true // 默认启用
                   }
                 : null
             }

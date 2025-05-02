@@ -12,6 +12,7 @@ const PromptForm = ({ onSubmit, initialData, onCancel, isEditing }: PromptFormPr
   const [title, setTitle] = useState('')
   const [content, setContent] = useState('')
   const [tags, setTags] = useState('')
+  const [enabled, setEnabled] = useState(true)
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
@@ -21,11 +22,13 @@ const PromptForm = ({ onSubmit, initialData, onCancel, isEditing }: PromptFormPr
       setTitle(initialData.title)
       setContent(initialData.content)
       setTags(initialData.tags.join(', '))
+      setEnabled(initialData.enabled !== undefined ? initialData.enabled : true)
     } else {
       // Clear form when not in edit mode
       setTitle('')
       setContent('')
       setTags('')
+      setEnabled(true)
     }
     setError(null)
   }, [initialData])
@@ -60,6 +63,7 @@ const PromptForm = ({ onSubmit, initialData, onCancel, isEditing }: PromptFormPr
         title: title.trim(),
         content: content.trim(),
         tags: tagList,
+        enabled,
       }
 
       await onSubmit(promptData as any) // Type assertion to handle both new and edited prompts
@@ -141,6 +145,21 @@ const PromptForm = ({ onSubmit, initialData, onCancel, isEditing }: PromptFormPr
             className='w-full px-3 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors duration-200'
             placeholder='例如：编程, 工作, 邮件'
           />
+        </div>
+
+        <div className='flex items-center mt-4'>
+          <label className='relative inline-flex items-center cursor-pointer'>
+            <input 
+              type='checkbox' 
+              checked={enabled} 
+              onChange={(e) => setEnabled(e.target.checked)}
+              className='sr-only peer'
+            />
+            <div className='w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-blue-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[""] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600'></div>
+            <span className='ml-3 text-sm font-medium text-gray-700'>
+              {enabled ? '已启用' : '已停用'} <span className='text-gray-400 font-normal'>(停用后不会在选择器中显示)</span>
+            </span>
+          </label>
         </div>
 
         <div className='flex space-x-3 pt-2'>

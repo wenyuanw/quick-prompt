@@ -18,10 +18,14 @@ function App() {
       // 直接从本地存储获取数据
       try {
         const result = await browser.storage.local.get('userPrompts')
-        const prompts = result.userPrompts || []
+        const allPrompts = result.userPrompts || []
 
-        if (Array.isArray(prompts)) {
-          setPromptCount(prompts.length)
+        if (Array.isArray(allPrompts)) {
+          // 只计算启用的提示词数量
+          const enabledPrompts = allPrompts.filter((prompt: any) => prompt.enabled !== false)
+          setPromptCount(enabledPrompts.length)
+          
+          console.log(`弹出窗口：共有 ${allPrompts.length} 个提示词，其中 ${enabledPrompts.length} 个已启用`)
         } else {
           setPromptCount(0)
         }

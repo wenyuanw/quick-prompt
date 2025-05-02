@@ -7,6 +7,7 @@ interface PromptListProps {
   onDelete: (id: string) => void
   searchTerm: string
   allPromptsCount: number
+  onToggleEnabled?: (id: string, enabled: boolean) => void
 }
 
 const PromptList = ({
@@ -15,6 +16,7 @@ const PromptList = ({
   onDelete,
   searchTerm,
   allPromptsCount,
+  onToggleEnabled,
 }: PromptListProps) => {
   if (allPromptsCount === 0) {
     return (
@@ -98,6 +100,24 @@ const PromptList = ({
             <p className='text-sm text-gray-600 mb-4 truncate' title={prompt.content}>
               {prompt.content}
             </p>
+
+            {/* 启用状态 */}
+            {onToggleEnabled && (
+              <div className='mt-2 flex items-center'>
+                <label className='relative inline-flex items-center cursor-pointer'>
+                  <input 
+                    type='checkbox' 
+                    checked={prompt.enabled !== undefined ? prompt.enabled : true} 
+                    onChange={(e) => onToggleEnabled(prompt.id, e.target.checked)}
+                    className='sr-only peer'
+                  />
+                  <div className='w-9 h-5 bg-gray-200 peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-blue-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[""] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-blue-600'></div>
+                  <span className='ml-2 text-xs text-gray-600'>
+                    {prompt.enabled !== undefined ? (prompt.enabled ? '已启用' : '已停用') : '已启用'}
+                  </span>
+                </label>
+              </div>
+            )}
           </div>
 
           {/* Card Footer / Actions */}

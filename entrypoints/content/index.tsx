@@ -8,6 +8,7 @@ export interface PromptItem {
   title: string
   content: string
   tags: string[]
+  enabled: boolean
 }
 
 // 自定义接口，用于统一处理不同类型的文本输入元素
@@ -176,10 +177,13 @@ export default defineContentScript({
         }
 
         // 从存储中获取所有提示词
-        const prompts = (await storage.getItem<PromptItem[]>('local:userPrompts')) || []
+        const allPrompts = (await storage.getItem<PromptItem[]>('local:userPrompts')) || []
+        
+        // 过滤只保留启用的提示词
+        const prompts = allPrompts.filter(prompt => prompt.enabled !== false)
 
         if (prompts && prompts.length > 0) {
-          console.log(`共找到 ${prompts.length} 个提示词，显示选择器...`)
+          console.log(`共找到 ${prompts.length} 个启用的提示词，显示选择器...`)
 
           // 显示提示词选择器弹窗
           const container = showPromptSelector(prompts, targetInput)
@@ -194,8 +198,8 @@ export default defineContentScript({
             isPromptSelectorOpen = false
           }, 500)
         } else {
-          console.log('没有找到已存储的提示词')
-          alert('没有找到已保存的提示词。请先在扩展中添加一些提示词。')
+          console.log('没有找到已启用的提示词')
+          alert('没有找到已启用的提示词。请先在扩展中添加并启用一些提示词。')
           isPromptSelectorOpen = false
         }
       } catch (error) {
