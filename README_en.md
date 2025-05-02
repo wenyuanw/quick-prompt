@@ -27,6 +27,28 @@ A powerful browser extension focused on prompt management and quick input. Helps
 4. **Quick Save Prompt**: Select any text and use `Ctrl+Shift+S` (Windows/Linux) or `Command+Shift+S` (macOS) to quickly save it as a prompt
 5. **Right-click Menu Save**: Select any text, right-click and choose "Save this prompt" to save the selected content as a prompt
 
+## 📸 Screenshots
+
+Quick Prompt offers an intuitive and user-friendly interface for managing and using prompts.
+
+### Prompt Selector
+
+![Prompt Selector](./assets/screenshots/prompt-selector.png)
+
+Use the `/p` shortcut command or keyboard shortcuts to quickly bring up the prompt selector in any input field, making it easy to select and insert the prompts you need.
+
+### Prompt Management Page
+
+![Prompt Management](./assets/screenshots/prompt-management.png)
+
+In the management page, you can create new prompts, edit existing ones, add tags, and organize them by categories. The interface is clean and straightforward to use.
+
+### Right-click Context Menu
+
+![Context Menu](./assets/screenshots/context-menu.png)
+
+Simply select any text on a webpage and right-click to quickly save it as a prompt, enhancing your productivity.
+
 ## ⚙️ Customization
 
 1. Click on the extension icon, then click the "Manage My Prompts" button
