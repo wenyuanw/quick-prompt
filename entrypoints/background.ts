@@ -101,6 +101,22 @@ export default defineBackground(() => {
       } catch (error) {
         console.error('背景脚本: 发送消息到标签页失败:', error)
       }
+    } else if (command === 'save-selected-prompt') {
+      console.log('背景脚本: 接收到保存选中文本的快捷键命令')
+
+      try {
+        // 获取当前活动的标签页
+        const tabs = await browser.tabs.query({ active: true, currentWindow: true })
+
+        if (tabs.length > 0 && tabs[0].id) {
+          // 向活动标签页发送获取选中文本的消息
+          const response = await browser.tabs.sendMessage(tabs[0].id, { action: 'getSelectedText' })
+        } else {
+          console.error('背景脚本: 未找到活动的标签页')
+        }
+      } catch (error) {
+        console.error('背景脚本: 获取选中文本或打开选项页失败:', error)
+      }
     }
   })
 
@@ -140,6 +156,24 @@ export default defineBackground(() => {
         // 如果打开新标签页失败，回退到默认打开方式
         browser.runtime.openOptionsPage()
         return { success: true, fallback: true }
+      }
+    }
+
+    if (message.action === 'openOptionsPageWithText') {
+      try {
+        // 获取选项页URL
+        const optionsUrl = browser.runtime.getURL('/options.html')
+
+        // 添加查询参数，传递选中的文本
+        const urlWithParams = `${optionsUrl}?action=new&content=${encodeURIComponent(message.text)}`
+
+        // 在新标签页打开选项页
+        await browser.tabs.create({ url: urlWithParams })
+        console.log('背景脚本: 成功打开选项页并传递文本')
+        return { success: true }
+      } catch (error: any) {
+        console.error('背景脚本: 打开选项页失败:', error)
+        return { success: false, error: error.message }
       }
     }
 

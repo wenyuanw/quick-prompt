@@ -53,6 +53,23 @@ export default defineContentScript({
       return null
     }
 
+    // 通用函数：打开选项页并传递选中的文本
+    const openOptionsWithText = async (text: string) => {
+      try {
+        // 不直接使用tabs API，而是发送消息给背景脚本
+        const response = await browser.runtime.sendMessage({
+          action: 'openOptionsPageWithText',
+          text: text
+        })
+        
+        console.log('内容脚本: 已请求背景脚本打开选项页', response)
+        return response && response.success
+      } catch (error) {
+        console.error('内容脚本: 请求打开选项页失败:', error)
+        return false
+      }
+    }
+
     // 通用函数：打开提示词选择器
     const openPromptSelector = async (inputElement?: HTMLInputElement | HTMLTextAreaElement) => {
       if (isPromptSelectorOpen) return
@@ -128,6 +145,26 @@ export default defineContentScript({
         // 使用通用函数打开提示词选择器
         await openPromptSelector()
         return { success: true }
+      }
+
+      if (message.action === 'getSelectedText') {
+        try {
+          // 获取当前选中的文本
+          const selectedText = window.getSelection()?.toString() || ''
+          console.log('内容脚本: 获取到选中文本:', selectedText)
+          
+          if (selectedText) {
+            // 如果有选中文本，通过背景脚本打开选项页
+            const opened = await openOptionsWithText(selectedText)
+            return { success: true, text: selectedText, openedOptionsPage: opened }
+          } else {
+            console.log('内容脚本: 未选中任何文本')
+            return { success: true, text: '' }
+          }
+        } catch (error) {
+          console.error('内容脚本: 获取选中文本时出错:', error)
+          return { success: false, error: '获取选中文本失败' }
+        }
       }
 
       return false

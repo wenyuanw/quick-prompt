@@ -19,6 +19,13 @@ export default defineConfig({
         },
         description: '打开提示词选择弹窗',
       },
+      'save-selected-prompt': {
+        suggested_key: {
+          default: 'Ctrl+Shift+S',
+          mac: 'Command+Shift+S',
+        },
+        description: '保存选中的文本作为提示词',
+      },
     },
   },
 })
