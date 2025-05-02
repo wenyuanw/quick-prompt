@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { storage } from '#imports'
 import PromptForm from './components/PromptForm'
 import PromptList from './components/PromptList'
@@ -25,6 +25,7 @@ const App = () => {
   const [error, setError] = useState<string | null>(null)
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [initialContent, setInitialContent] = useState<string | null>(null)
+  const fileInputRef = useRef<HTMLInputElement>(null)
 
   // 从URL获取查询参数
   useEffect(() => {
@@ -183,6 +184,121 @@ const App = () => {
     await savePrompts(newPrompts)
   }
 
+  // 导出提示词
+  const exportPrompts = () => {
+    try {
+      // 创建要导出的数据
+      const dataToExport = JSON.stringify(prompts, null, 2)
+      
+      // 创建Blob对象
+      const blob = new Blob([dataToExport], { type: 'application/json' })
+      
+      // 创建下载链接
+      const url = URL.createObjectURL(blob)
+      const a = document.createElement('a')
+      a.href = url
+      a.download = `quick-prompts-export-${new Date().toISOString().split('T')[0]}.json`
+      
+      // 触发下载
+      document.body.appendChild(a)
+      a.click()
+      
+      // 清理
+      document.body.removeChild(a)
+      URL.revokeObjectURL(url)
+    } catch (err) {
+      console.error('导出 Prompts 出错:', err)
+      setError('导出 Prompts 失败，请稍后再试')
+    }
+  }
+
+  // 触发文件选择对话框
+  const triggerFileInput = () => {
+    if (fileInputRef.current) {
+      fileInputRef.current.click()
+    }
+  }
+
+  // 导入提示词
+  const importPrompts = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0]
+    if (!file) return
+    
+    try {
+      const fileContent = await file.text()
+      const importedPrompts = JSON.parse(fileContent) as PromptItem[]
+      
+      // 验证导入的数据格式
+      if (!Array.isArray(importedPrompts)) {
+        throw new Error('导入的文件格式不正确')
+      }
+      
+      // 验证每个提示词的结构
+      const validPrompts = importedPrompts.filter(prompt => {
+        return (
+          typeof prompt === 'object' &&
+          typeof prompt.id === 'string' &&
+          typeof prompt.title === 'string' &&
+          typeof prompt.content === 'string' &&
+          Array.isArray(prompt.tags)
+        )
+      })
+      
+      if (validPrompts.length === 0) {
+        throw new Error('导入的文件中没有有效的提示词')
+      }
+      
+      // 确认是否需要合并或覆盖现有提示词
+      if (prompts.length > 0) {
+        const shouldMerge = window.confirm(
+          `您已有${prompts.length}个提示词，是否将导入的${validPrompts.length}个提示词与现有提示词合并？\n点击"确定"合并，点击"取消"覆盖现有提示词。`
+        )
+        
+        if (shouldMerge) {
+          // 合并提示词，避免ID重复
+          const existingIds = new Set(prompts.map(p => p.id))
+          const newPrompts = [...prompts]
+          
+          for (const prompt of validPrompts) {
+            if (!existingIds.has(prompt.id)) {
+              newPrompts.push(prompt)
+            } else {
+              // 为重复ID的提示词创建新ID
+              newPrompts.push({
+                ...prompt,
+                id: crypto.randomUUID(),
+                title: `${prompt.title} (导入)` // 为导入的重复提示词添加标记
+              })
+            }
+          }
+          
+          await savePrompts(newPrompts)
+        } else {
+          // 覆盖现有提示词
+          await savePrompts(validPrompts)
+        }
+      } else {
+        // 直接保存导入的提示词
+        await savePrompts(validPrompts)
+      }
+      
+      // 清除文件输入
+      if (fileInputRef.current) {
+        fileInputRef.current.value = ''
+      }
+      
+      alert(`成功导入了 ${validPrompts.length} 个提示词！`)
+    } catch (err) {
+      console.error('导入 Prompts 出错:', err)
+      setError(`导入 Prompts 失败: ${err instanceof Error ? err.message : '未知错误'}`)
+      
+      // 清除文件输入
+      if (fileInputRef.current) {
+        fileInputRef.current.value = ''
+      }
+    }
+  }
+
   if (isLoading) {
     return (
       <div className='min-h-screen bg-gray-50 py-8'>
@@ -260,23 +376,68 @@ const App = () => {
           </div>
         )}
 
-        {/* 搜索栏和添加按钮 */}
-        <div className='flex flex-col sm:flex-row gap-3 mb-6'>
-          <SearchBar value={searchTerm} onChange={setSearchTerm} />
-          <button
-            onClick={openAddModal}
-            className='flex-shrink-0 bg-blue-600 hover:bg-blue-700 text-white py-2 px-4 rounded-lg transition-colors duration-200 flex items-center justify-center sm:justify-start'
-          >
-            <svg className='w-5 h-5 mr-1' fill='none' stroke='currentColor' viewBox='0 0 24 24'>
-              <path
-                strokeLinecap='round'
-                strokeLinejoin='round'
-                strokeWidth='2'
-                d='M12 6v6m0 0v6m0-6h6m-6 0H6'
-              />
-            </svg>
-            添加新 Prompt
-          </button>
+        {/* 搜索栏和按钮组 */}
+        <div className='flex flex-col sm:flex-row gap-3 mb-6 sm:justify-between'>
+          <div className='sm:w-1/2 md:w-2/5'>
+            <SearchBar value={searchTerm} onChange={setSearchTerm} />
+          </div>
+          <div className='flex flex-wrap gap-2 sm:flex-nowrap sm:justify-end'>
+            <button
+              onClick={openAddModal}
+              className='flex-shrink-0 bg-blue-600 hover:bg-blue-700 text-white py-2 px-4 rounded-lg transition-colors duration-200 flex items-center justify-center'
+            >
+              <svg className='w-5 h-5 mr-1' fill='none' stroke='currentColor' viewBox='0 0 24 24'>
+                <path
+                  strokeLinecap='round'
+                  strokeLinejoin='round'
+                  strokeWidth='2'
+                  d='M12 6v6m0 0v6m0-6h6m-6 0H6'
+                />
+              </svg>
+              添加新 Prompt
+            </button>
+            
+            <button
+              onClick={exportPrompts}
+              className='flex-shrink-0 bg-green-600 hover:bg-green-700 text-white py-2 px-4 rounded-lg transition-colors duration-200 flex items-center justify-center'
+              disabled={prompts.length === 0}
+              title={prompts.length === 0 ? '没有提示词可导出' : '导出所有提示词'}
+            >
+              <svg className='w-5 h-5 mr-1' fill='none' stroke='currentColor' viewBox='0 0 24 24'>
+                <path
+                  strokeLinecap='round'
+                  strokeLinejoin='round'
+                  strokeWidth='2'
+                  d='M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12'
+                />
+              </svg>
+              导出
+            </button>
+            
+            <button
+              onClick={triggerFileInput}
+              className='flex-shrink-0 bg-purple-600 hover:bg-purple-700 text-white py-2 px-4 rounded-lg transition-colors duration-200 flex items-center justify-center'
+            >
+              <svg className='w-5 h-5 mr-1' fill='none' stroke='currentColor' viewBox='0 0 24 24'>
+                <path
+                  strokeLinecap='round'
+                  strokeLinejoin='round'
+                  strokeWidth='2'
+                  d='M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4'
+                />
+              </svg>
+              导入
+            </button>
+            
+            {/* 隐藏的文件输入元素 */}
+            <input
+              type='file'
+              ref={fileInputRef}
+              onChange={importPrompts}
+              accept='.json'
+              className='hidden'
+            />
+          </div>
         </div>
 
         {/* Prompts列表 */}

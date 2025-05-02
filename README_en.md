@@ -16,6 +16,7 @@ A powerful browser extension focused on prompt management and quick input. Helps
 - 📋 Support keyboard shortcuts (Ctrl+Shift+S / Command+Shift+S) to save selected text as a prompt
 - 📑 Support right-click context menu to save selected text as a prompt
 - 🎯 Customize prompts with titles, content, and tags
+- 💾 **Data Backup**: Export and import your prompt library for easy cross-device migration and backup
 - 🔍 Search and filter prompts
 - 🌙 Automatically adapt to system light/dark theme
 
@@ -26,6 +27,8 @@ A powerful browser extension focused on prompt management and quick input. Helps
 3. **Select a Prompt**: Click on the desired prompt from the popup selector, and it will be automatically inserted into the current input field
 4. **Quick Save Prompt**: Select any text and use `Ctrl+Shift+S` (Windows/Linux) or `Command+Shift+S` (macOS) to quickly save it as a prompt
 5. **Right-click Menu Save**: Select any text, right-click and choose "Save this prompt" to save the selected content as a prompt
+6. **Export Prompt Library**: Click the "Export" button on the management page to save all your prompts as a JSON file locally
+7. **Import Prompt Library**: Click the "Import" button on the management page to import prompts from a local JSON file (supports merging with or replacing existing prompts)
 
 ## 📸 Screenshots
 
@@ -59,6 +62,8 @@ Simply select any text on a webpage and right-click to quickly save it as a prom
    - Edit existing prompts
    - Delete unwanted prompts
    - Add tags to prompts for categorization
+   - Export your prompt library for backup
+   - Import previously backed up prompt libraries
 
 ## 📦 Installation Guide
 
