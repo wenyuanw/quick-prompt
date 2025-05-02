@@ -1,0 +1,234 @@
+/* 暗黑模式样式 */
+html.dark {
+  color-scheme: dark;
+}
+
+/* 暗黑模式下的基本样式 */
+html.dark body {
+  background-color: #121212;
+  color: #e0e0e0;
+}
+
+/* 容器和卡片背景 */
+html.dark .bg-white,
+html.dark .bg-gray-50 {
+  background-color: #1e1e1e !important;
+}
+
+html.dark .min-h-screen.bg-gray-50 {
+  background-color: #121212 !important;
+}
+
+/* 文字颜色 */
+html.dark .text-gray-800 {
+  color: #e0e0e0 !important;
+}
+
+html.dark .text-gray-700 {
+  color: #d0d0d0 !important;
+}
+
+html.dark .text-gray-600,
+html.dark .text-gray-500,
+html.dark .text-gray-400 {
+  color: #a0a0a0 !important;
+}
+
+/* 边框颜色 */
+html.dark .border-gray-200,
+html.dark .border-gray-300,
+html.dark .border-gray-100 {
+  border-color: #383838 !important;
+}
+
+/* 表单元素 */
+html.dark input,
+html.dark textarea,
+html.dark select {
+  background-color: #2a2a2a !important;
+  color: #e0e0e0 !important;
+  border-color: #444444 !important;
+}
+
+html.dark input::placeholder {
+  color: #777777 !important;
+}
+
+/* 焦点状态 */
+html.dark .focus\:ring-blue-500:focus {
+  --tw-ring-opacity: 0.75 !important;
+}
+
+html.dark .focus\:border-blue-500:focus {
+  border-color: rgba(59, 130, 246, 0.5) !important;
+}
+
+/* 模态框样式 */
+html.dark .modal-backdrop {
+  background-color: rgba(0, 0, 0, 0.7) !important;
+}
+
+html.dark .modal-content {
+  background-color: #1e1e1e !important;
+  border-color: #383838 !important;
+}
+
+/* 卡片样式 - PromptList */
+html.dark .grid-cols-1 > div {
+  background-color: #1e1e1e !important;
+  border-color: #383838 !important;
+}
+
+html.dark .bg-gradient-to-r.from-blue-50.to-white {
+  background-image: linear-gradient(to right, #1a2234, #1e1e1e) !important;
+}
+
+html.dark .bg-gray-50 {
+  background-color: #181818 !important;
+}
+
+/* PromptList 卡片内部元素 */
+html.dark .grid-cols-1 > div > .p-5 {
+  background-color: #1e1e1e !important;
+}
+
+html.dark .grid-cols-1 > div > div:last-child {
+  background-color: #181818 !important;
+}
+
+/* 红色边框和文字 */
+html.dark .text-red-600 {
+  color: #f87171 !important;
+}
+
+html.dark .focus\:ring-red-500:focus {
+  --tw-ring-opacity: 0.75 !important;
+}
+
+/* 卡片中的按钮 */
+html.dark .bg-white.border.border-gray-300 {
+  background-color: #2a2a2a !important;
+  border-color: #444 !important;
+  color: #d0d0d0 !important;
+}
+
+html.dark .bg-white.border.border-gray-300:hover {
+  background-color: #333 !important;
+}
+
+html.dark .bg-white.border.border-red-300 {
+  background-color: #2a2a2a !important;
+  border-color: rgba(248, 113, 113, 0.4) !important;
+}
+
+html.dark .bg-white.border.border-red-300:hover {
+  background-color: rgba(220, 38, 38, 0.1) !important;
+}
+
+/* hover:bg-gray-100 和 hover:bg-red-50 覆盖 */
+html.dark .hover\:bg-gray-100:hover {
+  background-color: #333 !important;
+}
+
+html.dark .hover\:bg-red-50:hover {
+  background-color: rgba(220, 38, 38, 0.1) !important;
+}
+
+/* 标签样式 */
+html.dark .bg-blue-100 {
+  background-color: rgba(59, 130, 246, 0.15) !important;
+}
+
+html.dark .text-blue-800 {
+  color: #90caf9 !important;
+}
+
+/* PromptForm 样式 */
+html.dark .bg-red-50 {
+  background-color: rgba(153, 27, 27, 0.15) !important;
+}
+
+html.dark .text-red-700 {
+  color: #f87171 !important;
+}
+
+html.dark .border-red-500 {
+  border-color: #ef4444 !important;
+}
+
+/* 表单按钮 */
+html.dark .bg-gray-100 {
+  background-color: #2a2a2a !important;
+}
+
+html.dark .text-gray-800 {
+  color: #e0e0e0 !important;
+}
+
+html.dark .hover\:bg-gray-200:hover {
+  background-color: #333 !important;
+}
+
+html.dark .focus\:ring-gray-400:focus {
+  --tw-ring-opacity: 0.5 !important;
+}
+
+/* 空状态背景 */
+html.dark .border-dashed.border-gray-300 {
+  border-color: #444 !important;
+}
+
+/* 加载动画 */
+html.dark .animate-spin {
+  color: #3b82f6 !important;
+}
+
+/* 阴影微调 */
+html.dark .shadow-sm {
+  box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.5) !important;
+}
+
+html.dark .hover\:shadow-md:hover {
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.6) !important;
+}
+
+/* 滚动条样式 */
+html.dark textarea::-webkit-scrollbar-track {
+  background: #2a2a2a;
+}
+
+html.dark textarea::-webkit-scrollbar-thumb {
+  background: #555;
+}
+
+html.dark textarea::-webkit-scrollbar-thumb:hover {
+  background: #777;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 0.5;
+  }
+}
+
+@keyframes slideIn {
+  from {
+    transform: translateY(20px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+.animate-fadeIn {
+  animation: fadeIn 0.3s ease-out forwards;
+}
+
+.animate-slideIn {
+  animation: slideIn 0.4s ease-out forwards;
+}
