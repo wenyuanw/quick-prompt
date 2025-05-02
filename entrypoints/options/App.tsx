@@ -118,6 +118,12 @@ const App = () => {
       // It's an add operation
       await addPrompt(prompt)
     }
+    
+    // 清除 URL 中的查询参数
+    if (window.location.search) {
+      window.history.replaceState({}, document.title, window.location.pathname)
+    }
+    
     closeModal()
   }
 
@@ -146,6 +152,12 @@ const App = () => {
   const cancelEdit = () => {
     setEditingPrompt(null)
     setInitialContent(null)
+    
+    // 清除 URL 中的查询参数
+    if (window.location.search) {
+      window.history.replaceState({}, document.title, window.location.pathname)
+    }
+    
     closeModal()
   }
 
