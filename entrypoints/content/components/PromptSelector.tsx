@@ -1,10 +1,10 @@
 import React, { useState, useEffect, useRef } from 'react'
 import { createRoot } from 'react-dom/client'
-import type { PromptItem } from '../index'
+import type { PromptItem, EditableElement } from '../index'
 
 interface PromptSelectorProps {
   prompts: PromptItem[]
-  targetElement: HTMLInputElement | HTMLTextAreaElement
+  targetElement: EditableElement
   onClose: () => void
 }
 
@@ -123,12 +123,26 @@ const PromptSelector: React.FC<PromptSelectorProps> = ({ prompts, targetElement,
 
     // 设置光标位置
     const newCursorPosition = textBeforeCursor.length + prompt.content.length
-    targetElement.setSelectionRange(newCursorPosition, newCursorPosition)
+    if (targetElement.setSelectionRange) {
+      targetElement.setSelectionRange(newCursorPosition, newCursorPosition)
+    }
     targetElement.focus()
 
-    // 触发input事件，确保其他监听器知道值已更改
-    const inputEvent = new Event('input', { bubbles: true })
-    targetElement.dispatchEvent(inputEvent)
+    // 尝试使用 DOM 事件触发 input 事件
+    try {
+      // 创建带冒泡的 input 事件
+      const inputEvent = new Event('input', { bubbles: true })
+      
+      // 获取实际的 DOM 元素并触发事件
+      if (targetElement instanceof EventTarget) {
+        targetElement.dispatchEvent(inputEvent)
+      } else if ((targetElement as any)._element instanceof EventTarget) {
+        // 如果是我们的适配器对象，尝试访问内部元素
+        (targetElement as any)._element.dispatchEvent(inputEvent)
+      }
+    } catch (error) {
+      console.warn('无法触发输入事件:', error)
+    }
 
     // 关闭弹窗
     onClose()
@@ -222,9 +236,10 @@ const PromptSelector: React.FC<PromptSelectorProps> = ({ prompts, targetElement,
 }
 
 // 创建弹窗并挂载组件
+// 现在支持传入 EditableElement 接口的对象，可以是标准输入框、文本域或 contenteditable 元素
 export function showPromptSelector(
   prompts: PromptItem[],
-  targetElement: HTMLInputElement | HTMLTextAreaElement
+  targetElement: EditableElement
 ): HTMLElement {
   // 移除任何已存在的弹窗
   const existingContainer = document.getElementById('quick-prompt-selector')
