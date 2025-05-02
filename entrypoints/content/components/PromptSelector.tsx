@@ -115,37 +115,109 @@ const PromptSelector: React.FC<PromptSelectorProps> = ({ prompts, targetElement,
 
   // 应用选中的提示
   const applyPrompt = (prompt: PromptItem) => {
-    const cursorPosition = targetElement.selectionStart || 0
-    // 替换"/p"为选中的提示内容
-    const textBeforeCursor = targetElement.value.substring(0, cursorPosition - 2) // 移除 "/p"
-    const textAfterCursor = targetElement.value.substring(cursorPosition)
-    targetElement.value = textBeforeCursor + prompt.content + textAfterCursor
-
-    // 设置光标位置
-    const newCursorPosition = textBeforeCursor.length + prompt.content.length
-    if (targetElement.setSelectionRange) {
-      targetElement.setSelectionRange(newCursorPosition, newCursorPosition)
-    }
-    targetElement.focus()
-
-    // 尝试使用 DOM 事件触发 input 事件
-    try {
-      // 创建带冒泡的 input 事件
-      const inputEvent = new Event('input', { bubbles: true })
-      
-      // 获取实际的 DOM 元素并触发事件
-      if (targetElement instanceof EventTarget) {
-        targetElement.dispatchEvent(inputEvent)
-      } else if ((targetElement as any)._element instanceof EventTarget) {
-        // 如果是我们的适配器对象，尝试访问内部元素
-        (targetElement as any)._element.dispatchEvent(inputEvent)
+    // 检查是否为自定义适配器（contenteditable 元素）
+    const isContentEditableAdapter = !!(targetElement as any)._element && 
+      (targetElement as any)._element.getAttribute('contenteditable') === 'true';
+    
+    if (isContentEditableAdapter) {
+      try {
+        // contenteditable 元素的特殊处理
+        const editableElement = (targetElement as any)._element as HTMLElement;
+        
+        // 获取当前内容和光标位置
+        const fullText = editableElement.textContent || '';
+        
+        // 检查全文是否包含 "/p"
+        if (fullText.includes('/p')) {
+          // 找到最后一个 "/p" 的位置
+          const lastTriggerPos = fullText.lastIndexOf('/p');
+          
+          // 构建新的内容（移除 "/p" 并插入提示词）
+          const textBeforeTrigger = fullText.substring(0, lastTriggerPos);
+          const textAfterTrigger = fullText.substring(lastTriggerPos + 2); // +2 跳过 "/p"
+          
+          // 设置新内容
+          const newContent = textBeforeTrigger + prompt.content + textAfterTrigger;
+          editableElement.textContent = newContent;
+          
+          // 重新设置光标位置到提示词后
+          const newCursorPosition = textBeforeTrigger.length + prompt.content.length;
+          
+          // 设置光标位置
+          const selection = window.getSelection();
+          if (selection) {
+            selection.removeAllRanges();
+            const range = document.createRange();
+            
+            // 确保有文本节点存在
+            let textNode = editableElement.firstChild;
+            if (!textNode) {
+              textNode = document.createTextNode(newContent);
+              editableElement.appendChild(textNode);
+            }
+            
+            // 设置光标位置
+            const safePosition = Math.min(newCursorPosition, textNode.textContent?.length || 0);
+            range.setStart(textNode, safePosition);
+            range.setEnd(textNode, safePosition);
+            selection.addRange(range);
+          }
+          
+          // 聚焦元素
+          editableElement.focus();
+        } else {
+          // 如果找不到 "/p"，直接在当前位置插入提示词
+          const selection = window.getSelection();
+          if (selection && selection.rangeCount > 0) {
+            const range = selection.getRangeAt(0);
+            range.deleteContents();
+            range.insertNode(document.createTextNode(prompt.content));
+            
+            // 移动光标到插入内容后面
+            range.setStartAfter(range.endContainer);
+            range.setEndAfter(range.endContainer);
+            selection.removeAllRanges();
+            selection.addRange(range);
+          } else {
+            // 如果没有选区，则直接添加到内容末尾
+            editableElement.textContent = (editableElement.textContent || '') + prompt.content;
+          }
+        }
+        
+        // 触发 input 事件
+        const inputEvent = new Event('input', { bubbles: true });
+        editableElement.dispatchEvent(inputEvent);
+      } catch (error) {
+        console.error('处理 contenteditable 元素时发生错误:', error);
       }
-    } catch (error) {
-      console.warn('无法触发输入事件:', error)
+    } else {
+      // 原有逻辑，适用于标准输入框
+      const cursorPosition = targetElement.selectionStart || 0;
+      // 替换"/p"为选中的提示内容
+      const textBeforeCursor = targetElement.value.substring(0, cursorPosition - 2); // 移除 "/p"
+      const textAfterCursor = targetElement.value.substring(cursorPosition);
+      targetElement.value = textBeforeCursor + prompt.content + textAfterCursor;
+
+      // 设置光标位置
+      const newCursorPosition = textBeforeCursor.length + prompt.content.length;
+      if (targetElement.setSelectionRange) {
+        targetElement.setSelectionRange(newCursorPosition, newCursorPosition);
+      }
+      targetElement.focus();
+
+      // 触发 input 事件
+      try {
+        const inputEvent = new Event('input', { bubbles: true });
+        if (targetElement instanceof EventTarget) {
+          targetElement.dispatchEvent(inputEvent);
+        }
+      } catch (error) {
+        console.warn('无法触发输入事件:', error);
+      }
     }
 
     // 关闭弹窗
-    onClose()
+    onClose();
   }
 
   // 点击背景关闭弹窗
