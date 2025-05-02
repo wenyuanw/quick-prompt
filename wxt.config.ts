@@ -8,7 +8,7 @@ export default defineConfig({
   }),
   modules: ['@wxt-dev/module-react'],
   manifest: {
-    name: '快捷 Prompt 助手 (WXT)',
+    name: 'Quick Prompt',
     description: '在网页输入框中通过指令快速插入预设的 Prompt 内容。',
     permissions: ['storage', 'tabs', 'contextMenus'],
     commands: {
