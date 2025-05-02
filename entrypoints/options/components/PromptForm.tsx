@@ -126,7 +126,7 @@ const PromptForm = ({ onSubmit, initialData, onCancel, isEditing }: PromptFormPr
             className='w-full px-3 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors duration-200'
             placeholder='输入你的 Prompt 模板...'
           />
-          <p className='mt-1 text-xs text-gray-500'>提示：可以使用变量占位符，如 {'{variable}'}</p>
+          {/* <p className='mt-1 text-xs text-gray-500'>提示：可以使用变量占位符，如 {'{variable}'}</p> */}
         </div>
 
         <div>

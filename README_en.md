@@ -13,6 +13,8 @@ A powerful browser extension focused on prompt management and quick input. Helps
 - 📚 **Prompt Management**: Easily create, edit and manage your prompt library
 - 🚀 **Quick Input**: Quickly trigger the prompt selector by typing `/p` in any webpage input field
 - ⌨️ Support keyboard shortcuts (Ctrl+Shift+P / Command+Shift+P) to open the prompt selector
+- 📋 Support keyboard shortcuts (Ctrl+Shift+S / Command+Shift+S) to save selected text as a prompt
+- 📑 Support right-click context menu to save selected text as a prompt
 - 🎯 Customize prompts with titles, content, and tags
 - 🔍 Search and filter prompts
 - 🌙 Automatically adapt to system light/dark theme
@@ -20,14 +22,15 @@ A powerful browser extension focused on prompt management and quick input. Helps
 ## 🚀 How to Use
 
 1. **Quick Trigger**: Type `/p` in any text input field on any webpage to trigger the prompt selector
-2. **Keyboard Shortcut**: Use `Ctrl+Shift+P` (Windows/Linux) or `Command+Shift+P` (macOS) to open the prompt selector
+2. **Keyboard Shortcut for Selector**: Use `Ctrl+Shift+P` (Windows/Linux) or `Command+Shift+P` (macOS) to open the prompt selector
 3. **Select a Prompt**: Click on the desired prompt from the popup selector, and it will be automatically inserted into the current input field
-4. **Manage Prompts**: Right-click on the extension icon and select "Options" to add, edit, or delete prompts
+4. **Quick Save Prompt**: Select any text and use `Ctrl+Shift+S` (Windows/Linux) or `Command+Shift+S` (macOS) to quickly save it as a prompt
+5. **Right-click Menu Save**: Select any text, right-click and choose "Save this prompt" to save the selected content as a prompt
 
 ## ⚙️ Customization
 
-1. Click on the extension icon, then click the "Manage Prompts" button
-2. In the options page, you can:
+1. Click on the extension icon, then click the "Manage My Prompts" button
+2. In the management page, you can:
    - Add new prompts
    - Edit existing prompts
    - Delete unwanted prompts
