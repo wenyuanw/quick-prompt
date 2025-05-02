@@ -1,0 +1,716 @@
+/* 确保弹窗样式不受宿主页面影响 */
+#quick-prompt-selector {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 2147483647; /* 最大可能的z-index值 */
+}
+
+/* 重置容器和其子元素的样式，防止被宿主页面影响 */
+#quick-prompt-selector,
+#quick-prompt-selector * {
+  all: revert;
+  box-sizing: border-box;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+  line-height: normal;
+}
+
+/* 确保弹窗样式能够独立存在 */
+#quick-prompt-selector-styles {
+  display: none;
+}
+
+/* 主题相关变量 - 亮色模式默认值 */
+:root {
+  --qp-bg-overlay: rgba(0, 0, 0, 0.5);
+  --qp-bg-primary: #ffffff;
+  --qp-bg-secondary: #f9fafb;
+  --qp-bg-hover: #f8f5ff; /* 更淡的紫色悬停背景 */
+  --qp-bg-selected: #f3ecff; /* 更淡的紫色选中背景 */
+  --qp-bg-tag: #eee8ff; /* 更淡的紫色标签背景 */
+  --qp-text-primary: #111827;
+  --qp-text-secondary: #6b7280;
+  --qp-text-tag: #5b46a8; /* 调整紫色文本 */
+  --qp-border-color: #e5e7eb;
+  --qp-focus-ring: #9d85f2; /* 稍微柔和点的紫色聚焦环 */
+  --qp-shadow-color: rgba(124, 58, 237, 0.06);
+  --qp-green: #10b981;
+
+  /* 柔和的淡紫色主题色 */
+  --qp-accent: #8674e2; /* 更柔和的主紫色 */
+  --qp-accent-light: #a495eb; /* 更柔和的浅紫色 */
+  --qp-gradient-start: #9f87f0; /* 更柔和的渐变起始色 */
+  --qp-gradient-end: #8674e2; /* 更柔和的渐变结束色 */
+}
+
+/* 暗黑模式变量 */
+@media (prefers-color-scheme: dark) {
+  :root {
+    --qp-bg-overlay: rgba(0, 0, 0, 0.7);
+    --qp-bg-primary: #1f2937;
+    --qp-bg-secondary: #111827;
+    --qp-bg-hover: #2c2967; /* 柔和的深紫色悬停背景 */
+    --qp-bg-selected: #3b348c; /* 更柔和的深紫色选中背景 */
+    --qp-bg-tag: #2f2c6e; /* 柔和的暗紫色标签背景 */
+    --qp-text-primary: #f9fafb;
+    --qp-text-secondary: #9ca3af;
+    --qp-text-tag: #c7bdfa; /* 柔和的亮紫色文本 */
+    --qp-border-color: #374151;
+    --qp-focus-ring: #9d85f2; /* 柔和的紫色聚焦环 */
+    --qp-shadow-color: rgba(124, 58, 237, 0.12);
+    --qp-green: #34d399;
+
+    /* 暗黑模式下的柔和紫色主题 */
+    --qp-accent: #9d85f2; /* 柔和的紫色 */
+    --qp-accent-light: #bbadf7; /* 柔和的浅紫色 */
+    --qp-gradient-start: #7e63e3; /* 柔和的深紫色渐变起始 */
+    --qp-gradient-end: #6055c5; /* 柔和的更深紫色渐变结束 */
+  }
+}
+
+/* 使用带前缀的类名避免冲突 */
+.qp-fixed {
+  position: fixed !important;
+}
+
+.qp-inset-0 {
+  top: 0 !important;
+  right: 0 !important;
+  bottom: 0 !important;
+  left: 0 !important;
+}
+
+.qp-bg-black {
+  background-color: var(--qp-bg-overlay) !important;
+}
+
+.qp-bg-opacity-50 {
+  opacity: 1 !important; /* 使用CSS变量控制透明度 */
+}
+
+.qp-flex {
+  display: flex !important;
+}
+
+.qp-items-center {
+  align-items: center !important;
+}
+
+.qp-justify-center {
+  justify-content: center !important;
+}
+
+.qp-justify-between {
+  justify-content: space-between !important;
+}
+
+.qp-z-50 {
+  z-index: 2147483647 !important; /* 最大可能的z-index值 */
+}
+
+.qp-bg-white {
+  background-color: var(--qp-bg-primary) !important;
+}
+
+.qp-rounded-lg {
+  border-radius: 0.75rem !important;
+}
+
+.qp-shadow-xl {
+  box-shadow: 0 20px 25px -5px var(--qp-shadow-color), 0 10px 10px -5px var(--qp-shadow-color) !important;
+}
+
+.qp-w-\[600px\] {
+  width: 600px !important;
+}
+
+.qp-max-h-\[80vh\] {
+  max-height: 80vh !important;
+}
+
+.qp-flex-col {
+  flex-direction: column !important;
+}
+
+.qp-p-4 {
+  padding: 1rem !important;
+}
+
+.qp-p-8 {
+  padding: 2rem !important;
+}
+
+.qp-border-b {
+  border-bottom: 1px solid var(--qp-border-color) !important;
+}
+
+.qp-border-t {
+  border-top: 1px solid var(--qp-border-color) !important;
+}
+
+.qp-w-full {
+  width: 100% !important;
+}
+
+.qp-px-4 {
+  padding-left: 1rem !important;
+  padding-right: 1rem !important;
+}
+
+.qp-py-2 {
+  padding-top: 0.5rem !important;
+  padding-bottom: 0.5rem !important;
+}
+
+.qp-border {
+  border: 1px solid var(--qp-border-color) !important;
+}
+
+.qp-rounded-md {
+  border-radius: 0.375rem !important;
+}
+
+.qp-focus\:outline-none:focus {
+  outline: none !important;
+}
+
+.qp-focus\:ring-2:focus {
+  --tw-ring-offset-shadow: var(--tw-ring-inset) 0 0 0 var(--tw-ring-offset-width)
+    var(--tw-ring-offset-color) !important;
+  --tw-ring-shadow: var(--tw-ring-inset) 0 0 0 calc(2px + var(--tw-ring-offset-width))
+    var(--qp-focus-ring) !important;
+  box-shadow: var(--tw-ring-offset-shadow), var(--tw-ring-shadow), 0 0 #0000 !important;
+}
+
+.qp-focus\:ring-blue-500:focus {
+  --tw-ring-color: var(--qp-focus-ring) !important;
+}
+
+.qp-overflow-auto {
+  overflow: auto !important;
+  flex: 1 1 auto !important;
+  min-height: 0 !important; /* 允许flex项收缩到内容大小 */
+}
+
+.qp-flex-1 {
+  flex: 1 1 0% !important;
+}
+
+.qp-cursor-pointer {
+  cursor: pointer !important;
+}
+
+.qp-bg-blue-100 {
+  background-color: var(--qp-bg-selected) !important;
+}
+
+.hover\:qp-bg-gray-100:hover {
+  background-color: var(--qp-bg-hover) !important;
+}
+
+.qp-font-medium {
+  font-weight: 500 !important;
+}
+
+.qp-text-sm {
+  font-size: 0.875rem !important;
+  line-height: 1.25rem !important;
+}
+
+.qp-text-gray-500 {
+  color: var(--qp-text-secondary) !important;
+}
+
+.qp-truncate {
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+  white-space: nowrap !important;
+}
+
+.qp-flex-wrap {
+  flex-wrap: wrap !important;
+}
+
+.qp-gap-1 {
+  gap: 0.25rem !important;
+}
+
+.qp-gap-2 {
+  gap: 0.5rem !important;
+}
+
+.qp-mt-1 {
+  margin-top: 0.25rem !important;
+}
+
+.qp-mt-2 {
+  margin-top: 0.5rem !important;
+}
+
+.qp-mb-2 {
+  margin-bottom: 0.5rem !important;
+}
+
+.qp-mr-1 {
+  margin-right: 0.25rem !important;
+}
+
+.qp-bg-gray-200 {
+  background-color: var(--qp-bg-tag) !important;
+}
+
+.qp-text-gray-700 {
+  color: var(--qp-text-tag) !important;
+}
+
+.qp-px-2 {
+  padding-left: 0.5rem !important;
+  padding-right: 0.5rem !important;
+}
+
+.qp-py-0\.5 {
+  padding-top: 0.125rem !important;
+  padding-bottom: 0.125rem !important;
+}
+
+.qp-text-xs {
+  font-size: 0.75rem !important;
+  line-height: 1rem !important;
+}
+
+.qp-rounded {
+  border-radius: 0.25rem !important;
+}
+
+.qp-rounded-full {
+  border-radius: 9999px !important;
+}
+
+.qp-p-2 {
+  padding: 0.5rem !important;
+}
+
+.qp-ml-1 {
+  margin-left: 0.25rem !important;
+}
+
+.qp-ml-2 {
+  margin-left: 0.5rem !important;
+}
+
+.qp-text-center {
+  text-align: center !important;
+}
+
+/* SVG和图标样式 */
+.qp-w-5 {
+  width: 1.25rem !important;
+}
+
+.qp-h-5 {
+  height: 1.25rem !important;
+}
+
+.qp-w-12 {
+  width: 3rem !important;
+}
+
+.qp-h-12 {
+  height: 3rem !important;
+}
+
+.qp-w-2 {
+  width: 0.5rem !important;
+}
+
+.qp-h-2 {
+  height: 0.5rem !important;
+}
+
+.qp-opacity-50 {
+  opacity: 0.5 !important;
+}
+
+.qp-bg-green-500 {
+  background-color: var(--qp-green) !important;
+}
+
+/* 添加平滑过渡效果 */
+#quick-prompt-selector * {
+  transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease !important;
+}
+
+/* 改进输入框样式 */
+#quick-prompt-selector input {
+  background-color: var(--qp-bg-secondary) !important;
+  color: var(--qp-text-primary) !important;
+}
+
+/* 改进滚动条样式 */
+#quick-prompt-selector .qp-overflow-auto::-webkit-scrollbar {
+  width: 6px !important;
+}
+
+#quick-prompt-selector .qp-overflow-auto::-webkit-scrollbar-track {
+  background: transparent !important;
+}
+
+#quick-prompt-selector .qp-overflow-auto::-webkit-scrollbar-thumb {
+  background-color: var(--qp-border-color) !important;
+  border-radius: 3px !important;
+}
+
+/* 提示项动画效果 */
+#quick-prompt-selector .qp-bg-blue-100 {
+  position: relative !important;
+}
+
+#quick-prompt-selector .qp-bg-blue-100::before {
+  content: '' !important;
+  position: absolute !important;
+  left: 0 !important;
+  top: 0 !important;
+  bottom: 0 !important;
+  width: 3px !important;
+  background-color: var(--qp-focus-ring) !important;
+}
+
+/* 以下是新增的现代化样式 */
+
+/* 主容器样式 */
+.qp-modal-container {
+  backdrop-filter: blur(8px) !important; /* 适中的模糊效果 */
+  background-color: var(--qp-bg-overlay) !important;
+  transition: all 0.25s ease-in-out !important; /* 更平滑的过渡 */
+}
+
+/* 弹窗主体样式 */
+.qp-modal {
+  border-radius: 12px !important;
+  overflow: hidden !important;
+  background-color: var(--qp-bg-primary) !important;
+  box-shadow: 0 8px 16px rgba(124, 58, 237, 0.06), 0 2px 4px rgba(124, 58, 237, 0.03) !important; /* 用紫色的阴影 */
+  transition: transform 0.25s ease-out, opacity 0.25s ease-out !important;
+  transform: translateY(0) scale(1) !important;
+  opacity: 1 !important;
+  max-width: 620px !important;
+  width: 90% !important;
+  display: flex !important;
+  flex-direction: column !important;
+  max-height: 80vh !important;
+}
+
+/* 弹窗头部样式 - 增加一点微妙的纹理 */
+.qp-modal-header {
+  background: linear-gradient(
+    to right,
+    var(--qp-gradient-start),
+    var(--qp-gradient-end)
+  ) !important;
+  padding: 1.2rem !important;
+  color: white !important;
+  border-bottom: none !important;
+  position: relative !important;
+}
+
+/* 添加轻微的纹理效果 */
+.qp-modal-header::before {
+  content: '' !important;
+  position: absolute !important;
+  top: 0 !important;
+  left: 0 !important;
+  right: 0 !important;
+  bottom: 0 !important;
+  background-image: linear-gradient(120deg, rgba(255, 255, 255, 0.05), transparent) !important;
+  pointer-events: none !important;
+}
+
+/* 现代化搜索输入框 - 基础样式（主要为暗色模式） */
+.qp-search-input {
+  border: none !important;
+  border-radius: 8px !important;
+  padding: 0.75rem 1rem !important;
+  background-color: rgba(255, 255, 255, 0.18) !important;
+  color: white !important;
+  backdrop-filter: blur(5px) !important;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1) !important;
+  transition: all 0.2s ease !important;
+  font-weight: 500 !important;
+}
+
+/* 暗色模式下的占位符 */
+.qp-search-input::placeholder {
+  color: rgba(255, 255, 255, 0.65) !important;
+  font-weight: 400 !important;
+}
+
+/* 暗色模式下的焦点样式 */
+.qp-search-input:focus {
+  box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.2) !important;
+  outline: none !important;
+  background-color: rgba(255, 255, 255, 0.22) !important;
+}
+
+/* 亮色模式下的搜索框样式 */
+[data-theme='light'] .qp-search-input {
+  background-color: rgba(124, 58, 237, 0.08) !important; /* 非常淡的紫色背景 */
+  color: #5b46a8 !important; /* 深紫色文字 */
+  box-shadow: 0 1px 2px rgba(124, 58, 237, 0.1) !important; /* 轻微的紫色阴影 */
+}
+
+/* 亮色模式下的占位符 */
+[data-theme='light'] .qp-search-input::placeholder {
+  color: rgba(124, 58, 237, 0.65) !important; /* 深紫色半透明占位符 */
+}
+
+/* 亮色模式下的焦点样式 */
+[data-theme='light'] .qp-search-input:focus {
+  background-color: rgba(124, 58, 237, 0.12) !important; /* 聚焦时背景色稍深 */
+  box-shadow: 0 0 0 2px rgba(124, 58, 237, 0.2) !important; /* 紫色聚焦环 */
+}
+
+/* 数据统计信息样式 - 现在用于底部状态栏 */
+.qp-stats {
+  color: rgba(255, 255, 255, 0.85) !important;
+  font-size: 0.75rem !important;
+  display: flex !important;
+  justify-content: space-between !important;
+  margin-top: 0.75rem !important;
+}
+
+/* 新增底部状态栏样式 */
+.qp-modal-footer {
+  padding: 0.6rem 1.2rem !important;
+  background-color: var(--qp-bg-secondary) !important;
+  border-top: 1px solid var(--qp-border-color) !important;
+  color: var(--qp-text-secondary) !important;
+  font-size: 0.75rem !important;
+  display: flex !important;
+  justify-content: space-between !important;
+  align-items: center !important;
+}
+
+.qp-modal-footer span {
+  color: var(--qp-text-secondary) !important;
+}
+
+/* 暗黑模式下的底部状态栏 */
+[data-theme='dark'] .qp-modal-footer {
+  background-color: var(--qp-bg-secondary) !important;
+  border-top: 1px solid rgba(124, 58, 237, 0.1) !important; /* 淡紫色的边框 */
+}
+
+/* 弹窗内容样式 */
+.qp-modal-content {
+  padding: 0 !important;
+  max-height: none !important; /* 移除最大高度限制，让它自动填充 */
+  background-color: var(--qp-bg-primary) !important;
+  display: flex !important;
+  flex-direction: column !important;
+  overflow: hidden !important;
+  flex: 1 !important; /* 让内容区域填充剩余空间 */
+  min-height: 0 !important; /* 允许收缩 */
+}
+
+/* 调整内容容器，确保它填充整个空间 */
+.qp-modal-content > div {
+  flex: 1 !important;
+  display: flex !important;
+  flex-direction: column !important;
+  min-height: 0 !important;
+  height: 100% !important; /* 确保高度填充 */
+}
+
+/* 提示列表容器样式 */
+.qp-prompt-list-container {
+  flex: 1 !important;
+  display: flex !important;
+  flex-direction: column !important;
+  min-height: 0 !important;
+  overflow: hidden !important;
+}
+
+/* 提示项样式 */
+.qp-prompt-item {
+  padding: 0.75rem 1.25rem !important;
+  border-left: 2px solid transparent !important;
+  transition: all 0.25s ease-out !important;
+  border-bottom: 1px solid var(--qp-border-color) !important;
+  background-color: var(--qp-bg-primary) !important;
+  position: relative !important;
+}
+
+.qp-prompt-item:last-child {
+  border-bottom: none !important;
+  margin-bottom: 0 !important; /* 确保最后一项没有底部边距 */
+}
+
+.qp-prompt-item:hover {
+  background-color: var(--qp-bg-hover) !important;
+  transform: translateX(1px) !important;
+}
+
+.qp-prompt-item.qp-selected {
+  background-color: var(--qp-bg-selected) !important;
+  border-left: 2px solid var(--qp-accent) !important;
+  transform: translateX(1px) !important;
+}
+
+/* 提示标题 */
+.qp-prompt-title {
+  font-weight: 600 !important;
+  font-size: 0.95rem !important;
+  color: var(--qp-text-primary) !important;
+  margin-bottom: 0.2rem !important;
+}
+
+/* 提示内容预览 */
+.qp-prompt-preview {
+  color: var(--qp-text-secondary) !important;
+  font-size: 0.85rem !important;
+  line-height: 1.4 !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+  white-space: nowrap !important;
+}
+
+/* 标签样式 */
+.qp-tags-container {
+  display: flex !important;
+  flex-wrap: wrap !important;
+  gap: 0.35rem !important;
+  margin-top: 0.5rem !important;
+}
+
+.qp-tag {
+  background-color: var(--qp-bg-tag) !important;
+  color: var(--qp-text-tag) !important;
+  font-size: 0.7rem !important;
+  padding: 0.12rem 0.45rem !important;
+  border-radius: 3px !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  box-shadow: none !important;
+}
+
+/* 空状态样式 */
+.qp-empty-state {
+  padding: 3rem 2rem !important;
+  text-align: center !important;
+  color: var(--qp-text-secondary) !important;
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  justify-content: center !important;
+  background-color: var(--qp-bg-primary) !important;
+  flex: 1 !important;
+  margin: 0 !important;
+}
+
+.qp-empty-icon {
+  width: 4rem !important;
+  height: 4rem !important;
+  margin-bottom: 1rem !important;
+  opacity: 0.5 !important;
+  color: var(--qp-text-secondary) !important;
+}
+
+.qp-empty-text {
+  font-size: 0.95rem !important;
+  margin-bottom: 0.5rem !important;
+  color: var(--qp-text-primary) !important;
+}
+
+.qp-empty-subtext {
+  font-size: 0.8rem !important;
+  opacity: 0.7 !important;
+  color: var(--qp-text-secondary) !important;
+}
+
+/* 滚动条优化 */
+.qp-custom-scrollbar::-webkit-scrollbar {
+  width: 6px !important;
+}
+
+.qp-custom-scrollbar::-webkit-scrollbar-track {
+  background: transparent !important;
+}
+
+.qp-custom-scrollbar::-webkit-scrollbar-thumb {
+  background-color: rgba(0, 0, 0, 0.1) !important;
+  border-radius: 3px !important;
+}
+
+[data-theme='dark'] .qp-custom-scrollbar::-webkit-scrollbar-thumb {
+  background-color: rgba(255, 255, 255, 0.1) !important;
+}
+
+/* 搜索输入框暗黑模式增强 */
+[data-theme='dark'] .qp-search-input {
+  background-color: rgba(124, 58, 237, 0.08) !important; /* 更柔和的紫色调的暗色输入框 */
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2) !important;
+  color: rgba(255, 255, 255, 0.95) !important;
+}
+
+[data-theme='dark'] .qp-search-input::placeholder {
+  color: rgba(255, 255, 255, 0.5) !important; /* 稍微提高暗黑模式下占位符对比度 */
+}
+
+[data-theme='dark'] .qp-search-input:focus {
+  box-shadow: 0 0 0 2px rgba(0, 0, 0, 0.2), 0 1px 2px rgba(0, 0, 0, 0.2) !important;
+}
+
+/* 改进暗黑模式下的选中和悬停效果 */
+[data-theme='dark'] .qp-prompt-item:hover {
+  background-color: var(--qp-bg-hover) !important;
+  transform: translateX(1px) !important;
+}
+
+[data-theme='dark'] .qp-prompt-item.qp-selected {
+  background-color: var(--qp-bg-selected) !important;
+  border-left: 2px solid var(--qp-accent) !important;
+  transform: translateX(1px) !important;
+}
+
+/* 确保标签在暗黑模式下的可读性 */
+[data-theme='dark'] .qp-tag {
+  background-color: var(--qp-bg-tag) !important; /* 使用暗紫色标签背景 */
+  color: var(--qp-text-tag) !important;
+  box-shadow: none !important;
+}
+
+/* 优化暗色模式下的对比度 */
+[data-theme='dark'] .qp-prompt-title {
+  color: var(--qp-text-primary) !important;
+  text-shadow: none !important; /* 移除文字阴影 */
+}
+
+[data-theme='dark'] .qp-prompt-preview {
+  color: var(--qp-text-secondary) !important;
+}
+
+/* 暗黑模式下的容器和弹窗样式增强 */
+[data-theme='dark'] .qp-modal {
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2), 0 2px 4px rgba(124, 58, 237, 0.07) !important; /* 暗色模式下更深的阴影 */
+}
+
+[data-theme='dark'] .qp-modal-header::before {
+  background-image: linear-gradient(
+    120deg,
+    rgba(255, 255, 255, 0.03),
+    transparent
+  ) !important; /* 更微妙的纹理 */
+}
+
+/* 确保暗黑模式下空状态的正确样式 */
+[data-theme='dark'] .qp-empty-state {
+  background-color: var(--qp-bg-primary) !important;
+}
+
+/* 确保选中和未选中项的边框一致，避免布局跳动 */
+.qp-prompt-item,
+.qp-prompt-item.qp-selected {
+  border-left-width: 2px !important;
+}

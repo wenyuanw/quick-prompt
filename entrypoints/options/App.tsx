@@ -29,7 +29,7 @@ const App = () => {
     const loadPrompts = async () => {
       try {
         setIsLoading(true)
-        const storedPrompts = await storage.getItem<PromptItem[]>('sync:userPrompts')
+        const storedPrompts = await storage.getItem<PromptItem[]>('local:userPrompts')
         setPrompts(storedPrompts || [])
         console.log('选项页：加载 Prompts:', storedPrompts?.length || 0)
       } catch (err) {
@@ -64,7 +64,7 @@ const App = () => {
   // Save prompts to storage
   const savePrompts = async (newPrompts: PromptItem[]) => {
     try {
-      await storage.setItem<PromptItem[]>('sync:userPrompts', newPrompts)
+      await storage.setItem<PromptItem[]>('local:userPrompts', newPrompts)
       console.log('选项页：Prompts 已保存')
       setPrompts(newPrompts)
     } catch (err) {
