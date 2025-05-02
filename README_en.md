@@ -53,8 +53,14 @@ _Coming soon_
    # Development mode (Chrome)
    pnpm dev
    
+   # Development mode (Firefox)
+   pnpm dev:firefox
+   
    # Build extension (Chrome)
    pnpm build
+   
+   # Build extension (Firefox)
+   pnpm build:firefox
    ```
 
 ### Install the Built Extension
@@ -69,7 +75,7 @@ _Coming soon_
 1. Open `about:debugging`
 2. Click "This Firefox"
 3. Click "Load Temporary Add-on"
-4. Select the `manifest.json` file in the project
+4. Select the `manifest.json` file in the `.output/firefox-mv2/` directory of the project
 
 ## 📄 License
 

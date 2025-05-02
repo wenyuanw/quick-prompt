@@ -53,8 +53,14 @@ _即将推出_
    # 开发模式 (Chrome)
    pnpm dev
    
+   # 开发模式 (Firefox)
+   pnpm dev:firefox
+   
    # 构建扩展 (Chrome)
    pnpm build
+   
+   # 构建扩展 (Firefox)
+   pnpm build:firefox
    ```
 
 ### 安装已构建的扩展
@@ -69,7 +75,7 @@ _即将推出_
 1. 打开 `about:debugging`
 2. 点击"此 Firefox"
 3. 点击"临时加载附加组件"
-4. 选择项目中的 `manifest.json` 文件
+4. 选择项目的 `.output/firefox-mv2/` 目录中的 `manifest.json` 文件
 
 ## 📄 许可证
 
