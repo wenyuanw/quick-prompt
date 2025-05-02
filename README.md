@@ -71,6 +71,13 @@ Quick Prompt 提供直观友好的用户界面，让你轻松管理和使用提�
 
 _即将推出_
 
+### 从 GitHub Releases 获取
+
+1. 访问 [GitHub Releases 页面](https://github.com/wenyuanw/quick-prompt/releases)
+2. 下载最新版本的构建好的插件包
+3. 解压下载的文件
+4. 按照下方的说明安装已构建的扩展
+
 ### 从源码构建
 
 1. 克隆仓库

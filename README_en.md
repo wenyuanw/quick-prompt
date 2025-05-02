@@ -71,6 +71,13 @@ Simply select any text on a webpage and right-click to quickly save it as a prom
 
 _Coming soon_
 
+### From GitHub Releases
+
+1. Visit the [GitHub Releases page](https://github.com/wenyuanw/quick-prompt/releases)
+2. Download the latest pre-built extension package
+3. Extract the downloaded file
+4. Follow the installation instructions below for the built extension
+
 ### Build from Source
 
 1. Clone the repository
