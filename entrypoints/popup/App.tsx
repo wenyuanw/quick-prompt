@@ -9,6 +9,8 @@ function App() {
   const [error, setError] = useState<string | null>(null)
   const [shortcutKey, setShortcutKey] = useState<string>('')
   const [saveShortcutKey, setSaveShortcutKey] = useState<string>('')
+  const [shortcutSettingsUrl, setShortcutSettingsUrl] = useState<string>('')
+  const [showShortcutHelp, setShowShortcutHelp] = useState<boolean>(false)
 
   // 加载提示数量
   const loadPromptCount = async () => {
@@ -45,6 +47,15 @@ function App() {
   // 获取当前快捷键
   const getShortcutKey = async () => {
     try {
+      // 检测当前浏览器类型
+      const isFirefox = navigator.userAgent.includes('Firefox')
+      // 设置对应浏览器的扩展快捷键设置页面
+      if (isFirefox) {
+        setShortcutSettingsUrl('about:addons')
+      } else {
+        setShortcutSettingsUrl('chrome://extensions/shortcuts')
+      }
+      
       // 从浏览器API获取真实配置的快捷键
       const commands = await browser.commands.getAll()
       const promptCommand = commands.find(cmd => cmd.name === 'open-prompt-selector')
@@ -52,25 +63,31 @@ function App() {
       
       if (promptCommand && promptCommand.shortcut) {
         setShortcutKey(promptCommand.shortcut)
+        setShowShortcutHelp(false)
       } else {
-        // 如果未找到快捷键配置或未设置，显示默认快捷键
-        const isMac = navigator.platform.toUpperCase().indexOf('MAC') >= 0
-        setShortcutKey(isMac ? 'Command+Shift+P' : 'Ctrl+Shift+P')
+        // 如果未找到快捷键配置或未设置，提示用户进入快捷键设置页面
+        setShortcutKey('')
+        setShowShortcutHelp(true)
       }
       
       if (saveCommand && saveCommand.shortcut) {
         setSaveShortcutKey(saveCommand.shortcut)
       } else {
-        // 如果未找到快捷键配置或未设置，显示默认快捷键
-        const isMac = navigator.platform.toUpperCase().indexOf('MAC') >= 0
-        setSaveShortcutKey(isMac ? 'Command+Shift+S' : 'Ctrl+Shift+S')
+        // 如果未找到快捷键配置或未设置，不显示此快捷键
+        setSaveShortcutKey('')
       }
     } catch (err) {
       console.error('获取快捷键设置失败', err)
-      // 出错时使用默认值
-      const isMac = navigator.platform.toUpperCase().indexOf('MAC') >= 0
-      setShortcutKey(isMac ? 'Command+Shift+P' : 'Ctrl+Shift+P')
-      setSaveShortcutKey(isMac ? 'Command+Shift+S' : 'Ctrl+Shift+S')
+      // 出错时提示用户进入快捷键设置页面
+      const isFirefox = navigator.userAgent.includes('Firefox')
+      if (isFirefox) {
+        setShortcutSettingsUrl('about:addons')
+      } else {
+        setShortcutSettingsUrl('chrome://extensions/shortcuts')
+      }
+      setShortcutKey('')
+      setSaveShortcutKey('')
+      setShowShortcutHelp(true)
     }
   }
 
@@ -118,8 +135,25 @@ function App() {
     }
   }
 
+  // 打开快捷键设置页面
+  const openShortcutSettings = () => {
+    // 对于Firefox，直接打开about:addons后需要用户进一步操作
+    if (navigator.userAgent.includes('Firefox')) {
+      // 显示额外提示
+      alert('打开扩展页面后，请点击右上角的齿轮图标，并选择"管理扩展快捷键"选项')
+    }
+    
+    // 尝试打开设置页面
+    try {
+      browser.tabs.create({ url: shortcutSettingsUrl })
+      window.close()
+    } catch (err) {
+      console.error('打开快捷键设置页面失败', err)
+    }
+  }
+
   return (
-    <div className='p-4 w-full max-w-[300px] min-w-[250px] box-border bg-white text-gray-900 dark:bg-gray-900 dark:text-white transition-colors duration-200'>
+    <div className='p-4 w-full max-w-[350px] min-w-[300px] box-border bg-white text-gray-900 dark:bg-gray-900 dark:text-white transition-colors duration-200'>
       {/* 标题区域 */}
       <div className='flex justify-center items-center mb-3'>
         <img src={Logo} className='h-8 mr-2' alt='quick prompt logo' />
@@ -129,53 +163,36 @@ function App() {
       </div>
 
       {/* 统计卡片 */}
-      <div className='rounded-lg shadow p-3 mb-3 relative bg-white dark:bg-gray-800 transition-colors duration-200'>
-        <div className='flex justify-between items-center mb-2'>
-          <h2 className='text-base font-semibold m-0 text-gray-700 dark:text-gray-200'>提示统计</h2>
-
-          <button
-            onClick={loadPromptCount}
-            disabled={loading}
-            title='刷新提示数量'
-            className='bg-transparent border-none text-gray-500 cursor-pointer dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300'
-          >
-            <svg
-              xmlns='http://www.w3.org/2000/svg'
-              className={loading ? 'animate-spin w-4 h-4' : 'w-4 h-4'}
-              fill='none'
-              viewBox='0 0 24 24'
-              stroke='currentColor'
-            >
-              <path
-                strokeLinecap='round'
-                strokeLinejoin='round'
-                strokeWidth={2}
-                d='M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15'
-              />
+      <div className='rounded-lg shadow p-2 mb-3 relative bg-white dark:bg-gray-800 transition-colors duration-200'>
+        <div className='flex justify-between items-center mb-1'>
+          <div className='flex items-center'>
+            <svg xmlns="http://www.w3.org/2000/svg" className="h-3.5 w-3.5 mr-1 text-blue-500 dark:text-blue-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
             </svg>
-          </button>
+            <h2 className='text-sm font-semibold m-0 text-gray-700 dark:text-gray-200'>提示词库</h2>
+          </div>
         </div>
 
         {/* 设置固定高度容器，防止状态切换时闪烁 */}
-        <div className='h-16 flex items-center justify-center'>
+        <div className='h-12 flex items-center justify-center'>
           {loading ? (
             // 骨架屏加载状态
             <div className='text-center w-full'>
-              <div className='h-8 flex justify-center items-center'>
-                <div className='w-10 h-8 bg-gray-200 dark:bg-gray-700 rounded animate-pulse'></div>
+              <div className='h-6 flex justify-center items-center'>
+                <div className='w-8 h-6 bg-gray-200 dark:bg-gray-700 rounded animate-pulse'></div>
               </div>
-              <div className='h-4 mt-1 flex justify-center items-center'>
-                <div className='w-20 h-3 bg-gray-200 dark:bg-gray-700 rounded animate-pulse'></div>
+              <div className='h-3 mt-1 flex justify-center items-center'>
+                <div className='w-16 h-2 bg-gray-200 dark:bg-gray-700 rounded animate-pulse'></div>
               </div>
             </div>
           ) : error ? (
-            <div className='text-red-500 text-center text-sm dark:text-red-400'>{error}</div>
+            <div className='text-red-500 text-center text-xs dark:text-red-400'>{error}</div>
           ) : (
-            <div className='text-center'>
-              <span className='text-2xl font-bold text-blue-600 dark:text-blue-400'>
+            <div className='text-center flex items-center justify-center'>
+              <span className='text-xl font-bold text-blue-600 dark:text-blue-400 mr-1.5'>
                 {promptCount}
               </span>
-              <p className='text-gray-500 text-sm mt-1 mb-0 dark:text-gray-400'>个可用提示</p>
+              <p className='text-gray-500 text-xs m-0 dark:text-gray-400'>个可用提示</p>
             </div>
           )}
         </div>
@@ -201,23 +218,57 @@ function App() {
               </svg>
             </div>
             <span className='text-xs text-gray-600 dark:text-gray-300 leading-relaxed'>
-              打开选择器: 输入 <kbd className='inline-flex items-center justify-center px-1.5 py-0.5 my-0.5 text-xs font-semibold bg-white dark:bg-gray-700 rounded border border-gray-300 dark:border-gray-600 shadow-sm text-blue-600 dark:text-blue-400 min-h-[20px]'>/p</kbd> 或按下 
+              快捷输入: 任意输入框中输入 <kbd className='inline-flex items-center justify-center px-1.5 py-0.5 my-0.5 text-xs font-semibold bg-white dark:bg-gray-700 rounded border border-gray-300 dark:border-gray-600 shadow-sm text-blue-600 dark:text-blue-400 min-h-[20px]'>/p</kbd> 
               {shortcutKey && (
-                <kbd className='inline-flex items-center justify-center ml-1 px-1.5 py-0.5 my-0.5 text-xs font-semibold bg-white dark:bg-gray-700 rounded border border-gray-300 dark:border-gray-600 shadow-sm text-blue-600 dark:text-blue-400 min-h-[20px]'>{shortcutKey}</kbd>
+                <> 或按下 <kbd className='inline-flex items-center justify-center ml-1 px-1.5 py-0.5 my-0.5 text-xs font-semibold bg-white dark:bg-gray-700 rounded border border-gray-300 dark:border-gray-600 shadow-sm text-blue-600 dark:text-blue-400 min-h-[20px]'>{shortcutKey}</kbd></>
               )}
             </span>
           </div>
           
           {saveShortcutKey && (
-            <div className='flex items-start'>
+            <div className='flex items-start mb-2'>
               <div className='flex-shrink-0 text-blue-500 dark:text-blue-400 mr-2 mt-1'>
                 <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                 </svg>
               </div>
               <span className='text-xs text-gray-600 dark:text-gray-300 leading-relaxed'>
-                选中文本后按下 <kbd className='inline-flex items-center justify-center px-1.5 py-0.5 my-0.5 text-xs font-semibold bg-white dark:bg-gray-700 rounded border border-gray-300 dark:border-gray-600 shadow-sm text-blue-600 dark:text-blue-400 min-h-[20px]'>{saveShortcutKey}</kbd> 保存为提示词
+                快捷保存：选中文本后按下 <kbd className='inline-flex items-center justify-center px-1.5 py-0.5 my-0.5 text-xs font-semibold bg-white dark:bg-gray-700 rounded border border-gray-300 dark:border-gray-600 shadow-sm text-blue-600 dark:text-blue-400 min-h-[20px]'>{saveShortcutKey}</kbd> 即可保存提示词
               </span>
+            </div>
+          )}
+
+          <div className='flex items-start mb-2'>
+            <div className='flex-shrink-0 text-blue-500 dark:text-blue-400 mr-2 mt-1'>
+              <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z" />
+              </svg>
+            </div>
+            <span className='text-xs text-gray-600 dark:text-gray-300 leading-relaxed'>
+              右键保存：选中文本后单击右键菜单选择"保存该提示词"
+            </span>
+          </div>
+
+          {showShortcutHelp && (
+            <div className='mt-2 bg-yellow-50 dark:bg-yellow-900/20 p-2 rounded-md border border-yellow-200 dark:border-yellow-800'>
+              <div className='flex items-start'>
+                <div className='flex-shrink-0 text-yellow-500 dark:text-yellow-400 mr-2 mt-1'>
+                  <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                  </svg>
+                </div>
+                <div>
+                  <p className='text-xs text-yellow-700 dark:text-yellow-300 leading-relaxed mb-1'>
+                    未检测到快捷键配置，可能是因为快捷键冲突。
+                  </p>
+                  <button 
+                    onClick={openShortcutSettings}
+                    className='text-xs bg-yellow-100 hover:bg-yellow-200 dark:bg-yellow-800 dark:hover:bg-yellow-700 text-yellow-800 dark:text-yellow-200 px-2 py-1 rounded-md transition-colors duration-200'
+                  >
+                    前往设置快捷键
+                  </button>
+                </div>
+              </div>
             </div>
           )}
         </div>
