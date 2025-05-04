@@ -1,6 +1,5 @@
 import { useState, useEffect } from 'react'
 import Logo from '~/assets/icon.png'
-import './App.css'
 import '~/assets/tailwind.css'
 
 function App() {

@@ -1,6 +1,5 @@
 import { storage } from '#imports'
 import { showPromptSelector } from './components/PromptSelector'
-import '~/assets/tailwind.css'
 import './content.css'
 
 export interface PromptItem {
