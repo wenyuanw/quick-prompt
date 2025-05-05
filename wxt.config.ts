@@ -14,7 +14,7 @@ export default defineConfig({
   manifest: {
     name: 'Quick Prompt',
     description: '在网页输入框中通过指令快速插入预设的 Prompt 内容。',
-    permissions: ['storage', 'tabs', 'contextMenus'],
+    permissions: ['storage', 'contextMenus'],
     commands: {
       'open-prompt-selector': {
         suggested_key: {
