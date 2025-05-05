@@ -1,10 +1,14 @@
 import { defineConfig } from 'wxt'
 import tailwindcss from '@tailwindcss/vite'
+import removeConsole from 'vite-plugin-remove-console'
 
 // See https://wxt.dev/api/config.html
 export default defineConfig({
-  vite: (env) => ({
-    plugins: [tailwindcss()],
+  vite: (configEnv) => ({
+    plugins:
+    configEnv.mode === 'production'
+      ? [removeConsole({ includes: ['log'] }), tailwindcss()]
+      : [tailwindcss()],
   }),
   modules: ['@wxt-dev/module-react'],
   manifest: {
