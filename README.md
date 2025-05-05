@@ -86,7 +86,7 @@ _即将推出_
 
 1. 克隆仓库
    ```bash
-   git clone <仓库URL>
+   git clone https://github.com/wenyuanw/quick-prompt.git
    cd quick-prompt
    ```
 

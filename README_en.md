@@ -86,7 +86,7 @@ _Coming soon_
 
 1. Clone the repository
    ```bash
-   git clone <repository URL>
+   git clone https://github.com/wenyuanw/quick-prompt.git
    cd quick-prompt
    ```
 
