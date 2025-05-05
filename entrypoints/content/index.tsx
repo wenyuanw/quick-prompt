@@ -165,6 +165,9 @@ export default defineContentScript({
         isPromptSelectorOpen = true
         console.log('准备打开提示词选择器...')
 
+        // 保存当前活动元素
+        const activeElement = document.activeElement as HTMLElement
+
         // 如果没有提供输入框，尝试获取当前聚焦的输入框
         const targetInput = inputElement || getFocusedTextInput()
 
@@ -192,9 +195,19 @@ export default defineContentScript({
             setThemeAttributes(container)
           }
 
-          // 弹窗关闭后重置状态
+          // 确保在选择器关闭后恢复原来的焦点
+          const restoreFocus = () => {
+            if (activeElement && typeof activeElement.focus === 'function') {
+              setTimeout(() => {
+                activeElement.focus()
+              }, 100)
+            }
+          }
+
+          // 弹窗关闭后重置状态并恢复焦点
           setTimeout(() => {
             isPromptSelectorOpen = false
+            restoreFocus()
           }, 500)
         } else {
           console.log('没有找到已启用的提示词')

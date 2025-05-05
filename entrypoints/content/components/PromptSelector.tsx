@@ -158,56 +158,63 @@ const PromptSelector: React.FC<PromptSelectorProps> = ({
           const textAfterTrigger = fullText.substring(lastTriggerPos + 2); // +2 跳过 "/p"
 
           // 设置新内容
-          const newContent =
-            textBeforeTrigger + prompt.content + textAfterTrigger;
-          editableElement.textContent = newContent;
+          const newContent = textBeforeTrigger + prompt.content + textAfterTrigger;
+          
+          // 创建一个新的文本节点
+          const textNode = document.createTextNode(newContent);
+          
+          // 清空现有内容
+          while (editableElement.firstChild) {
+            editableElement.removeChild(editableElement.firstChild);
+          }
+          
+          // 插入新的文本节点
+          editableElement.appendChild(textNode);
 
-          // 重新设置光标位置到提示词后
-          const newCursorPosition =
-            textBeforeTrigger.length + prompt.content.length;
-
-          // 设置光标位置
+          // 设置光标位置到提示词后
+          const newCursorPosition = textBeforeTrigger.length + prompt.content.length;
           const selection = window.getSelection();
           if (selection) {
-            selection.removeAllRanges();
             const range = document.createRange();
-
-            // 确保有文本节点存在
-            let textNode = editableElement.firstChild;
-            if (!textNode) {
-              textNode = document.createTextNode(newContent);
-              editableElement.appendChild(textNode);
-            }
-
-            // 设置光标位置
-            const safePosition = Math.min(
-              newCursorPosition,
-              textNode.textContent?.length || 0
-            );
-            range.setStart(textNode, safePosition);
-            range.setEnd(textNode, safePosition);
+            range.setStart(textNode, newCursorPosition);
+            range.setEnd(textNode, newCursorPosition);
+            selection.removeAllRanges();
             selection.addRange(range);
           }
-
-          // 聚焦元素
-          editableElement.focus();
         } else {
-          // 如果找不到 "/p"，直接在当前位置插入提示词
+          // 如果找不到 "/p"，在当前光标位置插入内容
           const selection = window.getSelection();
           if (selection && selection.rangeCount > 0) {
             const range = selection.getRangeAt(0);
-            range.deleteContents();
-            range.insertNode(document.createTextNode(prompt.content));
-
-            // 移动光标到插入内容后面
-            range.setStartAfter(range.endContainer);
-            range.setEndAfter(range.endContainer);
-            selection.removeAllRanges();
-            selection.addRange(range);
+            
+            // 确保我们在编辑器内部
+            if (!editableElement.contains(range.startContainer)) {
+              // 如果光标不在编辑器内，将内容追加到末尾
+              const textNode = document.createTextNode(prompt.content);
+              editableElement.appendChild(textNode);
+              
+              // 将光标移动到末尾
+              const newRange = document.createRange();
+              newRange.selectNodeContents(editableElement);
+              newRange.collapse(false);
+              selection.removeAllRanges();
+              selection.addRange(newRange);
+            } else {
+              // 在当前光标位置插入内容
+              const textNode = document.createTextNode(prompt.content);
+              range.deleteContents();
+              range.insertNode(textNode);
+              
+              // 移动光标到插入内容后面
+              range.setStartAfter(textNode);
+              range.setEndAfter(textNode);
+              selection.removeAllRanges();
+              selection.addRange(range);
+            }
           } else {
-            // 如果没有选区，则直接添加到内容末尾
-            editableElement.textContent =
-              (editableElement.textContent || "") + prompt.content;
+            // 如果没有选区，追加到末尾
+            const textNode = document.createTextNode(prompt.content);
+            editableElement.appendChild(textNode);
           }
         }
 
