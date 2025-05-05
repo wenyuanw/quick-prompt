@@ -17,6 +17,7 @@ export interface EditableElement {
   selectionEnd?: number | null
   focus(): void
   setSelectionRange?(start: number, end: number): void
+  dispatchEvent(event: Event): boolean
 }
 
 // 检测系统是否为暗黑模式
@@ -113,6 +114,9 @@ export default defineContentScript({
             } catch (error) {
               console.error('设置 contenteditable 光标位置失败:', error)
             }
+          },
+          dispatchEvent(event: Event): boolean {
+            return element.dispatchEvent(event)
           }
         }
         return adapter as EditableElement
@@ -188,27 +192,22 @@ export default defineContentScript({
           console.log(`共找到 ${prompts.length} 个启用的提示词，显示选择器...`)
 
           // 显示提示词选择器弹窗
-          const container = showPromptSelector(prompts, targetInput)
+          const container = showPromptSelector(prompts, targetInput, () => {
+            // 在选择器关闭时恢复焦点
+            if (activeElement && typeof activeElement.focus === 'function') {
+              setTimeout(() => {
+                console.log('恢复焦点')
+                activeElement.focus()
+              }, 100)
+            }
+            isPromptSelectorOpen = false
+          })
 
           // 设置主题
           if (container) {
             setThemeAttributes(container)
           }
 
-          // 确保在选择器关闭后恢复原来的焦点
-          const restoreFocus = () => {
-            if (activeElement && typeof activeElement.focus === 'function') {
-              setTimeout(() => {
-                activeElement.focus()
-              }, 100)
-            }
-          }
-
-          // 弹窗关闭后重置状态并恢复焦点
-          setTimeout(() => {
-            isPromptSelectorOpen = false
-            restoreFocus()
-          }, 500)
         } else {
           console.log('没有找到已启用的提示词')
           alert('没有找到已启用的提示词。请先在扩展中添加并启用一些提示词。')
