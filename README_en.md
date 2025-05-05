@@ -22,7 +22,7 @@ A powerful browser extension focused on prompt management and quick input. Helps
 
 ## ⚠️ Known Issues
 
-- Heads up! The quick input feature is taking an unexpected coffee break ☕ on Doubao (doubao.com) due to some technical shenanigans. But fear not! My trusty sidekick Cursor and I are burning the midnight oil to get it back on its feet ASAP!
+- On Doubao (doubao.com) website, when using `/p` to trigger the prompt selector, some input fields may have an issue where the `/p` trigger text is not properly cleared. But don't worry! My trusty partner Cursor and I are working day and night to find a solution and fix it ASAP!
 
 ## 🚀 How to Use
 
