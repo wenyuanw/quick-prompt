@@ -24,6 +24,7 @@ const PromptSelector: React.FC<PromptSelectorProps> = ({
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedIndex, setSelectedIndex] = useState(0);
   const [isDark, setIsDark] = useState(isDarkMode());
+  const [isKeyboardNav, setIsKeyboardNav] = useState(true);
   const searchInputRef = useRef<HTMLInputElement>(null);
   const listRef = useRef<HTMLDivElement>(null);
   const modalRef = useRef<HTMLDivElement>(null);
@@ -96,15 +97,13 @@ const PromptSelector: React.FC<PromptSelectorProps> = ({
 
       switch (e.key) {
         case "ArrowDown":
-          e.preventDefault();
-          setSelectedIndex((prev) => 
-            prev === filteredPrompts.length - 1 ? 0 : prev + 1
-          );
-          break;
         case "ArrowUp":
+          setIsKeyboardNav(true);  // 设置为键盘导航模式
           e.preventDefault();
           setSelectedIndex((prev) => 
-            prev === 0 ? filteredPrompts.length - 1 : prev - 1
+            e.key === "ArrowDown"
+              ? prev === filteredPrompts.length - 1 ? 0 : prev + 1
+              : prev === 0 ? filteredPrompts.length - 1 : prev - 1
           );
           break;
         case "Enter":
@@ -120,9 +119,19 @@ const PromptSelector: React.FC<PromptSelectorProps> = ({
       }
     };
 
-    document.addEventListener("keydown", handleKeyDown, true); // 使用捕获阶段
+    document.addEventListener("keydown", handleKeyDown, true);
     return () => document.removeEventListener("keydown", handleKeyDown, true);
   }, [selectedIndex, filteredPrompts]);
+
+  // 添加鼠标移动事件监听
+  useEffect(() => {
+    const handleMouseMove = () => {
+      setIsKeyboardNav(false);  // 设置为鼠标导航模式
+    };
+
+    document.addEventListener('mousemove', handleMouseMove, true);
+    return () => document.removeEventListener('mousemove', handleMouseMove, true);
+  }, []);
 
   // 确保选中项在视图中
   useEffect(() => {
@@ -316,7 +325,9 @@ const PromptSelector: React.FC<PromptSelectorProps> = ({
   return (
     <div
       ref={modalRef}
-      className="qp-fixed qp-inset-0 qp-flex qp-items-center qp-justify-center qp-z-50 qp-modal-container"
+      className={`qp-fixed qp-inset-0 qp-flex qp-items-center qp-justify-center qp-z-50 qp-modal-container ${
+        isKeyboardNav ? 'qp-keyboard-nav' : ''
+      }`}
       onClick={handleBackgroundClick}
       data-theme={isDark ? "dark" : "light"}
     >
@@ -349,7 +360,7 @@ const PromptSelector: React.FC<PromptSelectorProps> = ({
                     index === selectedIndex ? "qp-selected" : ""
                   }`}
                   onClick={() => applyPrompt(prompt)}
-                  onMouseEnter={() => setSelectedIndex(index)}
+                  onMouseEnter={() => !isKeyboardNav && setSelectedIndex(index)}
                 >
                   <div className="qp-prompt-title">{prompt.title}</div>
                   <div className="qp-prompt-preview">{prompt.content}</div>
@@ -612,15 +623,6 @@ export function showPromptSelector(
       -webkit-overflow-scrolling: touch !important;
     }
 
-    /* 提示列表容器样式 */
-    .qp-prompt-list-container {
-      flex: 1 !important;
-      display: flex !important;
-      flex-direction: column !important;
-      min-height: 0 !important;
-      overflow: hidden !important;
-    }
-
     /* 提示项样式 */
     .qp-prompt-item {
       padding: 12px 20px !important;
@@ -636,7 +638,8 @@ export function showPromptSelector(
       margin-bottom: 0 !important;
     }
 
-    .qp-prompt-item:hover {
+    /* 只在非键盘导航模式下显示hover效果 */
+    :host(:not([data-keyboard-nav])) .qp-prompt-item:hover {
       background-color: var(--qp-bg-hover) !important;
       transform: translateX(1px) !important;
     }
@@ -646,6 +649,12 @@ export function showPromptSelector(
       border-left: 2px solid var(--qp-accent) !important;
       transform: translateX(1px) !important;
       position: relative !important;
+    }
+
+    /* 在键盘导航模式下,hover效果被禁用 */
+    .qp-keyboard-nav .qp-prompt-item:not(.qp-selected):hover {
+      background-color: var(--qp-bg-primary) !important;
+      transform: none !important;
     }
     
     /* 提示标题 */
