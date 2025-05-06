@@ -97,13 +97,15 @@ const PromptSelector: React.FC<PromptSelectorProps> = ({
       switch (e.key) {
         case "ArrowDown":
           e.preventDefault();
-          setSelectedIndex((prev) =>
-            Math.min(prev + 1, filteredPrompts.length - 1)
+          setSelectedIndex((prev) => 
+            prev === filteredPrompts.length - 1 ? 0 : prev + 1
           );
           break;
         case "ArrowUp":
           e.preventDefault();
-          setSelectedIndex((prev) => Math.max(prev - 1, 0));
+          setSelectedIndex((prev) => 
+            prev === 0 ? filteredPrompts.length - 1 : prev - 1
+          );
           break;
         case "Enter":
           e.preventDefault();
@@ -124,9 +126,14 @@ const PromptSelector: React.FC<PromptSelectorProps> = ({
 
   // 确保选中项在视图中
   useEffect(() => {
-    const selectedElement = document.getElementById(
-      `prompt-item-${selectedIndex}`
+    // 通过modalRef直接访问Shadow DOM
+    const shadowRoot = modalRef.current?.getRootNode() as ShadowRoot;
+    if (!shadowRoot) return;
+    
+    const selectedElement = shadowRoot.querySelector(
+      `#prompt-item-${selectedIndex}`
     );
+    
     if (selectedElement && listRef.current) {
       selectedElement.scrollIntoView({ block: "nearest" });
     }
@@ -156,26 +163,27 @@ const PromptSelector: React.FC<PromptSelectorProps> = ({
           // 构建新的内容（移除 "/p" 并插入提示词）
           const textBeforeTrigger = fullText.substring(0, lastTriggerPos);
           const textAfterTrigger = fullText.substring(lastTriggerPos + 2);
-          const newContent = textBeforeTrigger + prompt.content + textAfterTrigger;
+          const newContent =
+            textBeforeTrigger + prompt.content + textAfterTrigger;
 
           // 创建并分发 beforeinput 事件
-          const beforeInputEvent = new InputEvent('beforeinput', {
+          const beforeInputEvent = new InputEvent("beforeinput", {
             bubbles: true,
             cancelable: true,
-            inputType: 'insertFromPaste',
-            data: newContent
+            inputType: "insertFromPaste",
+            data: newContent,
           });
-          
+
           // 如果 beforeinput 事件没有被阻止，则继续处理
           if (editableElement.dispatchEvent(beforeInputEvent)) {
             // 设置新内容
             editableElement.textContent = newContent;
 
             // 创建并分发 input 事件
-            const inputEvent = new InputEvent('input', {
+            const inputEvent = new InputEvent("input", {
               bubbles: true,
-              inputType: 'insertFromPaste',
-              data: newContent
+              inputType: "insertFromPaste",
+              data: newContent,
             });
             editableElement.dispatchEvent(inputEvent);
 
@@ -194,32 +202,33 @@ const PromptSelector: React.FC<PromptSelectorProps> = ({
           const selection = window.getSelection();
           if (selection && selection.rangeCount > 0) {
             const range = selection.getRangeAt(0);
-            const beforeInputEvent = new InputEvent('beforeinput', {
+            const beforeInputEvent = new InputEvent("beforeinput", {
               bubbles: true,
               cancelable: true,
-              inputType: 'insertFromPaste',
-              data: prompt.content
+              inputType: "insertFromPaste",
+              data: prompt.content,
             });
 
             // 如果 beforeinput 事件没有被阻止，则继续处理
             if (editableElement.dispatchEvent(beforeInputEvent)) {
               // 获取当前内容
-              const currentContent = editableElement.textContent || '';
+              const currentContent = editableElement.textContent || "";
               const position = range.startOffset;
-              
+
               // 在光标位置插入新内容
-              const newContent = currentContent.slice(0, position) + 
-                               prompt.content + 
-                               currentContent.slice(position);
-              
+              const newContent =
+                currentContent.slice(0, position) +
+                prompt.content +
+                currentContent.slice(position);
+
               // 设置新内容
               editableElement.textContent = newContent;
 
               // 创建并分发 input 事件
-              const inputEvent = new InputEvent('input', {
+              const inputEvent = new InputEvent("input", {
                 bubbles: true,
-                inputType: 'insertFromPaste',
-                data: prompt.content
+                inputType: "insertFromPaste",
+                data: prompt.content,
               });
               editableElement.dispatchEvent(inputEvent);
 
@@ -232,26 +241,26 @@ const PromptSelector: React.FC<PromptSelectorProps> = ({
             }
           } else {
             // 如果没有选区，追加到末尾
-            const beforeInputEvent = new InputEvent('beforeinput', {
+            const beforeInputEvent = new InputEvent("beforeinput", {
               bubbles: true,
               cancelable: true,
-              inputType: 'insertFromPaste',
-              data: prompt.content
+              inputType: "insertFromPaste",
+              data: prompt.content,
             });
 
             // 如果 beforeinput 事件没有被阻止，则继续处理
             if (editableElement.dispatchEvent(beforeInputEvent)) {
-              const currentContent = editableElement.textContent || '';
+              const currentContent = editableElement.textContent || "";
               const newContent = currentContent + prompt.content;
-              
+
               // 设置新内容
               editableElement.textContent = newContent;
 
               // 创建并分发 input 事件
-              const inputEvent = new InputEvent('input', {
+              const inputEvent = new InputEvent("input", {
                 bubbles: true,
-                inputType: 'insertFromPaste',
-                data: prompt.content
+                inputType: "insertFromPaste",
+                data: prompt.content,
               });
               editableElement.dispatchEvent(inputEvent);
             }
@@ -266,7 +275,10 @@ const PromptSelector: React.FC<PromptSelectorProps> = ({
     } else {
       // 原有的标准输入框处理逻辑
       const cursorPosition = targetElement.selectionStart || 0;
-      const textBeforeCursor = targetElement.value.substring(0, cursorPosition - 2);
+      const textBeforeCursor = targetElement.value.substring(
+        0,
+        cursorPosition - 2
+      );
       const textAfterCursor = targetElement.value.substring(cursorPosition);
       targetElement.value = textBeforeCursor + prompt.content + textAfterCursor;
 
@@ -279,10 +291,10 @@ const PromptSelector: React.FC<PromptSelectorProps> = ({
 
       // 触发 input 事件
       try {
-        const inputEvent = new InputEvent('input', {
+        const inputEvent = new InputEvent("input", {
           bubbles: true,
-          inputType: 'insertFromPaste',
-          data: prompt.content
+          inputType: "insertFromPaste",
+          data: prompt.content,
         });
         targetElement.dispatchEvent(inputEvent);
       } catch (error) {
@@ -328,7 +340,7 @@ const PromptSelector: React.FC<PromptSelectorProps> = ({
           className="qp-overflow-auto qp-modal-content qp-custom-scrollbar"
         >
           {filteredPrompts.length > 0 ? (
-            <div className="qp-prompt-list-container">
+            <>
               {filteredPrompts.map((prompt, index) => (
                 <div
                   id={`prompt-item-${index}`}
@@ -352,7 +364,7 @@ const PromptSelector: React.FC<PromptSelectorProps> = ({
                   )}
                 </div>
               ))}
-            </div>
+            </>
           ) : (
             <div className="qp-empty-state">
               <svg
@@ -598,14 +610,6 @@ export function showPromptSelector(
       overflow-y: auto !important;
       overscroll-behavior: contain !important;
       -webkit-overflow-scrolling: touch !important;
-    }
-
-    .qp-modal-content > div {
-      flex: 1 !important;
-      display: flex !important;
-      flex-direction: column !important;
-      min-height: 0 !important;
-      height: 100% !important;
     }
 
     /* 提示列表容器样式 */
