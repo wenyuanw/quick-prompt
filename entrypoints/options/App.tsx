@@ -463,6 +463,38 @@ const App = () => {
     }
   };
 
+  // 主题切换逻辑
+  useEffect(() => {
+    // 检测系统颜色模式并设置相应的class
+    const updateTheme = (isDark: boolean) => {
+      if (isDark) {
+        document.documentElement.classList.remove('light');
+        document.documentElement.classList.add('dark');
+      } else {
+        document.documentElement.classList.remove('dark');
+        document.documentElement.classList.add('light');
+      }
+    };
+
+    // 初始检测
+    if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+      updateTheme(true);
+    }
+
+    // 监听系统颜色模式变化
+    const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
+    const handleChange = (event: MediaQueryListEvent) => {
+      updateTheme(event.matches);
+    };
+
+    mediaQuery.addEventListener('change', handleChange);
+
+    // 清理函数
+    return () => {
+      mediaQuery.removeEventListener('change', handleChange);
+    };
+  }, []);
+
   if (isLoading) {
     return (
       <div className="min-h-screen bg-gray-50 py-8">
