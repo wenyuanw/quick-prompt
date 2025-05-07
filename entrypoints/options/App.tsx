@@ -4,6 +4,7 @@ import PromptForm from "./components/PromptForm";
 import PromptList from "./components/PromptList";
 import SearchBar from "./components/SearchBar";
 import Modal from "./components/Modal";
+import ConfirmModal from "./components/ConfirmModal";
 import "./App.css";
 import "~/assets/tailwind.css";
 
@@ -30,6 +31,8 @@ const App = () => {
   const [isRemoteImportModalOpen, setIsRemoteImportModalOpen] = useState(false);
   const [remoteUrl, setRemoteUrl] = useState("");
   const [isRemoteImporting, setIsRemoteImporting] = useState(false);
+  const [isConfirmModalOpen, setIsConfirmModalOpen] = useState(false);
+  const [promptToDelete, setPromptToDelete] = useState<string | null>(null);
 
   // 从URL获取查询参数
   useEffect(() => {
@@ -144,11 +147,16 @@ const App = () => {
 
   // Delete a prompt
   const deletePrompt = async (id: string) => {
-    if (window.confirm("确定要删除这个 Prompt 吗？")) {
-      const newPrompts = prompts.filter((p) => p.id !== id);
+    setPromptToDelete(id);
+    setIsConfirmModalOpen(true);
+  };
+
+  const handleConfirmDelete = async () => {
+    if (promptToDelete) {
+      const newPrompts = prompts.filter((p) => p.id !== promptToDelete);
       await savePrompts(newPrompts);
 
-      if (editingPrompt?.id === id) {
+      if (editingPrompt?.id === promptToDelete) {
         setEditingPrompt(null);
       }
     }
@@ -793,6 +801,20 @@ const App = () => {
             </div>
           </div>
         </Modal>
+
+        {/* 确认删除对话框 */}
+        <ConfirmModal
+          isOpen={isConfirmModalOpen}
+          onClose={() => {
+            setIsConfirmModalOpen(false);
+            setPromptToDelete(null);
+          }}
+          onConfirm={handleConfirmDelete}
+          title="确认删除"
+          message="确定要删除这个 Prompt 吗？"
+          confirmText="删除"
+          cancelText="取消"
+        />
       </div>
     </div>
   );
