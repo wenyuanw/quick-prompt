@@ -8,6 +8,8 @@ English | [中文](./README.md)
 
 A powerful browser extension focused on prompt management and quick input. Helps users create, manage, and organize prompt libraries, and quickly insert preset prompt content in any webpage input field, boosting your productivity.
 
+> Since browser extensions only work on web pages, I've open-sourced a functionally identical [Raycast extension](https://github.com/wenyuanw/quick-prompt-raycast) that's compatible with the browser extension's data format, allowing seamless migration using the same JSON data.
+
 ## ✨ Features
 
 - 📚 **Prompt Management**: Easily create, edit and manage your prompt library
