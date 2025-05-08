@@ -73,7 +73,7 @@ Quick Prompt 提供直观友好的用户界面，让你轻松管理和使用提�
 
 ### 从应用商店安装
 
-_即将推出_
+现已上线Chrome应用商店！[点击此处下载安装](https://chromewebstore.google.com/detail/quick-prompt/hnjamiaoicaepbkhdoknhhcedjdocpkd)
 
 ### 从 GitHub Releases 获取
 

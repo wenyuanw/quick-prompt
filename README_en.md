@@ -73,7 +73,7 @@ Simply select any text on a webpage and right-click to quickly save it as a prom
 
 ### From App Store
 
-_Coming soon_
+Now available on Chrome Web Store! [Click here to download](https://chromewebstore.google.com/detail/quick-prompt/hnjamiaoicaepbkhdoknhhcedjdocpkd)
 
 ### From GitHub Releases
 
