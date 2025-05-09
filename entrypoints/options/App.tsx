@@ -111,7 +111,7 @@ const App = () => {
       enabled: prompt.enabled !== undefined ? prompt.enabled : true, // 确保新建的提示词默认启用
     };
 
-    const newPrompts = [...prompts, newPrompt];
+    const newPrompts = [newPrompt, ...prompts];
     await savePrompts(newPrompts);
   };
 

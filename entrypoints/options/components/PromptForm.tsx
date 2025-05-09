@@ -131,10 +131,8 @@ const PromptForm = ({ onSubmit, initialData, onCancel, isEditing }: PromptFormPr
             placeholder='输入你的 Prompt 模板...'
           />
           <div className='mt-2 text-sm text-gray-600 bg-gray-50 p-3 rounded-md border border-gray-200'>
-            <div className='font-medium mb-1'>使用变量：</div>
             <p>可以使用 <code className='bg-gray-100 px-1 py-0.5 rounded'>{'{{变量名}}'}</code> 格式添加变量，例如：</p>
             <p className='mt-1 text-gray-500 text-xs'>{`你现在是一个{{角色}}，有着{{年限}}年的开发经验，擅长{{技能}}。`}</p>
-            <p className='mt-2'>用户使用时，系统会自动弹出窗口让用户填写变量值。</p>
           </div>
         </div>
 
