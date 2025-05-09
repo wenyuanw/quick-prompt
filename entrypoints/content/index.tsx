@@ -1,6 +1,5 @@
 import { storage } from '#imports'
 import { showPromptSelector } from './components/PromptSelector'
-// import './content.css'
 
 export interface PromptItem {
   id: string
