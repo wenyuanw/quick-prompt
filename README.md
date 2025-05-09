@@ -18,6 +18,7 @@
 - 📋 支持快捷键（Ctrl+Shift+S / Command+Shift+S）保存选中文本为提示词
 - 📑 支持右键菜单直接保存选中文本为提示词
 - 🎯 支持自定义提示词，包括标题、内容和标签
+- 🔄 **变量支持**：提示词中可以使用 `{{变量名}}` 格式的变量，使用时可以填写具体的值
 - 💾 **数据备份**：支持提示词库的导出和导入，方便跨设备迁移和备份
 - 🔍 搜索和过滤提示词功能
 - 🌙 自动适应系统的明暗主题
@@ -91,7 +92,6 @@ Quick Prompt 提供直观友好的用户界面，让你轻松管理和使用提�
    git clone https://github.com/wenyuanw/quick-prompt.git
    cd quick-prompt
    ```
-
 2. 安装依赖
    ```bash
    pnpm install
@@ -139,3 +139,4 @@ MIT
 3. 提交你的更改 (`git commit -m 'Add some amazing feature'`)
 4. 推送到分支 (`git push origin feature/amazing-feature`)
 5. 打开一个 Pull Request
+

@@ -18,6 +18,7 @@ A powerful browser extension focused on prompt management and quick input. Helps
 - 📋 Support keyboard shortcuts (Ctrl+Shift+S / Command+Shift+S) to save selected text as a prompt
 - 📑 Support right-click context menu to save selected text as a prompt
 - 🎯 Customize prompts with titles, content, and tags
+- 🔄 **Variable Support**: Use variables in prompts with `{{variable_name}}` format, fill in specific values when using
 - 💾 **Data Backup**: Export and import your prompt library for easy cross-device migration and backup
 - 🔍 Search and filter prompts
 - 🌙 Automatically adapt to system light/dark theme
