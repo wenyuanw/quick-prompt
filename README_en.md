@@ -61,6 +61,12 @@ In the management page, you can create new prompts, edit existing ones, add tags
 
 Simply select any text on a webpage and right-click to quickly save it as a prompt, enhancing your productivity.
 
+### Prompt Variable Input
+
+![Prompt Variable Dialog](https://github.com/user-attachments/assets/c91c1156-983a-454d-aad0-5698b0291b9b)
+
+Prompts support variable configuration. After selecting a prompt with variables, a dialog will pop up for entering the corresponding variable values.
+
 ## ⚙️ Customization
 
 1. Click on the extension icon, then click the "Manage My Prompts" button
