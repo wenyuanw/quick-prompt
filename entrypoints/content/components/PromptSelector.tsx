@@ -164,16 +164,18 @@ const PromptSelector: React.FC<PromptSelectorProps> = ({
         // 获取当前内容和光标位置
         const fullText = editableElement.textContent || "";
 
-        // 检查全文是否包含 "/p"
-        if (fullText.includes("/p")) {
-          // 找到最后一个 "/p" 的位置
-          const lastTriggerPos = fullText.lastIndexOf("/p");
-
-          // 构建新的内容（移除 "/p" 并插入提示词）
-          const textBeforeTrigger = fullText.substring(0, lastTriggerPos);
-          const textAfterTrigger = fullText.substring(lastTriggerPos + 2);
-          const newContent =
-            textBeforeTrigger + prompt.content + textAfterTrigger;
+        // 检查全文是否包含 "/p"，不区分大小写
+        if (fullText.toLowerCase().includes('/p')) {
+          // 找到最后一个 "/p" 或 "/P" 的位置
+          // 先查找小写，再查找大写，取最后出现的位置
+          const lastLowerCasePos = fullText.toLowerCase().lastIndexOf('/p');
+          // 找到实际文本中这个位置的两个字符
+          const actualTrigger = fullText.substring(lastLowerCasePos, lastLowerCasePos + 2);
+          
+          // 构建新的内容（移除触发词并插入提示词）
+          const textBeforeTrigger = fullText.substring(0, lastLowerCasePos);
+          const textAfterTrigger = fullText.substring(lastLowerCasePos + 2);
+          const newContent = textBeforeTrigger + prompt.content + textAfterTrigger;
 
           // 创建并分发 beforeinput 事件
           const beforeInputEvent = new InputEvent("beforeinput", {

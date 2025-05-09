@@ -230,12 +230,12 @@ export default defineContentScript({
         const value = inputElement.value
 
         // 检查是否输入了"/p"并且弹窗尚未打开
-        if (value.endsWith('/p') && lastInputValue !== value && !isPromptSelectorOpen) {
+        if (value?.toLowerCase()?.endsWith('/p') && lastInputValue !== value && !isPromptSelectorOpen) {
           lastInputValue = value
 
           // 使用通用函数打开提示词选择器
           await openPromptSelector(inputElement)
-        } else if (!value.endsWith('/p')) {
+        } else if (!value?.toLowerCase()?.endsWith('/p')) {
           // 更新上次输入值
           lastInputValue = value
         }
@@ -253,12 +253,12 @@ export default defineContentScript({
         const lastValue = contentEditableValuesMap.get(editableElement) || ''
         
         // 检查是否输入了"/p"并且弹窗尚未打开
-        if (value.endsWith('/p') && lastValue !== value && !isPromptSelectorOpen) {
+        if (value?.toLowerCase()?.endsWith('/p') && lastValue !== value && !isPromptSelectorOpen) {
           contentEditableValuesMap.set(editableElement, value)
           
           // 使用通用函数打开提示词选择器
           await openPromptSelector(adapter)
-        } else if (!value.endsWith('/p')) {
+        } else if (!value?.toLowerCase()?.endsWith('/p')) {
           // 更新上次输入值
           contentEditableValuesMap.set(editableElement, value)
         }
