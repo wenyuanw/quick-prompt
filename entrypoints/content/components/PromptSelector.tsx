@@ -2,6 +2,8 @@ import React, { useState, useEffect, useRef } from "react";
 import { createRoot } from "react-dom/client";
 import type { PromptItem, EditableElement } from "../index";
 import { getPromptSelectorStyles } from "../utils/styles";
+import { extractVariables } from "../utils/variableParser";
+import { showVariableInput } from "./VariableInput";
 
 interface PromptSelectorProps {
   prompts: PromptItem[];
@@ -151,6 +153,37 @@ const PromptSelector: React.FC<PromptSelectorProps> = ({
 
   // 应用选中的提示
   const applyPrompt = (prompt: PromptItem) => {
+    // 提取提示词中的变量
+    const variables = prompt._variables || extractVariables(prompt.content);
+    prompt._variables = variables;
+    
+    // 如果提示词包含变量，则打开变量输入弹窗
+    if (variables && variables.length > 0) {
+      // 暂时关闭提示选择器
+      onClose();
+      
+      // 显示变量输入弹窗
+      showVariableInput(
+        prompt,
+        targetElement,
+        (processedContent) => {
+          // 变量填写完成后，使用处理后的内容应用到目标元素
+          applyProcessedContent(processedContent);
+        },
+        () => {
+          // 取消变量输入时，不执行任何操作
+          console.log("变量输入已取消");
+        }
+      );
+      return;
+    }
+    
+    // 如果没有变量，直接应用原始内容
+    applyProcessedContent(prompt.content);
+  };
+
+  // 应用处理后的内容到目标元素
+  const applyProcessedContent = (content: string) => {
     // 检查是否为自定义适配器（contenteditable 元素）
     const isContentEditableAdapter =
       !!(targetElement as any)._element &&
@@ -176,7 +209,7 @@ const PromptSelector: React.FC<PromptSelectorProps> = ({
           // 构建新的内容（移除触发词并插入提示词）
           const textBeforeTrigger = fullText.substring(0, lastLowerCasePos);
           const textAfterTrigger = fullText.substring(lastLowerCasePos + 2);
-          const newContent = textBeforeTrigger + prompt.content + textAfterTrigger;
+          const newContent = textBeforeTrigger + content + textAfterTrigger;
 
           // 创建并分发 beforeinput 事件
           const beforeInputEvent = new InputEvent("beforeinput", {
@@ -218,7 +251,7 @@ const PromptSelector: React.FC<PromptSelectorProps> = ({
               bubbles: true,
               cancelable: true,
               inputType: "insertFromPaste",
-              data: prompt.content,
+              data: content,
             });
 
             // 如果 beforeinput 事件没有被阻止，则继续处理
@@ -230,7 +263,7 @@ const PromptSelector: React.FC<PromptSelectorProps> = ({
               // 在光标位置插入新内容
               const newContent =
                 currentContent.slice(0, position) +
-                prompt.content +
+                content +
                 currentContent.slice(position);
 
               // 设置新内容
@@ -240,7 +273,7 @@ const PromptSelector: React.FC<PromptSelectorProps> = ({
               const inputEvent = new InputEvent("input", {
                 bubbles: true,
                 inputType: "insertFromPaste",
-                data: prompt.content,
+                data: content,
               });
               editableElement.dispatchEvent(inputEvent);
 
@@ -257,13 +290,13 @@ const PromptSelector: React.FC<PromptSelectorProps> = ({
               bubbles: true,
               cancelable: true,
               inputType: "insertFromPaste",
-              data: prompt.content,
+              data: content,
             });
 
             // 如果 beforeinput 事件没有被阻止，则继续处理
             if (editableElement.dispatchEvent(beforeInputEvent)) {
               const currentContent = editableElement.textContent || "";
-              const newContent = currentContent + prompt.content;
+              const newContent = currentContent + content;
 
               // 设置新内容
               editableElement.textContent = newContent;
@@ -272,7 +305,7 @@ const PromptSelector: React.FC<PromptSelectorProps> = ({
               const inputEvent = new InputEvent("input", {
                 bubbles: true,
                 inputType: "insertFromPaste",
-                data: prompt.content,
+                data: content,
               });
               editableElement.dispatchEvent(inputEvent);
             }
@@ -292,10 +325,10 @@ const PromptSelector: React.FC<PromptSelectorProps> = ({
         cursorPosition - 2
       );
       const textAfterCursor = targetElement.value.substring(cursorPosition);
-      targetElement.value = textBeforeCursor + prompt.content + textAfterCursor;
+      targetElement.value = textBeforeCursor + content + textAfterCursor;
 
       // 设置光标位置
-      const newCursorPosition = textBeforeCursor.length + prompt.content.length;
+      const newCursorPosition = textBeforeCursor.length + content.length;
       if (targetElement.setSelectionRange) {
         targetElement.setSelectionRange(newCursorPosition, newCursorPosition);
       }
@@ -306,7 +339,7 @@ const PromptSelector: React.FC<PromptSelectorProps> = ({
         const inputEvent = new InputEvent("input", {
           bubbles: true,
           inputType: "insertFromPaste",
-          data: prompt.content,
+          data: content,
         });
         targetElement.dispatchEvent(inputEvent);
       } catch (error) {

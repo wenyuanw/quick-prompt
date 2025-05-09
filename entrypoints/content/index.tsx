@@ -1,5 +1,6 @@
 import { storage } from '#imports'
 import { showPromptSelector } from './components/PromptSelector'
+import { extractVariables } from './utils/variableParser'
 
 export interface PromptItem {
   id: string
@@ -7,6 +8,8 @@ export interface PromptItem {
   content: string
   tags: string[]
   enabled: boolean
+  // 添加 variables 字段用于存储解析出的变量，但不持久化
+  _variables?: string[]
 }
 
 // 自定义接口，用于统一处理不同类型的文本输入元素
@@ -186,6 +189,12 @@ export default defineContentScript({
         
         // 过滤只保留启用的提示词
         const prompts = allPrompts.filter(prompt => prompt.enabled !== false)
+
+        // 预处理提示词中的变量
+        prompts.forEach(prompt => {
+          // 从内容中提取变量
+          prompt._variables = extractVariables(prompt.content)
+        })
 
         if (prompts && prompts.length > 0) {
           console.log(`共找到 ${prompts.length} 个启用的提示词，显示选择器...`)

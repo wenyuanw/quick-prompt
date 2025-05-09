@@ -17,6 +17,13 @@ export default defineBackground(() => {
       tags: ['编程'],
       enabled: true,
     },
+    {
+      id: crypto.randomUUID(),
+      title: '开发角色',
+      content: '你现在是一个{{角色}}，有着{{年限}}年的开发经验，擅长{{技能}}。',
+      tags: ['编程', '变量'],
+      enabled: true,
+    },
   ]
 
   // 获取storage接口的key名，和options页面保持一致
