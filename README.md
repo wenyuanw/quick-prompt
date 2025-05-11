@@ -146,3 +146,6 @@ MIT
 4. 推送到分支 (`git push origin feature/amazing-feature`)
 5. 打开一个 Pull Request
 
+## Star History
+
+[![Star History Chart](https://api.star-history.com/svg?repos=wenyuanw/quick-prompt&type=Date)](https://www.star-history.com/#wenyuanw/quick-prompt&Date)
