@@ -160,7 +160,7 @@ const VariableInput: React.FC<VariableInputProps> = ({
   
   // 预览状态
   const [previewContent, setPreviewContent] = useState(prompt.content);
-  const firstInputRef = useRef<HTMLInputElement>(null);
+  const firstInputRef = useRef<HTMLTextAreaElement>(null);
   const formRef = useRef<HTMLFormElement>(null);
   
   // 更新变量值和预览
@@ -279,14 +279,14 @@ const VariableInput: React.FC<VariableInputProps> = ({
                 <label className="qp-form-label" htmlFor={`var-${variable}`}>
                   {variable}
                 </label>
-                <input
+                <textarea
                   ref={index === 0 ? firstInputRef : null}
                   id={`var-${variable}`}
                   className="qp-form-input"
-                  type="text"
                   value={variableValues[variable]}
                   onChange={(e) => handleVariableChange(variable, e.target.value)}
                   placeholder={`请输入${variable}的值`}
+                  rows={1}
                 />
               </div>
             ))}
