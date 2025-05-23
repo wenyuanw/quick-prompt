@@ -39,7 +39,20 @@ export default defineBackground(() => {
   // 在扩展启动时立即执行初始化
   initializeDefaultData()
 
-  // 创建右键菜单项
+  // 创建插件图标右键菜单项
+  browser.contextMenus.create({
+    id: 'open-options',
+    title: '提示词管理',
+    contexts: ['action'], // 插件图标右键菜单
+  })
+
+  browser.contextMenus.create({
+    id: 'category-management',
+    title: '分类管理',
+    contexts: ['action'],
+  })
+
+  // 创建页面内容右键菜单项
   browser.contextMenus.create({
     id: 'save-prompt',
     title: '保存该提示词',
@@ -61,6 +74,14 @@ export default defineBackground(() => {
 
       // 在新标签页打开选项页
       await browser.tabs.create({ url: urlWithParams })
+    } else if (info.menuItemId === 'open-options') {
+      // 打开选项页
+      const optionsUrl = browser.runtime.getURL('/options.html')
+      await browser.tabs.create({ url: optionsUrl })
+    } else if (info.menuItemId === 'category-management') {
+      // 打开分类管理页
+      const optionsUrl = browser.runtime.getURL('/options.html#/categories')
+      await browser.tabs.create({ url: optionsUrl })
     }
   })
 
