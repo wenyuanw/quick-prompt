@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import type { PromptItem } from '../App'
+import type { PromptItem } from '@/utils/types'
 
 interface PromptFormProps {
   onSubmit: (prompt: PromptItem | Omit<PromptItem, 'id'>) => Promise<void>

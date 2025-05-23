@@ -1,3 +1,4 @@
+import { BROWSER_STORAGE_KEY } from '@/utils/constants'
 import { useState, useEffect } from 'react'
 import Logo from '~/assets/icon.png'
 import '~/assets/tailwind.css'
@@ -18,7 +19,7 @@ function App() {
 
       // 直接从本地存储获取数据
       try {
-        const result = await browser.storage.local.get('userPrompts')
+        const result = await browser.storage.local.get(BROWSER_STORAGE_KEY)
         const allPrompts = result.userPrompts || []
 
         if (Array.isArray(allPrompts)) {

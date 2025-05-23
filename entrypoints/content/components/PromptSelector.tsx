@@ -1,23 +1,16 @@
 import React, { useState, useEffect, useRef } from "react";
 import { createRoot } from "react-dom/client";
-import type { PromptItem, EditableElement } from "../index";
+import type { PromptItemWithVariables, EditableElement } from "@/utils/types";
 import { getPromptSelectorStyles } from "../utils/styles";
 import { extractVariables } from "../utils/variableParser";
 import { showVariableInput } from "./VariableInput";
+import { isDarkMode } from "@/utils/tools";
 
 interface PromptSelectorProps {
-  prompts: PromptItem[];
+  prompts: PromptItemWithVariables[];
   targetElement: EditableElement;
   onClose: () => void;
 }
-
-// 检测系统是否为暗黑模式的函数
-const isDarkMode = () => {
-  return (
-    window.matchMedia &&
-    window.matchMedia("(prefers-color-scheme: dark)").matches
-  );
-};
 
 const PromptSelector: React.FC<PromptSelectorProps> = ({
   prompts,
@@ -152,7 +145,7 @@ const PromptSelector: React.FC<PromptSelectorProps> = ({
   }, [selectedIndex]);
 
   // 应用选中的提示
-  const applyPrompt = (prompt: PromptItem) => {
+  const applyPrompt = (prompt: PromptItemWithVariables) => {
     // 提取提示词中的变量
     const variables = prompt._variables || extractVariables(prompt.content);
     prompt._variables = variables;
@@ -445,7 +438,7 @@ const PromptSelector: React.FC<PromptSelectorProps> = ({
 
 // 创建弹窗并挂载组件
 export function showPromptSelector(
-  prompts: PromptItem[],
+  prompts: PromptItemWithVariables[],
   targetElement: EditableElement,
   onCloseCallback?: () => void
 ): HTMLElement {

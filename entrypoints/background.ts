@@ -1,33 +1,7 @@
+import { BROWSER_STORAGE_KEY, DEFAULT_PROMPTS } from "@/utils/constants"
+
 export default defineBackground(() => {
   console.log('Hello background!', { id: browser.runtime.id })
-
-  // 默认的prompt样例
-  const DEFAULT_PROMPTS = [
-    {
-      id: crypto.randomUUID(),
-      title: '吉卜力风格',
-      content: '将图片转换为吉卜力风格',
-      tags: ['画图', '吉卜力'],
-      enabled: true,
-    },
-    {
-      id: crypto.randomUUID(),
-      title: '代码解释',
-      content: '请解释以下代码的功能和工作原理：\n\n',
-      tags: ['编程'],
-      enabled: true,
-    },
-    {
-      id: crypto.randomUUID(),
-      title: '开发角色',
-      content: '你现在是一个{{角色}}，有着{{年限}}年的开发经验，擅长{{技能}}。',
-      tags: ['编程', '变量'],
-      enabled: true,
-    },
-  ]
-
-  // 获取storage接口的key名，和options页面保持一致
-  const BROWSER_STORAGE_KEY = 'userPrompts'
 
   // 初始化默认提示词
   const initializeDefaultPrompts = async () => {

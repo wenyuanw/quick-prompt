@@ -7,15 +7,8 @@ import Modal from "./components/Modal";
 import ConfirmModal from "./components/ConfirmModal";
 import "./App.css";
 import "~/assets/tailwind.css";
-
-// 定义 Prompt 数据结构 (推荐)
-export interface PromptItem {
-  id: string;
-  title: string;
-  content: string;
-  tags: string[];
-  enabled: boolean;
-}
+import { PromptItem } from "@/utils/types";
+import { BROWSER_STORAGE_KEY } from "@/utils/constants";
 
 const App = () => {
   const [prompts, setPrompts] = useState<PromptItem[]>([]);
@@ -56,7 +49,7 @@ const App = () => {
       try {
         setIsLoading(true);
         const storedPrompts = await storage.getItem<PromptItem[]>(
-          "local:userPrompts"
+          `local:${BROWSER_STORAGE_KEY}`
         );
         setPrompts(storedPrompts || []);
         console.log("选项页：加载 Prompts:", storedPrompts?.length || 0);
@@ -94,7 +87,7 @@ const App = () => {
   // Save prompts to storage
   const savePrompts = async (newPrompts: PromptItem[]) => {
     try {
-      await storage.setItem<PromptItem[]>("local:userPrompts", newPrompts);
+      await storage.setItem<PromptItem[]>(`local:${BROWSER_STORAGE_KEY}`, newPrompts);
       console.log("选项页：Prompts 已保存");
       setPrompts(newPrompts);
     } catch (err) {

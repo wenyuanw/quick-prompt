@@ -1,5 +1,5 @@
 import React from 'react'
-import type { PromptItem } from '../App'
+import type { PromptItem } from '@/utils/types'
 
 interface PromptListProps {
   prompts: PromptItem[]
