@@ -43,7 +43,7 @@ Quick Prompt 提供直观友好的用户界面，让你轻松管理和使用提�
 
 ### 提示词选择器
 
-![提示词选择器](https://github.com/user-attachments/assets/d20d493f-70d2-4420-a797-f4c00f1439f4)
+![提示词选择器](https://github.com/user-attachments/assets/41b9897c-d701-4ff0-97f7-2f1754f570a8)
 
 ![提示词选择器](https://github.com/user-attachments/assets/22d9d30c-b4c3-4e34-a0a0-8ef51e2cb942)
 
