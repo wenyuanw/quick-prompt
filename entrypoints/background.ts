@@ -1,37 +1,18 @@
+import { BROWSER_STORAGE_KEY, DEFAULT_PROMPTS } from "@/utils/constants"
+import { initializeDefaultCategories, migratePromptsWithCategory } from "@/utils/categoryUtils"
+
 export default defineBackground(() => {
   console.log('Hello background!', { id: browser.runtime.id })
 
-  // 默认的prompt样例
-  const DEFAULT_PROMPTS = [
-    {
-      id: crypto.randomUUID(),
-      title: '吉卜力风格',
-      content: '将图片转换为吉卜力风格',
-      tags: ['画图', '吉卜力'],
-      enabled: true,
-    },
-    {
-      id: crypto.randomUUID(),
-      title: '代码解释',
-      content: '请解释以下代码的功能和工作原理：\n\n',
-      tags: ['编程'],
-      enabled: true,
-    },
-    {
-      id: crypto.randomUUID(),
-      title: '开发角色',
-      content: '你现在是一个{{角色}}，有着{{年限}}年的开发经验，擅长{{技能}}。',
-      tags: ['编程', '变量'],
-      enabled: true,
-    },
-  ]
-
-  // 获取storage接口的key名，和options页面保持一致
-  const BROWSER_STORAGE_KEY = 'userPrompts'
-
-  // 初始化默认提示词
-  const initializeDefaultPrompts = async () => {
+  // 初始化默认提示词和分类
+  const initializeDefaultData = async () => {
     try {
+      // 先初始化默认分类
+      await initializeDefaultCategories()
+      
+      // 迁移旧的提示词数据
+      await migratePromptsWithCategory()
+
       const prompts = await browser.storage.local.get(BROWSER_STORAGE_KEY)
 
       // 如果已经有提示，不初始化
@@ -51,12 +32,12 @@ export default defineBackground(() => {
 
       console.log('背景脚本: 成功初始化默认Prompts')
     } catch (error) {
-      console.error('背景脚本: 初始化默认提示失败:', error)
+      console.error('背景脚本: 初始化默认数据失败:', error)
     }
   }
 
   // 在扩展启动时立即执行初始化
-  initializeDefaultPrompts()
+  initializeDefaultData()
 
   // 创建右键菜单项
   browser.contextMenus.create({
@@ -87,7 +68,7 @@ export default defineBackground(() => {
   browser.runtime.onInstalled.addListener((details) => {
     if (details.reason === 'install') {
       console.log('背景脚本: 扩展首次安装，初始化默认Prompts')
-      initializeDefaultPrompts()
+      initializeDefaultData()
     }
   })
 

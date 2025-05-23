@@ -234,7 +234,48 @@ export function getPromptSelectorStyles(): string {
       overflow: hidden !important;
       text-overflow: ellipsis !important;
       white-space: nowrap !important;
-      margin-bottom: 4px !important;
+      margin-bottom: 8px !important;
+    }
+
+    /* 提示元数据区域（分类和标签） */
+    .qp-prompt-meta {
+      display: flex !important;
+      align-items: center !important;
+      gap: 8px !important;
+      flex-wrap: wrap !important;
+    }
+
+    /* 分类显示 */
+    .qp-prompt-category {
+      display: flex !important;
+      align-items: center !important;
+      gap: 4px !important;
+      flex-shrink: 0 !important;
+      background-color: var(--qp-bg-secondary) !important;
+      padding: 2px 6px !important;
+      border-radius: 4px !important;
+      border: 1px solid var(--qp-border-color) !important;
+      order: 1 !important;
+    }
+
+    .qp-category-dot {
+      width: 6px !important;
+      height: 6px !important;
+      border-radius: 50% !important;
+      flex-shrink: 0 !important;
+    }
+
+    .qp-category-name {
+      font-size: 11px !important;
+      font-weight: 500 !important;
+      color: var(--qp-text-secondary) !important;
+      line-height: 1 !important;
+    }
+
+    /* 暗色模式下的分类显示 */
+    :host([data-theme="dark"]) .qp-prompt-category {
+      background-color: var(--qp-bg-secondary) !important;
+      border-color: var(--qp-border-color) !important;
     }
 
     /* 标签样式 */
@@ -242,7 +283,7 @@ export function getPromptSelectorStyles(): string {
       display: flex !important;
       flex-wrap: wrap !important;
       gap: 6px !important;
-      margin-top: 8px !important;
+      order: 2 !important;
     }
 
     .qp-tag {
@@ -304,9 +345,9 @@ export function getPromptSelectorStyles(): string {
       padding: 12px 16px !important;
       background-color: rgba(255, 255, 255, 0.25) !important;
       color: white !important;
-      backdrop-filter: blur(5px) !important;
-      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1) !important;
-      transition: all 0.2s ease !important;
+      backdrop-filter: blur(8px) !important;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15), inset 0 1px 0 rgba(255, 255, 255, 0.2) !important;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
       font-weight: 500 !important;
       width: 100% !important;
       letter-spacing: 0.3px !important;
@@ -317,33 +358,46 @@ export function getPromptSelectorStyles(): string {
       font-weight: 400 !important;
     }
 
+    .qp-search-input:hover {
+      background-color: rgba(255, 255, 255, 0.35) !important;
+      box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.3) !important;
+      transform: translateY(-1px) !important;
+    }
+
     .qp-search-input:focus {
-      background-color: rgba(255, 255, 255, 0.3) !important;
-      box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.3), 0 2px 4px rgba(0, 0, 0, 0.1) !important;
+      background-color: rgba(255, 255, 255, 0.35) !important;
+      box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.3), 0 6px 16px rgba(0, 0, 0, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.3) !important;
       outline: none !important;
+      transform: translateY(-1px) !important;
     }
 
     [data-theme='light'] .qp-search-input {
-      background-color: rgba(255, 255, 255, 0.9) !important;
+      background-color: rgba(255, 255, 255, 0.95) !important;
       color: #1a1a1a !important;
-      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05) !important;
-      border: 1px solid rgba(124, 58, 237, 0.1) !important;
+      box-shadow: 0 4px 12px rgba(124, 58, 237, 0.1), inset 0 1px 0 rgba(255, 255, 255, 1), 0 1px 3px rgba(0, 0, 0, 0.05) !important;
+      border: 1px solid rgba(124, 58, 237, 0.15) !important;
     }
 
     :host([data-theme='light']) .qp-search-input::placeholder {
       color: rgba(0, 0, 0, 0.4) !important;
     }
 
+    :host([data-theme='light']) .qp-search-input:hover {
+      background-color: #ffffff !important;
+      border-color: rgba(124, 58, 237, 0.25) !important;
+      box-shadow: 0 6px 16px rgba(124, 58, 237, 0.15), inset 0 1px 0 rgba(255, 255, 255, 1), 0 2px 6px rgba(0, 0, 0, 0.08) !important;
+    }
+
     :host([data-theme='light']) .qp-search-input:focus {
       background-color: #ffffff !important;
-      border-color: rgba(124, 58, 237, 0.3) !important;
-      box-shadow: 0 0 0 2px rgba(124, 58, 237, 0.2), 0 2px 4px rgba(124, 58, 237, 0.05) !important;
+      border-color: rgba(124, 58, 237, 0.4) !important;
+      box-shadow: 0 0 0 3px rgba(124, 58, 237, 0.1), 0 6px 16px rgba(124, 58, 237, 0.15), inset 0 1px 0 rgba(255, 255, 255, 1) !important;
     }
     
     /* 搜索输入框暗黑模式 */
     :host([data-theme='dark']) .qp-search-input {
-      background-color: rgba(0, 0, 0, 0.2) !important;
-      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2) !important;
+      background-color: rgba(15, 23, 42, 0.8) !important;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.1), 0 1px 3px rgba(0, 0, 0, 0.2) !important;
       color: rgba(255, 255, 255, 0.95) !important;
       border: 1px solid rgba(255, 255, 255, 0.1) !important;
     }
@@ -352,10 +406,16 @@ export function getPromptSelectorStyles(): string {
       color: rgba(255, 255, 255, 0.6) !important;
     }
 
-    :host([data-theme='dark']) .qp-search-input:focus {
-      background-color: rgba(0, 0, 0, 0.3) !important;
+    :host([data-theme='dark']) .qp-search-input:hover {
+      background-color: rgba(15, 23, 42, 0.9) !important;
       border-color: rgba(255, 255, 255, 0.2) !important;
-      box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.1), 0 2px 4px rgba(0, 0, 0, 0.2) !important;
+      box-shadow: 0 6px 16px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.15), 0 2px 6px rgba(0, 0, 0, 0.3) !important;
+    }
+
+    :host([data-theme='dark']) .qp-search-input:focus {
+      background-color: rgba(15, 23, 42, 0.9) !important;
+      border-color: rgba(157, 133, 242, 0.5) !important;
+      box-shadow: 0 0 0 3px rgba(157, 133, 242, 0.2), 0 6px 16px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.15) !important;
     }
     
     /* 滚动条样式 */
@@ -383,6 +443,138 @@ export function getPromptSelectorStyles(): string {
     
     .qp-cursor-pointer {
       cursor: pointer !important;
+    }
+
+    /* 分类选择器样式 */
+    .qp-category-select {
+      border: none !important;
+      border-radius: 8px !important;
+      padding: 12px 24px 12px 24px !important;
+      background-color: rgba(255, 255, 255, 0.25) !important;
+      background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpath d='M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z'/%3e%3c/svg%3e"), url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6,9 12,15 18,9'/%3e%3c/svg%3e") !important;
+      background-repeat: no-repeat, no-repeat !important;
+      background-position: 4px center, right 6px center !important;
+      background-size: 12px, 14px !important;
+      color: white !important;
+      backdrop-filter: blur(8px) !important;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15), inset 0 1px 0 rgba(255, 255, 255, 0.2) !important;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+      font-weight: 500 !important;
+      font-size: 14px !important;
+      letter-spacing: 0.3px !important;
+      cursor: pointer !important;
+      outline: none !important;
+      width: 110px !important;
+      text-overflow: ellipsis !important;
+      white-space: nowrap !important;
+      overflow: hidden !important;
+      appearance: none !important;
+      -webkit-appearance: none !important;
+      -moz-appearance: none !important;
+    }
+
+    .qp-category-select:hover {
+      background-color: rgba(255, 255, 255, 0.35) !important;
+      box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.3) !important;
+      transform: translateY(-1px) !important;
+    }
+
+    .qp-category-select:focus {
+      background-color: rgba(255, 255, 255, 0.35) !important;
+      box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.3), 0 6px 16px rgba(0, 0, 0, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.3) !important;
+      transform: translateY(-1px) !important;
+    }
+
+    .qp-category-select:active {
+      transform: translateY(0px) !important;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.2) !important;
+    }
+
+    /* 分类选择器亮色模式 */
+    :host([data-theme='light']) .qp-category-select {
+      background-color: rgba(255, 255, 255, 0.95) !important;
+      background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%236366f1' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpath d='M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z'/%3e%3c/svg%3e"), url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%236366f1' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6,9 12,15 18,9'/%3e%3c/svg%3e") !important;
+      color: #1a1a1a !important;
+      box-shadow: 0 4px 12px rgba(124, 58, 237, 0.1), inset 0 1px 0 rgba(255, 255, 255, 1), 0 1px 3px rgba(0, 0, 0, 0.05) !important;
+      border: 1px solid rgba(124, 58, 237, 0.15) !important;
+    }
+
+    :host([data-theme='light']) .qp-category-select:hover {
+      background-color: #ffffff !important;
+      border-color: rgba(124, 58, 237, 0.25) !important;
+      box-shadow: 0 6px 16px rgba(124, 58, 237, 0.15), inset 0 1px 0 rgba(255, 255, 255, 1), 0 2px 6px rgba(0, 0, 0, 0.08) !important;
+    }
+
+    :host([data-theme='light']) .qp-category-select:focus {
+      background-color: #ffffff !important;
+      border-color: rgba(124, 58, 237, 0.4) !important;
+      box-shadow: 0 0 0 3px rgba(124, 58, 237, 0.1), 0 6px 16px rgba(124, 58, 237, 0.15), inset 0 1px 0 rgba(255, 255, 255, 1) !important;
+    }
+
+    :host([data-theme='light']) .qp-category-select:active {
+      box-shadow: 0 2px 8px rgba(124, 58, 237, 0.2), inset 0 1px 0 rgba(255, 255, 255, 1) !important;
+    }
+
+    /* 分类选择器暗黑模式 */
+    :host([data-theme='dark']) .qp-category-select {
+      background-color: rgba(15, 23, 42, 0.8) !important;
+      background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%239d85f2' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpath d='M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z'/%3e%3c/svg%3e"), url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%239d85f2' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6,9 12,15 18,9'/%3e%3c/svg%3e") !important;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.1), 0 1px 3px rgba(0, 0, 0, 0.2) !important;
+      color: rgba(255, 255, 255, 0.95) !important;
+      border: 1px solid rgba(255, 255, 255, 0.1) !important;
+    }
+
+    :host([data-theme='dark']) .qp-category-select:hover {
+      background-color: rgba(15, 23, 42, 0.9) !important;
+      border-color: rgba(255, 255, 255, 0.2) !important;
+      box-shadow: 0 6px 16px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.15), 0 2px 6px rgba(0, 0, 0, 0.3) !important;
+    }
+
+    :host([data-theme='dark']) .qp-category-select:focus {
+      background-color: rgba(15, 23, 42, 0.9) !important;
+      border-color: rgba(157, 133, 242, 0.5) !important;
+      box-shadow: 0 0 0 3px rgba(157, 133, 242, 0.2), 0 6px 16px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.15) !important;
+    }
+
+    :host([data-theme='dark']) .qp-category-select:active {
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.1) !important;
+    }
+
+    /* 布局相关样式 */
+    .qp-w-full {
+      width: 100% !important;
+    }
+
+    .qp-flex-1 {
+      flex: 1 !important;
+    }
+
+    .qp-gap-3 {
+      gap: 12px !important;
+    }
+
+    .qp-space-y-3 > * + * {
+      margin-top: 12px !important;
+    }
+
+    /* 快捷键提示样式 */
+    .qp-shortcut-hints {
+      font-size: 11px !important;
+      color: rgba(255, 255, 255, 0.75) !important;
+      text-align: center !important;
+      display: flex !important;
+      justify-content: center !important;
+      align-items: center !important;
+      gap: 8px !important;
+      flex-wrap: wrap !important;
+    }
+
+    .qp-hint-item {
+      background-color: rgba(255, 255, 255, 0.15) !important;
+      padding: 2px 6px !important;
+      border-radius: 3px !important;
+      font-weight: 500 !important;
+      white-space: nowrap !important;
     }
   `;
 } 

@@ -1,19 +1,13 @@
 import React, { useState, useEffect, useRef } from "react";
 import { createRoot } from "react-dom/client";
-import type { PromptItem, EditableElement } from "../index";
+import type { PromptItemWithVariables, EditableElement } from "@/utils/types";
 import { getPromptSelectorStyles } from "../utils/styles";
 import { extractVariables, replaceVariables } from "../utils/variableParser";
+import { isDarkMode } from "@/utils/tools";
 
-// 检测系统是否为暗黑模式的函数
-const isDarkMode = () => {
-  return (
-    window.matchMedia &&
-    window.matchMedia("(prefers-color-scheme: dark)").matches
-  );
-};
 
 interface VariableInputProps {
-  prompt: PromptItem;
+  prompt: PromptItemWithVariables;
   targetElement: EditableElement;
   onCancel: () => void;
   onSubmit: (processedContent: string) => void;
@@ -83,6 +77,14 @@ const getVariableInputStyles = (): string => {
       transition: border-color 0.15s ease-in-out !important;
       box-shadow: none !important;
       outline: none !important;
+      resize: vertical !important;
+      overflow-y: auto !important;
+      scrollbar-width: none !important;
+      -ms-overflow-style: none !important;
+    }
+    
+    .qp-form-input::-webkit-scrollbar {
+      display: none !important;
     }
     
     .qp-form-input:focus {
@@ -309,7 +311,7 @@ const VariableInput: React.FC<VariableInputProps> = ({
 
 // 显示变量输入弹窗
 export function showVariableInput(
-  prompt: PromptItem,
+  prompt: PromptItemWithVariables,
   targetElement: EditableElement,
   onConfirm: (processedContent: string) => void,
   onCancel: () => void

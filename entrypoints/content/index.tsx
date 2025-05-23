@@ -1,31 +1,10 @@
 import { storage } from '#imports'
+import { isDarkMode } from '@/utils/tools'
 import { showPromptSelector } from './components/PromptSelector'
 import { extractVariables } from './utils/variableParser'
-
-export interface PromptItem {
-  id: string
-  title: string
-  content: string
-  tags: string[]
-  enabled: boolean
-  // 添加 variables 字段用于存储解析出的变量，但不持久化
-  _variables?: string[]
-}
-
-// 自定义接口，用于统一处理不同类型的文本输入元素
-export interface EditableElement {
-  value: string
-  selectionStart?: number | null
-  selectionEnd?: number | null
-  focus(): void
-  setSelectionRange?(start: number, end: number): void
-  dispatchEvent(event: Event): boolean
-}
-
-// 检测系统是否为暗黑模式
-const isDarkMode = () => {
-  return window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches
-}
+import { BROWSER_STORAGE_KEY } from '@/utils/constants'
+import { migratePromptsWithCategory } from '@/utils/categoryUtils'
+import type { EditableElement, PromptItem, PromptItemWithVariables } from '@/utils/types'
 
 export default defineContentScript({
   matches: ['*://*/*'],
@@ -184,11 +163,14 @@ export default defineContentScript({
           return
         }
 
+        // 先执行数据迁移，确保分类信息正确
+        await migratePromptsWithCategory()
+
         // 从存储中获取所有提示词
-        const allPrompts = (await storage.getItem<PromptItem[]>('local:userPrompts')) || []
+        const allPrompts = (await storage.getItem<PromptItem[]>(`local:${BROWSER_STORAGE_KEY}`)) || []
         
         // 过滤只保留启用的提示词
-        const prompts = allPrompts.filter(prompt => prompt.enabled !== false)
+        const prompts : PromptItemWithVariables[] = allPrompts.filter(prompt => prompt.enabled !== false)
 
         // 预处理提示词中的变量
         prompts.forEach(prompt => {
