@@ -43,7 +43,7 @@ Quick Prompt offers an intuitive and user-friendly interface for managing and us
 
 ### Prompt Selector
 
-![Prompt Selector](https://github.com/user-attachments/assets/d20d493f-70d2-4420-a797-f4c00f1439f4)
+![Prompt Selector](https://github.com/user-attachments/assets/41b9897c-d701-4ff0-97f7-2f1754f570a8)
 
 ![Prompt Selector](https://github.com/user-attachments/assets/22d9d30c-b4c3-4e34-a0a0-8ef51e2cb942)
 
