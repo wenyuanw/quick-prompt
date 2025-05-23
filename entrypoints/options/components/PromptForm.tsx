@@ -1,5 +1,8 @@
 import { useState, useEffect } from 'react'
-import type { PromptItem } from '@/utils/types'
+import { Link } from 'react-router-dom'
+import type { PromptItem, Category } from '@/utils/types'
+import { getCategories } from '@/utils/categoryUtils'
+import { DEFAULT_CATEGORY_ID } from '@/utils/constants'
 
 interface PromptFormProps {
   onSubmit: (prompt: PromptItem | Omit<PromptItem, 'id'>) => Promise<void>
@@ -13,8 +16,28 @@ const PromptForm = ({ onSubmit, initialData, onCancel, isEditing }: PromptFormPr
   const [content, setContent] = useState('')
   const [tags, setTags] = useState('')
   const [enabled, setEnabled] = useState(true)
+  const [categoryId, setCategoryId] = useState(DEFAULT_CATEGORY_ID)
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [error, setError] = useState<string | null>(null)
+  const [categories, setCategories] = useState<Category[]>([])
+  const [loadingCategories, setLoadingCategories] = useState(true)
+
+  // 加载分类列表
+  useEffect(() => {
+    const loadCategories = async () => {
+      try {
+        setLoadingCategories(true)
+        const categoriesList = await getCategories()
+        setCategories(categoriesList.filter(cat => cat.enabled)) // 只显示启用的分类
+      } catch (err) {
+        console.error('加载分类失败:', err)
+      } finally {
+        setLoadingCategories(false)
+      }
+    }
+    
+    loadCategories()
+  }, [])
 
   // Reset form when initialData changes (editing mode toggle)
   useEffect(() => {
@@ -23,12 +46,14 @@ const PromptForm = ({ onSubmit, initialData, onCancel, isEditing }: PromptFormPr
       setContent(initialData.content)
       setTags(initialData.tags.join(', '))
       setEnabled(initialData.enabled !== undefined ? initialData.enabled : true)
+      setCategoryId(initialData.categoryId || DEFAULT_CATEGORY_ID)
     } else {
       // Clear form when not in edit mode
       setTitle('')
       setContent('')
       setTags('')
       setEnabled(true)
+      setCategoryId(DEFAULT_CATEGORY_ID)
     }
     setError(null)
   }, [initialData])
@@ -44,6 +69,11 @@ const PromptForm = ({ onSubmit, initialData, onCancel, isEditing }: PromptFormPr
 
     if (!content.trim()) {
       setError('内容不能为空')
+      return
+    }
+
+    if (!categoryId) {
+      setError('请选择分类')
       return
     }
 
@@ -64,6 +94,7 @@ const PromptForm = ({ onSubmit, initialData, onCancel, isEditing }: PromptFormPr
         content: content.trim(),
         tags: tagList,
         enabled,
+        categoryId,
       }
 
       await onSubmit(promptData as any) // Type assertion to handle both new and edited prompts
@@ -73,6 +104,7 @@ const PromptForm = ({ onSubmit, initialData, onCancel, isEditing }: PromptFormPr
         setTitle('')
         setContent('')
         setTags('')
+        setCategoryId(DEFAULT_CATEGORY_ID)
       }
     } catch (err) {
       console.error('提交表单出错:', err)
@@ -134,6 +166,41 @@ const PromptForm = ({ onSubmit, initialData, onCancel, isEditing }: PromptFormPr
             <p>可以使用 <code className='bg-gray-100 px-1 py-0.5 rounded'>{'{{变量名}}'}</code> 格式添加变量，例如：</p>
             <p className='mt-1 text-gray-500 text-xs'>{`你现在是一个{{角色}}，有着{{年限}}年的开发经验，擅长{{技能}}。`}</p>
           </div>
+        </div>
+
+        <div>
+          <label htmlFor='category' className='block text-sm font-medium text-gray-700 mb-1'>
+            分类
+          </label>
+          {loadingCategories ? (
+            <div className='w-full px-3 py-2 border border-gray-300 rounded-lg bg-gray-50 text-gray-500'>
+              加载分类中...
+            </div>
+          ) : (
+            <select
+              id='category'
+              value={categoryId}
+              onChange={(e) => setCategoryId(e.target.value)}
+              className='w-full px-3 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors duration-200'
+            >
+              {categories.map((category) => (
+                <option key={category.id} value={category.id}>
+                  {category.name}
+                </option>
+              ))}
+            </select>
+          )}
+          {categories.length === 0 && !loadingCategories && (
+            <p className='mt-1 text-sm text-gray-500'>
+              没有可用的分类，请先
+              <Link 
+                to='/categories' 
+                className='text-blue-600 hover:text-blue-800 ml-1'
+              >
+                创建分类
+              </Link>
+            </p>
+          )}
         </div>
 
         <div>

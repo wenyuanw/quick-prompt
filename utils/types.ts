@@ -1,4 +1,17 @@
 /**
+ * 分类数据结构
+ */
+export interface Category {
+  id: string;
+  name: string;
+  description?: string;
+  color?: string;
+  enabled: boolean;
+  createdAt: string;
+  updatedAt: string;
+}
+
+/**
  * Prompt 数据结构
  */
 export interface PromptItem {
@@ -7,6 +20,7 @@ export interface PromptItem {
   content: string;
   tags: string[];
   enabled: boolean;
+  categoryId: string;
 }
 
 export interface PromptItemWithVariables extends PromptItem {

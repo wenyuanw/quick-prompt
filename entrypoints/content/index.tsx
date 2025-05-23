@@ -3,6 +3,7 @@ import { isDarkMode } from '@/utils/tools'
 import { showPromptSelector } from './components/PromptSelector'
 import { extractVariables } from './utils/variableParser'
 import { BROWSER_STORAGE_KEY } from '@/utils/constants'
+import { migratePromptsWithCategory } from '@/utils/categoryUtils'
 import type { EditableElement, PromptItem, PromptItemWithVariables } from '@/utils/types'
 
 export default defineContentScript({
@@ -161,6 +162,9 @@ export default defineContentScript({
           isPromptSelectorOpen = false
           return
         }
+
+        // 先执行数据迁移，确保分类信息正确
+        await migratePromptsWithCategory()
 
         // 从存储中获取所有提示词
         const allPrompts = (await storage.getItem<PromptItem[]>(`local:${BROWSER_STORAGE_KEY}`)) || []

@@ -77,6 +77,14 @@ const getVariableInputStyles = (): string => {
       transition: border-color 0.15s ease-in-out !important;
       box-shadow: none !important;
       outline: none !important;
+      resize: vertical !important;
+      overflow-y: auto !important;
+      scrollbar-width: none !important;
+      -ms-overflow-style: none !important;
+    }
+    
+    .qp-form-input::-webkit-scrollbar {
+      display: none !important;
     }
     
     .qp-form-input:focus {

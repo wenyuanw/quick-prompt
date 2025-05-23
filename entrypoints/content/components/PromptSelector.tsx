@@ -1,10 +1,11 @@
 import React, { useState, useEffect, useRef } from "react";
 import { createRoot } from "react-dom/client";
-import type { PromptItemWithVariables, EditableElement } from "@/utils/types";
+import type { PromptItemWithVariables, EditableElement, Category } from "@/utils/types";
 import { getPromptSelectorStyles } from "../utils/styles";
 import { extractVariables } from "../utils/variableParser";
 import { showVariableInput } from "./VariableInput";
 import { isDarkMode } from "@/utils/tools";
+import { getCategories } from "@/utils/categoryUtils";
 
 interface PromptSelectorProps {
   prompts: PromptItemWithVariables[];
@@ -21,19 +22,54 @@ const PromptSelector: React.FC<PromptSelectorProps> = ({
   const [selectedIndex, setSelectedIndex] = useState(0);
   const [isDark, setIsDark] = useState(isDarkMode());
   const [isKeyboardNav, setIsKeyboardNav] = useState(true);
+  const [categories, setCategories] = useState<Category[]>([]);
+  const [selectedCategoryId, setSelectedCategoryId] = useState<string | null>(null);
+  const [categoriesMap, setCategoriesMap] = useState<Record<string, Category>>({});
   const searchInputRef = useRef<HTMLInputElement>(null);
   const listRef = useRef<HTMLDivElement>(null);
   const modalRef = useRef<HTMLDivElement>(null);
 
-  // 过滤提示列表
-  const filteredPrompts = prompts.filter(
-    (prompt) =>
-      prompt.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      prompt.content.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      prompt.tags.some((tag) =>
-        tag.toLowerCase().includes(searchTerm.toLowerCase())
-      )
-  );
+  // 加载分类列表
+  useEffect(() => {
+    const loadCategories = async () => {
+      try {
+        const categoriesList = await getCategories();
+        const enabledCategories = categoriesList.filter(cat => cat.enabled);
+        setCategories(enabledCategories);
+        
+        // 创建分类映射表
+        const categoryMap: Record<string, Category> = {};
+        categoriesList.forEach(cat => {
+          categoryMap[cat.id] = cat;
+        });
+        setCategoriesMap(categoryMap);
+      } catch (err) {
+        console.error('加载分类失败:', err);
+      }
+    };
+    
+    loadCategories();
+  }, []);
+
+  // 过滤提示列表 - 同时考虑搜索词和分类筛选
+  const filteredPrompts = prompts.filter((prompt) => {
+    // 首先按分类筛选
+    if (selectedCategoryId && prompt.categoryId !== selectedCategoryId) {
+      return false;
+    }
+    
+    // 再按搜索词筛选
+    if (searchTerm.trim()) {
+      const term = searchTerm.toLowerCase();
+      return (
+        prompt.title.toLowerCase().includes(term) ||
+        prompt.content.toLowerCase().includes(term) ||
+        prompt.tags.some((tag) => tag.toLowerCase().includes(term))
+      );
+    }
+    
+    return true;
+  });
 
   // 当组件挂载时聚焦搜索框
   useEffect(() => {
@@ -85,6 +121,21 @@ const PromptSelector: React.FC<PromptSelectorProps> = ({
     }
   }, []);
 
+  // 循环切换分类
+  const cycleCategorySelection = (direction: 'next' | 'prev') => {
+    const allOptions = [null, ...categories.map(cat => cat.id)]; // null 表示"所有分类"
+    const currentIndex = allOptions.indexOf(selectedCategoryId);
+    
+    let nextIndex;
+    if (direction === 'next') {
+      nextIndex = currentIndex === allOptions.length - 1 ? 0 : currentIndex + 1;
+    } else {
+      nextIndex = currentIndex === 0 ? allOptions.length - 1 : currentIndex - 1;
+    }
+    
+    setSelectedCategoryId(allOptions[nextIndex]);
+  };
+
   // 键盘导航
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -112,12 +163,22 @@ const PromptSelector: React.FC<PromptSelectorProps> = ({
           e.preventDefault();
           onClose();
           break;
+        case "Tab":
+          e.preventDefault();
+          // Tab键循环切换分类
+          cycleCategorySelection(e.shiftKey ? 'prev' : 'next');
+          break;
       }
     };
 
     document.addEventListener("keydown", handleKeyDown, true);
     return () => document.removeEventListener("keydown", handleKeyDown, true);
-  }, [selectedIndex, filteredPrompts]);
+  }, [selectedIndex, filteredPrompts, categories, selectedCategoryId]);
+
+  // 当筛选结果变化时重置选中索引
+  useEffect(() => {
+    setSelectedIndex(0);
+  }, [searchTerm, selectedCategoryId]);
 
   // 添加鼠标移动事件监听
   useEffect(() => {
@@ -362,17 +423,32 @@ const PromptSelector: React.FC<PromptSelectorProps> = ({
     >
       <div className="qp-flex qp-flex-col qp-modal">
         <div className="qp-modal-header">
-          <input
-            ref={searchInputRef}
-            type="text"
-            className="qp-w-full qp-search-input"
-            placeholder="输入关键词搜索提示..."
-            value={searchTerm}
-            onChange={(e) => {
-              setSearchTerm(e.target.value);
-              setSelectedIndex(0);
-            }}
-          />
+          <div className="qp-w-full qp-space-y-3">
+            <div className="qp-flex qp-items-center qp-gap-3">
+              <input
+                ref={searchInputRef}
+                type="text"
+                className="qp-flex-1 qp-search-input"
+                placeholder="输入关键词搜索提示..."
+                value={searchTerm}
+                onChange={(e) => {
+                  setSearchTerm(e.target.value);
+                }}
+              />
+              <select
+                value={selectedCategoryId || ""}
+                onChange={(e) => setSelectedCategoryId(e.target.value || null)}
+                className="qp-category-select"
+              >
+                <option value="">所有分类</option>
+                {categories.map((category) => (
+                  <option key={category.id} value={category.id}>
+                    {category.name}
+                  </option>
+                ))}
+              </select>
+            </div>
+          </div>
         </div>
 
         <div
@@ -381,29 +457,43 @@ const PromptSelector: React.FC<PromptSelectorProps> = ({
         >
           {filteredPrompts.length > 0 ? (
             <>
-              {filteredPrompts.map((prompt, index) => (
-                <div
-                  id={`prompt-item-${index}`}
-                  key={prompt.id}
-                  className={`qp-cursor-pointer qp-prompt-item ${
-                    index === selectedIndex ? "qp-selected" : ""
-                  }`}
-                  onClick={() => applyPrompt(prompt)}
-                  onMouseEnter={() => !isKeyboardNav && setSelectedIndex(index)}
-                >
-                  <div className="qp-prompt-title">{prompt.title}</div>
-                  <div className="qp-prompt-preview">{prompt.content}</div>
-                  {prompt.tags.length > 0 && (
-                    <div className="qp-tags-container">
-                      {prompt.tags.map((tag) => (
-                        <span key={tag} className="qp-tag">
-                          {tag}
-                        </span>
-                      ))}
+              {filteredPrompts.map((prompt, index) => {
+                const category = categoriesMap[prompt.categoryId];
+                return (
+                  <div
+                    id={`prompt-item-${index}`}
+                    key={prompt.id}
+                    className={`qp-cursor-pointer qp-prompt-item ${
+                      index === selectedIndex ? "qp-selected" : ""
+                    }`}
+                    onClick={() => applyPrompt(prompt)}
+                    onMouseEnter={() => !isKeyboardNav && setSelectedIndex(index)}
+                  >
+                    <div className="qp-prompt-title">{prompt.title}</div>
+                    <div className="qp-prompt-preview">{prompt.content}</div>
+                    <div className="qp-prompt-meta">
+                      {category && (
+                        <div className="qp-prompt-category">
+                          <div 
+                            className="qp-category-dot" 
+                            style={{ backgroundColor: category.color || '#6366f1' }}
+                          />
+                          <span className="qp-category-name">{category.name}</span>
+                        </div>
+                      )}
+                      {prompt.tags.length > 0 && (
+                        <div className="qp-tags-container">
+                          {prompt.tags.map((tag) => (
+                            <span key={tag} className="qp-tag">
+                              {tag}
+                            </span>
+                          ))}
+                        </div>
+                      )}
                     </div>
-                  )}
-                </div>
-              ))}
+                  </div>
+                );
+              })}
             </>
           ) : (
             <div className="qp-empty-state">
@@ -421,15 +511,26 @@ const PromptSelector: React.FC<PromptSelectorProps> = ({
                   d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"
                 />
               </svg>
-              <div className="qp-empty-text">没有找到匹配的提示</div>
-              <div className="qp-empty-subtext">尝试使用其他关键词搜索</div>
+              <div className="qp-empty-text">
+                {searchTerm || selectedCategoryId ? "没有找到匹配的提示" : "没有可用的提示"}
+              </div>
+              <div className="qp-empty-subtext">
+                {searchTerm && selectedCategoryId 
+                  ? "尝试更改搜索词或选择其他分类"
+                  : searchTerm 
+                  ? "尝试使用其他关键词搜索"
+                  : selectedCategoryId
+                  ? "该分类中暂无提示词"
+                  : "请先添加一些提示词"
+                }
+              </div>
             </div>
           )}
         </div>
 
         <div className="qp-modal-footer">
           <span>共 {filteredPrompts.length} 个提示</span>
-          <span>按 ↑↓ 导航 · Enter 选择 · Esc 关闭</span>
+          <span>↑↓ 导航 · Enter 选择 · Tab 切换分类</span>
         </div>
       </div>
     </div>
