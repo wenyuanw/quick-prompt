@@ -43,7 +43,7 @@ Quick Prompt offers an intuitive and user-friendly interface for managing and us
 
 ### Prompt Selector
 
-![Prompt Selector](https://github.com/user-attachments/assets/d20d493f-70d2-4420-a797-f4c00f1439f4)
+![Prompt Selector](https://github.com/user-attachments/assets/41b9897c-d701-4ff0-97f7-2f1754f570a8)
 
 ![Prompt Selector](https://github.com/user-attachments/assets/22d9d30c-b4c3-4e34-a0a0-8ef51e2cb942)
 
@@ -51,7 +51,7 @@ Use the `/p` shortcut command or keyboard shortcuts to quickly bring up the prom
 
 ### Prompt Management Page
 
-![Prompt Management](https://github.com/user-attachments/assets/033822b6-64a7-4994-9336-2dbba7354702)
+![Prompt Management](https://github.com/user-attachments/assets/371ae51e-1cee-4a66-a2a5-cca017396872)
 
 In the management page, you can create new prompts, edit existing ones, add tags, and organize them by categories. The interface is clean and straightforward to use.
 
