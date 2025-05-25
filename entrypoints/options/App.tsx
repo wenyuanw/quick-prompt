@@ -3,6 +3,9 @@ import { HashRouter as Router, Routes, Route } from "react-router-dom";
 import Sidebar from "./components/Sidebar";
 import PromptManager from "./components/PromptManager";
 import CategoryManager from "./components/CategoryManager";
+import NotionIntegrationPage from "./components/NotionIntegrationPage";
+import GoogleAuthPage from "./components/GoogleAuthPage";
+import ToastContainer from "./components/ToastContainer";
 import "./App.css";
 import "~/assets/tailwind.css";
 
@@ -92,6 +95,8 @@ const App = () => {
               <Routes>
                 <Route path="/" element={<PromptManager />} />
                 <Route path="/categories" element={<CategoryManager />} />
+                <Route path="/integrations/notion" element={<NotionIntegrationPage />} />
+                <Route path="/integrations/google" element={<GoogleAuthPage />} />
               </Routes>
 
               {/* 回到顶部按钮 */}
@@ -119,6 +124,9 @@ const App = () => {
                   </button>
                 </div>
               )}
+              
+              {/* 添加Toast通知容器 */}
+              <ToastContainer />
             </div>
           </main>
         </div>
