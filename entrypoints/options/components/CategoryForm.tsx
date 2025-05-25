@@ -114,7 +114,7 @@ const CategoryForm = ({ onSubmit, initialData, onCancel, isEditing }: CategoryFo
             value={name}
             onChange={(e) => setName(e.target.value)}
             className='w-full px-3 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors duration-200'
-            placeholder='例如：工作文档'
+            placeholder='例如：编程开发'
           />
         </div>
 
