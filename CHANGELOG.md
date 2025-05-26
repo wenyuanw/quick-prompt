@@ -1,3 +1,14 @@
+## [0.0.11] - 2025-05-26
+
+### 新增
+- **谷歌身份验证** [@Alphamancer](https://github.com/Alphamancer)
+   - 支持用户通过Google账号登录
+
+- **Notion API集成** [@Alphamancer](https://github.com/Alphamancer)
+   - 实现提示词与Notion数据库双向同步
+   - 支持从Notion导入提示词
+   - 支持将本地提示词导出到Notion
+
 ## [0.0.10] - 2025-05-23
 
 ### 新增
