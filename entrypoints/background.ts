@@ -7,9 +7,12 @@ import type { PromptItem } from "@/utils/types"
 // User Info Storage Key
 const USER_INFO_STORAGE_KEY = 'google_user_info';
 
-// 这些全局变量应该由 Vite/WXT 从 wxt.config.ts 注入
-// const __WEB_APP_CLIENT_ID_PREFIX__ = ""; // 占位符，将在构建时替换
-// const __CHROME_CLIENT_ID_PREFIX__ = ""; // 占位符，将在构建时替换
+// 从环境变量获取客户端ID前缀
+const WEB_APP_CLIENT_ID_PREFIX = import.meta.env.WXT_WEB_APP_CLIENT_ID_PREFIX || '';
+const CHROME_CLIENT_ID_PREFIX = import.meta.env.WXT_CHROME_APP_CLIENT_ID_PREFIX || '';
+
+console.log('WEB_APP_CLIENT_ID_PREFIX', WEB_APP_CLIENT_ID_PREFIX);
+console.log('CHROME_CLIENT_ID_PREFIX', CHROME_CLIENT_ID_PREFIX);
 
 export default defineBackground(() => {
   console.log('Hello background!', { id: browser.runtime.id })
@@ -63,10 +66,9 @@ export default defineBackground(() => {
         return;
       }
       
-      // @ts-ignore
-      const clientIdPrefix = typeof __CHROME_CLIENT_ID_PREFIX__ !== 'undefined' ? __CHROME_CLIENT_ID_PREFIX__ : null;
+      const clientIdPrefix = CHROME_CLIENT_ID_PREFIX;
       if (!clientIdPrefix) {
-        console.warn('__CHROME_CLIENT_ID_PREFIX__ is not defined. Proceeding without explicit client_id for getAuthToken. May rely on extension ID whitelisting.');
+        console.warn('CHROME_CLIENT_ID_PREFIX is not defined. Proceeding without explicit client_id for getAuthToken. May rely on extension ID whitelisting.');
       }
       console.log(`[getAuthTokenInternal] Calling browser.identity.getAuthToken (interactive: ${interactive}), Client ID prefix configured: ${!!clientIdPrefix}`);
 
@@ -105,10 +107,9 @@ export default defineBackground(() => {
   // Core function for Google Authentication via launchWebAuthFlow
   const launchWebAuthFlowInternal = async (interactive: boolean): Promise<string | null> => {
     try {
-      // @ts-ignore
-      const webClientIdPrefix = typeof __WEB_APP_CLIENT_ID_PREFIX__ !== 'undefined' ? __WEB_APP_CLIENT_ID_PREFIX__ : null;
+      const webClientIdPrefix = WEB_APP_CLIENT_ID_PREFIX;
       if (!webClientIdPrefix) {
-        console.error('__WEB_APP_CLIENT_ID_PREFIX__ is not defined. Cannot use launchWebAuthFlow.');
+        console.error('WEB_APP_CLIENT_ID_PREFIX is not defined. Cannot use launchWebAuthFlow.');
         return null;
       }
       const CLIENT_ID = `${webClientIdPrefix}.apps.googleusercontent.com`;
@@ -172,10 +173,8 @@ export default defineBackground(() => {
     const desktopType = await getDesktopTypeForAuth();
     console.log(`[AUTH_DESKTOP_TYPE V2] Determined desktop type: ${desktopType}`);
 
-    // @ts-ignore
-    const chromeClientIdPrefixAvailable = typeof __CHROME_CLIENT_ID_PREFIX__ !== 'undefined' && __CHROME_CLIENT_ID_PREFIX__;
-    // @ts-ignore
-    const webClientIdPrefixAvailable = typeof __WEB_APP_CLIENT_ID_PREFIX__ !== 'undefined' && __WEB_APP_CLIENT_ID_PREFIX__;
+    const chromeClientIdPrefixAvailable = CHROME_CLIENT_ID_PREFIX;
+    const webClientIdPrefixAvailable = WEB_APP_CLIENT_ID_PREFIX;
 
     if (!chromeClientIdPrefixAvailable && !webClientIdPrefixAvailable) {
         console.error("[AUTH_ERROR V2] Neither CHROME_CLIENT_ID_PREFIX nor WEB_APP_CLIENT_ID_PREFIX are defined. Authentication is not possible.");
