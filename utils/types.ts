@@ -21,6 +21,7 @@ export interface PromptItem {
   tags: string[];
   enabled: boolean;
   categoryId: string;
+  notionPageId?: string;
 }
 
 export interface PromptItemWithVariables extends PromptItem {

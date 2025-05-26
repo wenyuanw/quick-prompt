@@ -214,4 +214,4 @@ const CategoryForm = ({ onSubmit, initialData, onCancel, isEditing }: CategoryFo
   )
 }
 
-export default CategoryForm 
+export default CategoryForm
