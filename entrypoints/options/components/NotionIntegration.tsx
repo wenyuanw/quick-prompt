@@ -326,7 +326,7 @@ const NotionIntegration: React.FC<NotionIntegrationProps> = () => {
       <div className="flex justify-between items-center mb-4">
         <h2 className="text-xl font-semibold text-gray-800 dark:text-white">Notion 整合</h2>
         <a 
-          href="https://gist.github.com/Alphamancer/4d0b76311d71225ac1fb85d11e82cdef"
+          href="https://github.com/wenyuanw/quick-prompt/blob/main/docs/notion-sync-guide.md"
           target="_blank" 
           rel="noopener noreferrer"
           className="inline-flex items-center text-sm text-blue-600 dark:text-blue-400 hover:underline"
