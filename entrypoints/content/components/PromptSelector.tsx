@@ -246,130 +246,94 @@ const PromptSelector: React.FC<PromptSelectorProps> = ({
 
     if (isContentEditableAdapter) {
       try {
-        // contenteditable 元素的特殊处理
         const editableElement = (targetElement as any)._element as HTMLElement;
+        const selection = window.getSelection();
 
-        // 获取当前内容和光标位置
-        const fullText = editableElement.textContent || "";
+        if (!selection || selection.rangeCount === 0) {
+          console.error("Quick Prompt: No selection found. Cannot apply prompt or remove /p trigger.");
+          onClose(); // Close the selector
+          return;     // Exit if no selection
+        }
 
-        // 检查全文是否包含 "/p"，不区分大小写
-        if (fullText.toLowerCase().includes('/p')) {
-          // 找到最后一个 "/p" 或 "/P" 的位置
-          // 先查找小写，再查找大写，取最后出现的位置
-          const lastLowerCasePos = fullText.toLowerCase().lastIndexOf('/p');
-          // 找到实际文本中这个位置的两个字符
-          const actualTrigger = fullText.substring(lastLowerCasePos, lastLowerCasePos + 2);
-          
-          // 构建新的内容（移除触发词并插入提示词）
-          const textBeforeTrigger = fullText.substring(0, lastLowerCasePos);
-          const textAfterTrigger = fullText.substring(lastLowerCasePos + 2);
-          const newContent = textBeforeTrigger + content + textAfterTrigger;
+        const range = selection.getRangeAt(0); // Use directly as per prompt's snippet
+        const cursorNode = range.startContainer;
+        const cursorPos = range.startOffset;
 
-          // 创建并分发 beforeinput 事件
-          const beforeInputEvent = new InputEvent("beforeinput", {
-            bubbles: true,
-            cancelable: true,
-            inputType: "insertFromPaste",
-            data: newContent,
-          });
+        let textNodeWithTrigger: Text | null = null;
+        let triggerStartPosition = -1;
 
-          // 如果 beforeinput 事件没有被阻止，则继续处理
-          if (editableElement.dispatchEvent(beforeInputEvent)) {
-            // 设置新内容
-            editableElement.textContent = newContent;
-
-            // 创建并分发 input 事件
-            const inputEvent = new InputEvent("input", {
-              bubbles: true,
-              inputType: "insertFromPaste",
-              data: newContent,
-            });
-            editableElement.dispatchEvent(inputEvent);
-
-            // 设置光标到末尾
-            const selection = window.getSelection();
-            if (selection) {
-              const range = document.createRange();
-              range.selectNodeContents(editableElement);
-              range.collapse(false);
-              selection.removeAllRanges();
-              selection.addRange(range);
-            }
-          }
-        } else {
-          // 如果找不到 "/p"，在当前光标位置插入内容
-          const selection = window.getSelection();
-          if (selection && selection.rangeCount > 0) {
-            const range = selection.getRangeAt(0);
-            const beforeInputEvent = new InputEvent("beforeinput", {
-              bubbles: true,
-              cancelable: true,
-              inputType: "insertFromPaste",
-              data: content,
-            });
-
-            // 如果 beforeinput 事件没有被阻止，则继续处理
-            if (editableElement.dispatchEvent(beforeInputEvent)) {
-              // 获取当前内容
-              const currentContent = editableElement.textContent || "";
-              const position = range.startOffset;
-
-              // 在光标位置插入新内容
-              const newContent =
-                currentContent.slice(0, position) +
-                content +
-                currentContent.slice(position);
-
-              // 设置新内容
-              editableElement.textContent = newContent;
-
-              // 创建并分发 input 事件
-              const inputEvent = new InputEvent("input", {
-                bubbles: true,
-                inputType: "insertFromPaste",
-                data: content,
-              });
-              editableElement.dispatchEvent(inputEvent);
-
-              // 设置光标到末尾
-              const newRange = document.createRange();
-              newRange.selectNodeContents(editableElement);
-              newRange.collapse(false);
-              selection.removeAllRanges();
-              selection.addRange(newRange);
-            }
-          } else {
-            // 如果没有选区，追加到末尾
-            const beforeInputEvent = new InputEvent("beforeinput", {
-              bubbles: true,
-              cancelable: true,
-              inputType: "insertFromPaste",
-              data: content,
-            });
-
-            // 如果 beforeinput 事件没有被阻止，则继续处理
-            if (editableElement.dispatchEvent(beforeInputEvent)) {
-              const currentContent = editableElement.textContent || "";
-              const newContent = currentContent + content;
-
-              // 设置新内容
-              editableElement.textContent = newContent;
-
-              // 创建并分发 input 事件
-              const inputEvent = new InputEvent("input", {
-                bubbles: true,
-                inputType: "insertFromPaste",
-                data: content,
-              });
-              editableElement.dispatchEvent(inputEvent);
-            }
+        if (cursorNode.nodeType === Node.TEXT_NODE && cursorPos >= 2) {
+          const textContent = cursorNode.textContent || ""; // Renamed for clarity from textContentBeforeCursor
+          const textBeforeCursor = textContent.substring(cursorPos - 2, cursorPos);
+          if (textBeforeCursor.toLowerCase() === "/p") {
+            textNodeWithTrigger = cursorNode as Text;
+            triggerStartPosition = cursorPos - 2;
           }
         }
 
-        // 确保编辑器获得焦点
+        if (textNodeWithTrigger && triggerStartPosition !== -1) {
+          const triggerRange = document.createRange();
+          triggerRange.setStart(textNodeWithTrigger, triggerStartPosition);
+          triggerRange.setEnd(textNodeWithTrigger, triggerStartPosition + 2);
+
+          const beforeDeleteEvent = new InputEvent("beforeinput", {
+            bubbles: true,
+            cancelable: true,
+            inputType: "deleteContentBackward",
+          });
+
+          if (!editableElement.dispatchEvent(beforeDeleteEvent)) {
+            console.log("Quick Prompt: Deletion of /p canceled by beforeinput event.");
+            onClose();
+            return;
+          }
+          triggerRange.deleteContents();
+          // After deletion, the main `range` (cursor position) should be automatically
+          // collapsed at the point of deletion. We will insert content there.
+          // Ensure the selection is updated to this new collapsed range.
+          selection.removeAllRanges();
+          selection.addRange(range); // range should now be at the correct insertion point
+        } else {
+          // If /p was not found immediately before the cursor using this specific logic,
+          // do not fall back to full textContent replacement for /p removal.
+          // Insert the prompt, and /p might remain if our precise method missed it.
+          console.warn("Quick Prompt: Could not find /p immediately before cursor for precise DOM deletion. /p may not be removed.");
+        }
+
+        // Insert the prompt content
+        const contentTextNode = document.createTextNode(content);
+        const beforeInsertEvent = new InputEvent("beforeinput", {
+          bubbles: true,
+          cancelable: true,
+          inputType: "insertText", 
+          data: content,
+        });
+
+        if (!editableElement.dispatchEvent(beforeInsertEvent)) {
+          console.log("Quick Prompt: Insertion of prompt content canceled by beforeinput event.");
+          onClose();
+          return;
+        }
+
+        range.insertNode(contentTextNode);
+
+        range.setStartAfter(contentTextNode);
+        range.setEndAfter(contentTextNode);
+        selection.removeAllRanges(); 
+        selection.addRange(range);   
+
+        const inputEvent = new InputEvent("input", {
+          bubbles: true,
+          inputType: "insertText", 
+          data: content,
+        });
+        editableElement.dispatchEvent(inputEvent);
         editableElement.focus();
+        onClose(); 
+
       } catch (error) {
         console.error("处理 contenteditable 元素时发生错误:", error);
+        onClose(); 
       }
     } else {
       // 原有的标准输入框处理逻辑
@@ -392,17 +356,21 @@ const PromptSelector: React.FC<PromptSelectorProps> = ({
       try {
         const inputEvent = new InputEvent("input", {
           bubbles: true,
-          inputType: "insertFromPaste",
+          inputType: "insertFromPaste", // Kept as insertFromPaste for non-contenteditable to match original
           data: content,
         });
         targetElement.dispatchEvent(inputEvent);
       } catch (error) {
         console.warn("无法触发输入事件:", error);
       }
+      // For non-contenteditable, onClose was originally outside the if/else.
+      // To maintain consistency with the new contenteditable logic,
+      // we ensure onClose is called for this path too.
+      onClose(); // onClose for the non-contenteditable path
     }
-
-    // 关闭弹窗
-    onClose();
+    // Note: The main onClose() call was previously here.
+    // It has been moved into each branch (contenteditable and non-contenteditable)
+    // to ensure it's called correctly, especially if beforeinput events are cancelled or in case of errors.
   };
 
   // 点击背景关闭弹窗
