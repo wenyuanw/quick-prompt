@@ -24,7 +24,7 @@ export default defineBackground(() => {
     const ua = navigator.userAgent.toLowerCase()
     return ua.includes('chrome/') && !ua.includes('edg/') && !ua.includes('opr/') && !navigator.userAgentData?.mobile
   }
-  
+
   const getDesktopTypeForAuth = async (): Promise<string> => {
     if (typeof navigator.userAgentData !== 'undefined' && navigator.userAgentData) {
       try {
@@ -38,12 +38,12 @@ export default defineBackground(() => {
           brands: brands,
           highEntropyValues: highEntropyValues
         })
-        
+
         // Arc Browser on Windows reports as "Windows", "x86", "64" and brands include "Chromium", "Google Chrome"
         // but might not have "Arc" explicitly. It behaves like Chrome for getAuthToken.
         if (platform === 'windows' && brands?.includes('chromium') && brands?.includes('google chrome')) {
-           // Further check if it's Arc or similar that might hide its true identity but supports getAuthToken
-           if (isLikelyChromeDesktop()) return 'CHROME_DESKTOP_LIKELY' // Treat as Chrome if it walks and talks like Chrome
+          // Further check if it's Arc or similar that might hide its true identity but supports getAuthToken
+          if (isLikelyChromeDesktop()) return 'CHROME_DESKTOP_LIKELY' // Treat as Chrome if it walks and talks like Chrome
         }
         // Standard Chrome check
         if (navigator.userAgentData.brands?.some(b => b.brand.toLowerCase() === 'google chrome') && !navigator.userAgentData.mobile) return 'CHROME_DESKTOP_NATIVE'
@@ -65,36 +65,36 @@ export default defineBackground(() => {
         resolve(null);
         return;
       }
-      
+
       const clientIdPrefix = CHROME_CLIENT_ID_PREFIX;
       if (!clientIdPrefix) {
         console.warn('CHROME_CLIENT_ID_PREFIX is not defined. Proceeding without explicit client_id for getAuthToken. May rely on extension ID whitelisting.');
       }
       console.log(`[getAuthTokenInternal] Calling browser.identity.getAuthToken (interactive: ${interactive}), Client ID prefix configured: ${!!clientIdPrefix}`);
 
-      browser.identity.getAuthToken({ interactive }, (result: any) => { 
+      browser.identity.getAuthToken({ interactive }, (result: any) => {
         console.log(`[getAuthTokenInternal Callback] Received result/error from getAuthToken. Interactive: ${interactive}`);
         try {
           if (browser.runtime.lastError) {
-              console.warn(`getAuthToken(interactive: ${interactive}) FAILED:`, browser.runtime.lastError.message);
-              resolve(null);
-              return; 
+            console.warn(`getAuthToken(interactive: ${interactive}) FAILED:`, browser.runtime.lastError.message);
+            resolve(null);
+            return;
           }
 
           let tokenToResolve: string | null = null;
 
           if (typeof result === 'string' && result) {
-              tokenToResolve = result;
+            tokenToResolve = result;
           } else if (result && typeof result.token === 'string' && result.token) {
-              tokenToResolve = result.token;
+            tokenToResolve = result.token;
           }
 
           if (tokenToResolve) {
-              console.log(`getAuthToken(interactive: ${interactive}) successful with token (first few chars): ${tokenToResolve.substring(0,10)}...`);
-              resolve(tokenToResolve);
+            console.log(`getAuthToken(interactive: ${interactive}) successful with token (first few chars): ${tokenToResolve.substring(0,10)}...`);
+            resolve(tokenToResolve);
           } else {
-              console.warn(`getAuthToken(interactive: ${interactive}) did not yield a valid token. Result was:`, result);
-              resolve(null);
+            console.warn(`getAuthToken(interactive: ${interactive}) did not yield a valid token. Result was:`, result);
+            resolve(null);
           }
         } catch (e: any) {
           console.error(`[getAuthTokenInternal Callback] Error processing getAuthToken result (interactive: ${interactive}):`, e);
@@ -115,11 +115,11 @@ export default defineBackground(() => {
       const CLIENT_ID = `${webClientIdPrefix}.apps.googleusercontent.com`;
       const REDIRECT_URI = browser.identity.getRedirectURL();
       const SCOPES = ['https://www.googleapis.com/auth/userinfo.email', 'https://www.googleapis.com/auth/userinfo.profile'];
-      
+
       let authUrl = new URL('https://accounts.google.com/o/oauth2/v2/auth');
       authUrl.searchParams.append('client_id', CLIENT_ID);
       authUrl.searchParams.append('redirect_uri', REDIRECT_URI);
-      authUrl.searchParams.append('response_type', 'token'); 
+      authUrl.searchParams.append('response_type', 'token');
       authUrl.searchParams.append('scope', SCOPES.join(' '));
       if (interactive) {
         authUrl.searchParams.append('prompt', 'select_account');
@@ -165,7 +165,7 @@ export default defineBackground(() => {
       return null;
     }
   };
-  
+
   // Unified Google Authentication function
   const authenticateWithGoogle = async (interactive: boolean): Promise<{token: string; userInfo?: { email: string; name: string, id: string }} | null> => {
     console.log(`[AUTH_START V2] authenticateWithGoogle(interactive: ${interactive})`);
@@ -177,8 +177,8 @@ export default defineBackground(() => {
     const webClientIdPrefixAvailable = WEB_APP_CLIENT_ID_PREFIX;
 
     if (!chromeClientIdPrefixAvailable && !webClientIdPrefixAvailable) {
-        console.error("[AUTH_ERROR V2] Neither CHROME_CLIENT_ID_PREFIX nor WEB_APP_CLIENT_ID_PREFIX are defined. Authentication is not possible.");
-        return null;
+      console.error("[AUTH_ERROR V2] Neither CHROME_CLIENT_ID_PREFIX nor WEB_APP_CLIENT_ID_PREFIX are defined. Authentication is not possible.");
+      return null;
     }
 
     if (chromeClientIdPrefixAvailable && (desktopType.startsWith('CHROME_DESKTOP') || desktopType === 'OTHER_LIKELY_CHROME_GETAUTHTOKEN_CAPABLE')) {
@@ -196,7 +196,7 @@ export default defineBackground(() => {
           // Do not return a token if userInfo cannot be fetched, as it might be stale/problematic.
           // Caller should handle this as a failed auth attempt.
           await browser.storage.local.remove(USER_INFO_STORAGE_KEY); // Ensure inconsistent state is cleared
-          return null; 
+          return null;
         }
       }
       console.warn('[AUTH_FALLBACK V2] getAuthTokenInternal failed or returned no token.');
@@ -206,32 +206,32 @@ export default defineBackground(() => {
       }
       console.log('[AUTH_FALLBACK V2] Proceeding to launchWebAuthFlowInternal as fallback.');
     } else if (!webClientIdPrefixAvailable) {
-        console.error("[AUTH_ERROR V2] Not a Chrome-like desktop or CHROME_CLIENT_ID_PREFIX not set, and WEB_APP_CLIENT_ID_PREFIX is not available. Cannot authenticate.");
-        return null;
+      console.error("[AUTH_ERROR V2] Not a Chrome-like desktop or CHROME_CLIENT_ID_PREFIX not set, and WEB_APP_CLIENT_ID_PREFIX is not available. Cannot authenticate.");
+      return null;
     }
 
     if (webClientIdPrefixAvailable) {
-        console.log('[AUTH_ATTEMPT V2] Trying launchWebAuthFlowInternal...');
-        token = await launchWebAuthFlowInternal(interactive);
-        if (token) {
-            console.log('[AUTH_SUCCESS V2] Token obtained via launchWebAuthFlowInternal.');
-            // For launchWebAuthFlow, we fetch userInfo here as well.
-            const userInfo = await getUserInfo(token);
-            if (userInfo) {
-              await browser.storage.local.set({ [USER_INFO_STORAGE_KEY]: userInfo }); // Store user info
-              return { token, userInfo };
-            } else {
-              console.warn('[AUTH_WARN V2] launchWebAuthFlowInternal succeeded but getUserInfo failed. Token might be invalid or network issue.');
-              // As above, do not return a token if userInfo cannot be fetched.
-              await browser.storage.local.remove(USER_INFO_STORAGE_KEY); // Ensure inconsistent state is cleared
-              return null;
-            }
+      console.log('[AUTH_ATTEMPT V2] Trying launchWebAuthFlowInternal...');
+      token = await launchWebAuthFlowInternal(interactive);
+      if (token) {
+        console.log('[AUTH_SUCCESS V2] Token obtained via launchWebAuthFlowInternal.');
+        // For launchWebAuthFlow, we fetch userInfo here as well.
+        const userInfo = await getUserInfo(token);
+        if (userInfo) {
+          await browser.storage.local.set({ [USER_INFO_STORAGE_KEY]: userInfo }); // Store user info
+          return { token, userInfo };
+        } else {
+          console.warn('[AUTH_WARN V2] launchWebAuthFlowInternal succeeded but getUserInfo failed. Token might be invalid or network issue.');
+          // As above, do not return a token if userInfo cannot be fetched.
+          await browser.storage.local.remove(USER_INFO_STORAGE_KEY); // Ensure inconsistent state is cleared
+          return null;
         }
-        console.warn('[AUTH_FAILURE V2] launchWebAuthFlowInternal also failed or returned no token.');
+      }
+      console.warn('[AUTH_FAILURE V2] launchWebAuthFlowInternal also failed or returned no token.');
     } else {
-        console.log('[AUTH_SKIP V2] launchWebAuthFlowInternal skipped as WEB_APP_CLIENT_ID_PREFIX is not available.');
+      console.log('[AUTH_SKIP V2] launchWebAuthFlowInternal skipped as WEB_APP_CLIENT_ID_PREFIX is not available.');
     }
-    
+
     console.error('[AUTH_END V2] Authentication failed after all attempts.');
     await browser.storage.local.remove(USER_INFO_STORAGE_KEY); // Ensure storage is cleared on final failure
     return null;
@@ -269,26 +269,26 @@ export default defineBackground(() => {
       // We don't strictly need the token value itself, just its presence.
       const authDetails = await browser.storage.local.get(USER_INFO_STORAGE_KEY);
       if (authDetails && authDetails[USER_INFO_STORAGE_KEY]) {
-          // If user info exists, we can assume a token was previously obtained.
-          // To be absolutely sure for removeCachedAuthToken, we *could* try getAuthToken(false)
-          // but it might be overkill if we are clearing user info anyway.
-          // For simplicity, we'll rely on stored user info as an indicator of an active session.
-          // To be more robust, one might need to fetch the token to pass to removeCachedAuthToken,
-          // especially if multiple accounts or token types were possible.
-          
-          // Try to get current token to remove it explicitly. This is a best effort.
-          // Note: getAuthToken(false) might fail if token is expired, but removeCachedAuthToken
-          // might still work based on browser's internal session state.
-          if (browser.identity && typeof browser.identity.getAuthToken === 'function') {
-            try {
-                const tokenResponse = await getAuthTokenInternal(false); // Try to get current token without UI
-                if (tokenResponse) { // tokenResponse is string | null
-                    activeToken = tokenResponse;
-                }
-            } catch (e) {
-                console.warn("Error trying to fetch token non-interactively before logout:", e);
+        // If user info exists, we can assume a token was previously obtained.
+        // To be absolutely sure for removeCachedAuthToken, we *could* try getAuthToken(false)
+        // but it might be overkill if we are clearing user info anyway.
+        // For simplicity, we'll rely on stored user info as an indicator of an active session.
+        // To be more robust, one might need to fetch the token to pass to removeCachedAuthToken,
+        // especially if multiple accounts or token types were possible.
+
+        // Try to get current token to remove it explicitly. This is a best effort.
+        // Note: getAuthToken(false) might fail if token is expired, but removeCachedAuthToken
+        // might still work based on browser's internal session state.
+        if (browser.identity && typeof browser.identity.getAuthToken === 'function') {
+          try {
+            const tokenResponse = await getAuthTokenInternal(false); // Try to get current token without UI
+            if (tokenResponse) { // tokenResponse is string | null
+              activeToken = tokenResponse;
             }
+          } catch (e) {
+            console.warn("Error trying to fetch token non-interactively before logout:", e);
           }
+        }
       }
 
       if (activeToken && browser.identity && typeof browser.identity.removeCachedAuthToken === 'function') {
@@ -301,7 +301,7 @@ export default defineBackground(() => {
         // await browser.identity.clearAllCachedAuthTokens(); // This is often too broad. Let's avoid unless necessary.
         // For most cases, just clearing our stored user info is sufficient if token removal is problematic.
       }
-      
+
       // Always remove user info from our storage
       await browser.storage.local.remove(USER_INFO_STORAGE_KEY);
       console.log('User info removed from local storage. Logout process complete.');
@@ -313,11 +313,11 @@ export default defineBackground(() => {
       console.warn('Ensured user info is removed from local storage despite logout error.');
     }
   };
-  
+
   // Wrapper for Notion Sync: Notion -> Local
   const syncFromNotionToLocal = async (forceSync: boolean = false, mode: 'replace' | 'append' = 'replace'): Promise<boolean> => {
     console.log(`Background: Triggering syncFromNotionToLocal (force: ${forceSync}, mode: ${mode})`);
-    return await syncCorePromptsFromNotion(mode); 
+    return await syncCorePromptsFromNotion(mode);
   };
 
   // Wrapper for Notion Sync: Local -> Notion
@@ -333,10 +333,10 @@ export default defineBackground(() => {
 
     const localPromptsResult = await browser.storage.local.get(BROWSER_STORAGE_KEY);
     const localPrompts: PromptItem[] = (localPromptsResult[BROWSER_STORAGE_KEY as keyof typeof localPromptsResult] as PromptItem[]) || [];
-    
+
     if (!localPrompts || localPrompts.length === 0) {
-        console.log('No local prompts to sync to Notion.');
-        return {success: true}; 
+      console.log('No local prompts to sync to Notion.');
+      return {success: true};
     }
     return await syncCorePromptsToNotion(localPrompts);
   };
@@ -362,6 +362,69 @@ export default defineBackground(() => {
       }
     } catch (error) {
       console.error('背景脚本: 初始化默认数据失败:', error);
+    }
+  };
+
+  // 检测快捷键配置状态
+  const checkShortcutConfiguration = async (): Promise<void> => {
+    try {
+      console.log('背景脚本: 开始检测快捷键配置状态');
+
+      // 获取所有已配置的命令
+      const commands = await browser.commands.getAll();
+      const promptCommand = commands.find(cmd => cmd.name === 'open-prompt-selector');
+      const saveCommand = commands.find(cmd => cmd.name === 'save-selected-prompt');
+
+      // 检查主要的提示词选择器快捷键
+      let shortcutIssues: string[] = [];
+
+      if (!promptCommand || !promptCommand.shortcut) {
+        shortcutIssues.push('提示词选择器快捷键未配置成功（可能存在冲突）');
+        console.log('背景脚本: 提示词选择器快捷键配置失败');
+      } else {
+        console.log('背景脚本: 提示词选择器快捷键配置成功:', promptCommand.shortcut);
+      }
+
+      if (!saveCommand || !saveCommand.shortcut) {
+        shortcutIssues.push('保存提示词快捷键未配置成功（可能存在冲突）');
+        console.log('背景脚本: 保存提示词快捷键配置失败');
+      } else {
+        console.log('背景脚本: 保存提示词快捷键配置成功:', saveCommand.shortcut);
+      }
+
+      // 存储快捷键配置状态，供弹出窗口和选项页面使用
+      await browser.storage.local.set({
+        'shortcut_check_result': {
+          hasIssues: shortcutIssues.length > 0,
+          issues: shortcutIssues,
+          promptShortcut: promptCommand?.shortcut || null,
+          saveShortcut: saveCommand?.shortcut || null,
+          checkedAt: Date.now()
+        }
+      });
+
+      // 如果存在快捷键问题，发送通知
+      if (shortcutIssues.length > 0) {
+        console.log('背景脚本: 检测到快捷键配置问题，将显示通知');
+
+        // 创建通知显示快捷键配置问题
+        if (browser.notifications) {
+          await browser.notifications.create('shortcut-config-issue', {
+            type: 'basic',
+            iconUrl: '/icon/32.png',
+            title: 'Quick Prompt - 快捷键配置提醒',
+            message: '部分快捷键可能因冲突未能配置成功，建议手动设置。点击查看详情。'
+          });
+        }
+
+        // 设置标记，让用户下次打开弹出窗口时能看到详细提示
+        await browser.storage.local.set({
+          'show_shortcut_setup_reminder': true
+        });
+      }
+
+    } catch (error) {
+      console.error('背景脚本: 检测快捷键配置时出错:', error);
     }
   };
 
@@ -414,6 +477,47 @@ export default defineBackground(() => {
     }
   })
 
+  // 处理通知点击事件
+  if (browser.notifications && browser.notifications.onClicked) {
+    browser.notifications.onClicked.addListener(async (notificationId) => {
+      if (notificationId === 'shortcut-config-issue') {
+        console.log('背景脚本: 用户点击了快捷键配置通知');
+
+        try {
+          // 检测浏览器类型并打开对应的快捷键设置页面
+          const isFirefox = navigator.userAgent.includes('Firefox');
+          const shortcutSettingsUrl = isFirefox ? 'about:addons' : 'chrome://extensions/shortcuts';
+
+          await browser.tabs.create({ url: shortcutSettingsUrl });
+
+          // 清除通知
+          await browser.notifications.clear(notificationId);
+
+          // 如果是Firefox，显示额外提示
+          if (isFirefox) {
+            setTimeout(async () => {
+              await browser.notifications.create('firefox-shortcut-tip', {
+                type: 'basic',
+                iconUrl: '/icon/32.png',
+                title: 'Quick Prompt - 设置提示',
+                message: '在扩展页面点击右上角齿轮图标，选择"管理扩展快捷键"'
+              });
+            }, 1000);
+          }
+        } catch (error) {
+          console.error('背景脚本: 打开快捷键设置页面失败:', error);
+        }
+      }
+
+      // 清除Firefox的提示通知
+      if (notificationId === 'firefox-shortcut-tip') {
+        setTimeout(async () => {
+          await browser.notifications.clear(notificationId);
+        }, 5000);
+      }
+    });
+  }
+
   // 也监听扩展安装/更新事件
   browser.runtime.onInstalled.addListener(async (details) => {
     if (details.reason === 'install') {
@@ -421,6 +525,11 @@ export default defineBackground(() => {
       await initializeDefaultData();
       await browser.storage.sync.set({ notionSyncToNotionEnabled: false });
       console.log('背景脚本: 已初始化 Notion 同步设置 (本地->Notion 为关闭状态)');
+
+      // 安装后延迟一下再检测快捷键，确保扩展完全加载
+      setTimeout(async () => {
+        await checkShortcutConfiguration();
+      }, 2000);
     }
   });
 
@@ -431,25 +540,25 @@ export default defineBackground(() => {
       const syncSettings = await browser.storage.sync.get('notionSyncToNotionEnabled');
       if (syncSettings.notionSyncToNotionEnabled) {
         console.log('Local data changed, Notion sync (Local -> Notion) is enabled. Triggering sync...');
-        
+
         // 创建唯一的同步ID用于自动同步
         const syncId = `auto_${Date.now()}`;
-        
+
         // 存储同步状态为进行中
-        await browser.storage.local.set({ 
-          'notion_sync_status': { 
+        await browser.storage.local.set({
+          'notion_sync_status': {
             id: syncId,
             status: 'in_progress',
             message: '正在自动同步到Notion，请稍候...',
-            startTime: Date.now() 
-          } 
+            startTime: Date.now()
+          }
         });
-        
+
         try {
           // 执行同步并获取结果
           const result = await syncLocalDataToNotion(true);
           console.log(`[AUTO_SYNC_COMPLETE] Auto sync to Notion ${result.success ? 'successful' : 'failed'}`, result.errors || '');
-          
+
           // 保存同步结果
           if (result.success && !result.errors?.length) {
             // 完全成功
@@ -489,7 +598,7 @@ export default defineBackground(() => {
           }
         } catch (error: any) {
           console.error('[AUTO_SYNC_ERROR] Error during automatic sync to Notion:', error);
-          
+
           // 存储错误信息
           await browser.storage.local.set({
             'notion_sync_status': {
@@ -529,9 +638,9 @@ export default defineBackground(() => {
         if (tabs.length > 0 && tabs[0].id) {
           const response = await browser.tabs.sendMessage(tabs[0].id, { action: 'getSelectedText' });
           if (response && response.text) {
-             const optionsUrl = browser.runtime.getURL('/options.html');
-             const urlWithParams = `${optionsUrl}?action=new&content=${encodeURIComponent(response.text)}`;
-             await browser.tabs.create({ url: urlWithParams });
+            const optionsUrl = browser.runtime.getURL('/options.html');
+            const urlWithParams = `${optionsUrl}?action=new&content=${encodeURIComponent(response.text)}`;
+            await browser.tabs.create({ url: urlWithParams });
           } else {
             console.log("快捷键保存：未从内容脚本获取到文本，或内容脚本未响应。")
           }
@@ -569,7 +678,7 @@ export default defineBackground(() => {
         return { success: true };
       } catch (error) {
         console.error('打开选项页失败:', error);
-        browser.runtime.openOptionsPage(); 
+        browser.runtime.openOptionsPage();
         return { success: true, fallback: true };
       }
     }
@@ -589,23 +698,23 @@ export default defineBackground(() => {
     // +++ Consolidated Google Auth Message Handlers +++
     if (message.action === 'authenticateWithGoogle' || message.action === 'googleLogin') { // Handles both old and new action name for login
       console.log(`[MSG_AUTH V3] Processing '${message.action}' for interactive: ${message.interactive}`);
-      
+
       // 定义认证状态键，用于存储认证进度
       const AUTH_STATUS_KEY = 'google_auth_status';
-      
+
       // 更新认证状态
       const updateAuthStatus = async (status: string) => {
-        await browser.storage.local.set({ 
+        await browser.storage.local.set({
           [AUTH_STATUS_KEY]: {
             status: status,
             timestamp: Date.now()
           }
         });
       };
-      
+
       // 标记认证开始
       await updateAuthStatus('in_progress');
-      
+
       // 为了解决异步操作和UI更新之间的时序问题
       // 定义响应类型
       interface AuthResponse {
@@ -616,21 +725,21 @@ export default defineBackground(() => {
         };
         error?: string;
       }
-      
+
       let authPromise = new Promise<AuthResponse>(async (resolve) => {
         try {
           // 改进认证逻辑，先尝试使用交互式登录，如果失败则检查已存在的会话
           let authResult = null;
           const isInteractive = message.interactive === true;
-          
+
           console.log('[MSG_AUTH V3] Starting authentication process...');
-          
+
           // 首先尝试进行认证
           authResult = await authenticateWithGoogle(isInteractive);
-          
+
           // 确保我们有足够的时间等待认证完成
           console.log('[MSG_AUTH V3] Initial auth attempt completed, checking result...');
-          
+
           // 如果交互式登录失败但Chrome中已登录账号，尝试获取已有会话信息
           if (!authResult && isInteractive) {
             console.log('[MSG_AUTH V3] Interactive auth failed, checking for existing session...');
@@ -639,23 +748,23 @@ export default defineBackground(() => {
             const storedInfo = await browser.storage.local.get(USER_INFO_STORAGE_KEY);
             if (storedInfo && storedInfo[USER_INFO_STORAGE_KEY]) {
               console.log('[MSG_AUTH V3] Found existing user info in storage');
-              authResult = { 
+              authResult = {
                 token: 'session-token', // 使用占位符token
-                userInfo: storedInfo[USER_INFO_STORAGE_KEY] 
+                userInfo: storedInfo[USER_INFO_STORAGE_KEY]
               };
             }
           }
-          
+
           if (authResult && authResult.userInfo) {
             console.log('[MSG_AUTH V3] Authentication successful. User:', authResult.userInfo.email);
             // Core authenticateWithGoogle now handles storing to USER_INFO_STORAGE_KEY
             await updateAuthStatus('success');
-            resolve({ 
-              success: true, 
-              data: { 
-                token: authResult.token, 
-                userInfo: authResult.userInfo 
-              } 
+            resolve({
+              success: true,
+              data: {
+                token: authResult.token,
+                userInfo: authResult.userInfo
+              }
             });
           } else {
             console.warn('[MSG_AUTH V3] Authentication failed or no user info.');
@@ -668,44 +777,44 @@ export default defineBackground(() => {
           resolve({ success: false, error: error.message || 'An unknown error occurred during authentication.' });
         }
       });
-      
+
       // 使用更可靠的异步响应模式
       authPromise.then(response => {
         console.log('[MSG_AUTH V3] Sending final auth response:', response.success);
         sendResponse(response);
       });
-      
+
       return true; // Indicate asynchronous response
     }
 
     if (message.action === 'logoutGoogle' || message.action === 'googleLogout') { // Handles both old and new action name for logout
       console.log(`[MSG_LOGOUT V3] Processing '${message.action}'`);
-      
+
       // 定义响应类型
       interface LogoutResponse {
         success: boolean;
         message?: string;
         error?: string;
       }
-      
+
       // 使用Promise确保异步处理完成后再响应
       const logoutPromise = new Promise<LogoutResponse>(async (resolve) => {
-      try {
-        await logoutGoogle(); // Core logoutGoogle handles token removal and USER_INFO_STORAGE_KEY
-        console.log('[MSG_LOGOUT V3] Logout process completed by core function.');
+        try {
+          await logoutGoogle(); // Core logoutGoogle handles token removal and USER_INFO_STORAGE_KEY
+          console.log('[MSG_LOGOUT V3] Logout process completed by core function.');
           resolve({ success: true, message: 'Logout successful.' });
-      } catch (e: any) {
-        console.error('[MSG_LOGOUT V3] Error during logoutGoogle message processing:', e);
+        } catch (e: any) {
+          console.error('[MSG_LOGOUT V3] Error during logoutGoogle message processing:', e);
           resolve({ success: false, error: e.message || 'An unknown error occurred during logout.' });
-      }
+        }
       });
-      
+
       // 使用更可靠的异步响应模式
       logoutPromise.then(response => {
         console.log('[MSG_LOGOUT V3] Sending final logout response:', response.success);
         sendResponse(response);
       });
-      
+
       return true; // Indicate asynchronous response
     }
 
@@ -729,33 +838,33 @@ export default defineBackground(() => {
     // Handle Notion sync messages if they are still relevant and managed here
     if (message.action === 'syncFromNotion' || message.action === 'syncFromNotionToLocal') {
       console.log(`Received ${message.action} message in background`);
-      
+
       const syncId = Date.now().toString();
 
       // 告知前端同步已开始 - 移动到 await 之前
-      sendResponse({ 
-        success: true, 
+      sendResponse({
+        success: true,
         syncInProgress: true,
         syncId: syncId,
         message: '从Notion同步已开始，正在处理...'
       });
-      
+
       // 异步处理同步操作 和 存储初始状态
       (async function() {
         try {
           // 存储同步状态，标记为进行中 - 现在在异步块内
-          await browser.storage.local.set({ 
-            'notion_from_sync_status': { 
+          await browser.storage.local.set({
+            'notion_from_sync_status': {
               id: syncId,
-              status: 'in_progress', 
-              startTime: Date.now() 
-            } 
+              status: 'in_progress',
+              startTime: Date.now()
+            }
           });
 
           console.log('[SYNC_FROM_NOTION_START] Beginning sync from Notion process');
           const success = await syncFromNotionToLocal(message.forceSync || false, message.mode || 'replace');
           console.log(`[SYNC_FROM_NOTION_COMPLETE] Sync from Notion ${success ? 'successful' : 'failed'}`);
-          
+
           // 存储同步结果
           await browser.storage.local.set({
             'notion_from_sync_status': {
@@ -768,7 +877,7 @@ export default defineBackground(() => {
           });
         } catch (error: any) {
           console.error('[SYNC_FROM_NOTION_ERROR] Error syncing from Notion:', error);
-          
+
           // 存储错误信息
           await browser.storage.local.set({
             'notion_from_sync_status': {
@@ -781,38 +890,38 @@ export default defineBackground(() => {
           });
         }
       })();
-      
+
       return true;
     }
 
     if (message.action === 'syncToNotion' || message.action === 'syncLocalToNotion') {
       console.log(`Received ${message.action} message in background`);
-      
+
       const syncId = Date.now().toString();
-      
+
       // 告知前端同步已开始 - 移动到 await 之前
-      sendResponse({ 
-        success: true, 
+      sendResponse({
+        success: true,
         syncInProgress: true,
         syncId: syncId,
         message: '同步已开始，正在处理...'
       });
-      
+
       // 异步处理同步操作 和 存储初始状态
       (async function() {
         try {
           // 存储同步状态，标记为进行中 - 现在在异步块内
-          await browser.storage.local.set({ 
-            'notion_sync_status': { 
+          await browser.storage.local.set({
+            'notion_sync_status': {
               id: syncId,
-              status: 'in_progress', 
-              startTime: Date.now() 
-            } 
+              status: 'in_progress',
+              startTime: Date.now()
+            }
           });
           console.log('[SYNC_START] Beginning sync to Notion process');
           const result = await syncLocalDataToNotion(message.forceSync || false);
           console.log(`[SYNC_COMPLETE] Sync to Notion ${result.success ? 'successful' : 'failed'}`, result.errors || '');
-          
+
           // 存储同步结果
           if (result.success && !result.errors?.length) {
             // 完全成功
@@ -839,20 +948,20 @@ export default defineBackground(() => {
             });
           } else {
             // 完全失败
-          await browser.storage.local.set({
-            'notion_sync_status': {
-              id: syncId,
+            await browser.storage.local.set({
+              'notion_sync_status': {
+                id: syncId,
                 status: 'error',
                 success: false,
                 message: '同步失败',
                 error: result.errors ? result.errors.join('\n') : '未知错误',
-              completedTime: Date.now()
-            }
-          });
+                completedTime: Date.now()
+              }
+            });
           }
         } catch (error: any) {
           console.error('[SYNC_ERROR] Error syncing to Notion:', error);
-          
+
           // 存储错误信息
           await browser.storage.local.set({
             'notion_sync_status': {
@@ -866,7 +975,7 @@ export default defineBackground(() => {
           });
         }
       })();
-      
+
       return true;
     }
   });
