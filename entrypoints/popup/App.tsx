@@ -26,7 +26,7 @@ function App() {
           // 只计算启用的提示词数量
           const enabledPrompts = allPrompts.filter((prompt: any) => prompt.enabled !== false)
           setPromptCount(enabledPrompts.length)
-          
+
           console.log(`弹出窗口：共有 ${allPrompts.length} 个提示词，其中 ${enabledPrompts.length} 个已启用`)
         } else {
           setPromptCount(0)
@@ -56,6 +56,10 @@ function App() {
         setShortcutSettingsUrl('chrome://extensions/shortcuts')
       }
       
+      // 检查用户是否已选择不再提醒
+      const reminderSettings = await browser.storage.local.get('shortcut_reminder_dismissed')
+      const isReminderDismissed = reminderSettings.shortcut_reminder_dismissed === true
+      
       // 从浏览器API获取真实配置的快捷键
       const commands = await browser.commands.getAll()
       const promptCommand = commands.find(cmd => cmd.name === 'open-prompt-selector')
@@ -65,9 +69,9 @@ function App() {
         setShortcutKey(promptCommand.shortcut)
         setShowShortcutHelp(false)
       } else {
-        // 如果未找到快捷键配置或未设置，提示用户进入快捷键设置页面
+        // 如果未找到快捷键配置或未设置，且用户未选择不再提醒，则提示用户进入快捷键设置页面
         setShortcutKey('')
-        setShowShortcutHelp(true)
+        setShowShortcutHelp(!isReminderDismissed)
       }
       
       if (saveCommand && saveCommand.shortcut) {
@@ -78,16 +82,27 @@ function App() {
       }
     } catch (err) {
       console.error('获取快捷键设置失败', err)
-      // 出错时提示用户进入快捷键设置页面
-      const isFirefox = navigator.userAgent.includes('Firefox')
-      if (isFirefox) {
-        setShortcutSettingsUrl('about:addons')
-      } else {
-        setShortcutSettingsUrl('chrome://extensions/shortcuts')
+      
+      // 检查用户是否已选择不再提醒
+      try {
+        const reminderSettings = await browser.storage.local.get('shortcut_reminder_dismissed')
+        const isReminderDismissed = reminderSettings.shortcut_reminder_dismissed === true
+        
+        // 出错时提示用户进入快捷键设置页面（如果用户未选择不再提醒）
+        const isFirefox = navigator.userAgent.includes('Firefox')
+        if (isFirefox) {
+          setShortcutSettingsUrl('about:addons')
+        } else {
+          setShortcutSettingsUrl('chrome://extensions/shortcuts')
+        }
+        setShortcutKey('')
+        setSaveShortcutKey('')
+        setShowShortcutHelp(!isReminderDismissed)
+      } catch (storageErr) {
+        console.error('检查提醒设置失败', storageErr)
+        // 如果连存储都访问不了，还是显示提醒
+        setShowShortcutHelp(true)
       }
-      setShortcutKey('')
-      setSaveShortcutKey('')
-      setShowShortcutHelp(true)
     }
   }
 
@@ -152,6 +167,20 @@ function App() {
     }
   }
 
+  // 不再提醒快捷键设置问题
+  const dismissShortcutReminder = async () => {
+    try {
+      await browser.storage.local.set({
+        'shortcut_reminder_dismissed': true,
+        'shortcut_reminder_dismissed_at': Date.now()
+      })
+      setShowShortcutHelp(false)
+      console.log('弹出窗口: 已设置不再提醒快捷键设置问题')
+    } catch (error) {
+      console.error('弹出窗口: 设置不再提醒时出错:', error)
+    }
+  }
+
   return (
     <div className='p-4 w-full max-w-[350px] min-w-[300px] box-border bg-white text-gray-900 dark:bg-gray-900 dark:text-white transition-colors duration-200'>
       {/* 标题区域 */}
@@ -210,7 +239,7 @@ function App() {
         {/* 快捷方式提示区域 */}
         <div className='mt-3 rounded-lg bg-gray-50 dark:bg-gray-800 p-3 shadow-sm'>
           <h3 className='text-xs font-medium text-gray-600 dark:text-gray-300 mb-2'>使用方式</h3>
-          
+
           <div className='flex items-start mb-2'>
             <div className='flex-shrink-0 text-blue-500 dark:text-blue-400 mr-2 mt-1'>
               <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -218,13 +247,13 @@ function App() {
               </svg>
             </div>
             <span className='text-xs text-gray-600 dark:text-gray-300 leading-relaxed'>
-              快捷输入: 任意输入框中输入 <kbd className='inline-flex items-center justify-center px-1.5 py-0.5 my-0.5 text-xs font-semibold bg-white dark:bg-gray-700 rounded border border-gray-300 dark:border-gray-600 shadow-sm text-blue-600 dark:text-blue-400 min-h-[20px]'>/p</kbd> 
+              快捷输入: 任意输入框中输入 <kbd className='inline-flex items-center justify-center px-1.5 py-0.5 my-0.5 text-xs font-semibold bg-white dark:bg-gray-700 rounded border border-gray-300 dark:border-gray-600 shadow-sm text-blue-600 dark:text-blue-400 min-h-[20px]'>/p</kbd>
               {shortcutKey && (
                 <> 或按下 <kbd className='inline-flex items-center justify-center ml-1 px-1.5 py-0.5 my-0.5 text-xs font-semibold bg-white dark:bg-gray-700 rounded border border-gray-300 dark:border-gray-600 shadow-sm text-blue-600 dark:text-blue-400 min-h-[20px]'>{shortcutKey}</kbd></>
               )}
             </span>
           </div>
-          
+
           {saveShortcutKey && (
             <div className='flex items-start mb-2'>
               <div className='flex-shrink-0 text-blue-500 dark:text-blue-400 mr-2 mt-1'>
@@ -266,6 +295,13 @@ function App() {
                     className='text-xs bg-yellow-100 hover:bg-yellow-200 dark:bg-yellow-800 dark:hover:bg-yellow-700 text-yellow-800 dark:text-yellow-200 px-2 py-1 rounded-md transition-colors duration-200'
                   >
                     前往设置快捷键
+                  </button>
+                  <button
+                    onClick={dismissShortcutReminder}
+                    className='text-xs text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 px-1 py-1 transition-colors duration-200 ml-2'
+                    title="不再提醒快捷键设置问题"
+                  >
+                    不再提醒
                   </button>
                 </div>
               </div>
