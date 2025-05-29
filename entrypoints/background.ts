@@ -367,21 +367,52 @@ export default defineBackground(() => {
 
   initializeDefaultData();
 
-  // 创建右键菜单项
+  // 创建插件图标右键菜单项
+  browser.contextMenus.create({
+    id: 'open-options',
+    title: '提示词管理',
+    contexts: ['action'], // 插件图标右键菜单
+  })
+
+  browser.contextMenus.create({
+    id: 'category-management',
+    title: '分类管理',
+    contexts: ['action'],
+  })
+
+  // 创建页面内容右键菜单项
   browser.contextMenus.create({
     id: 'save-prompt',
     title: '保存该提示词',
     contexts: ['selection'],
   });
 
+
   // 处理右键菜单点击事件
   browser.contextMenus.onClicked.addListener(async (info, tab) => {
     if (info.menuItemId === 'save-prompt' && info.selectionText) {
-      const optionsUrl = browser.runtime.getURL('/options.html');
-      const urlWithParams = `${optionsUrl}?action=new&content=${encodeURIComponent(info.selectionText)}`;
-      await browser.tabs.create({ url: urlWithParams });
+      console.log('背景脚本: 右键菜单被点击，选中文本:', info.selectionText)
+
+      // 获取选项页URL
+      const optionsUrl = browser.runtime.getURL('/options.html')
+
+      // 添加查询参数，传递选中的文本
+      const urlWithParams = `${optionsUrl}?action=new&content=${encodeURIComponent(
+        info.selectionText
+      )}`
+
+      // 在新标签页打开选项页
+      await browser.tabs.create({ url: urlWithParams })
+    } else if (info.menuItemId === 'open-options') {
+      // 打开选项页
+      const optionsUrl = browser.runtime.getURL('/options.html')
+      await browser.tabs.create({ url: optionsUrl })
+    } else if (info.menuItemId === 'category-management') {
+      // 打开分类管理页
+      const optionsUrl = browser.runtime.getURL('/options.html#/categories')
+      await browser.tabs.create({ url: optionsUrl })
     }
-  });
+  })
 
   // 也监听扩展安装/更新事件
   browser.runtime.onInstalled.addListener(async (details) => {
