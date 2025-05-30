@@ -491,225 +491,207 @@ const PromptManager = () => {
 
   if (isLoading) {
     return (
-      <div className="flex justify-center items-center min-h-[60vh]">
-        <div className="text-center">
-          <svg
-            className="animate-spin h-10 w-10 text-blue-600 mx-auto mb-4"
-            xmlns="http://www.w3.org/2000/svg"
-            fill="none"
-            viewBox="0 0 24 24"
-          >
-            <circle
-              className="opacity-25"
-              cx="12"
-              cy="12"
-              r="10"
-              stroke="currentColor"
-              strokeWidth="4"
-            ></circle>
-            <path
-              className="opacity-75"
-              fill="currentColor"
-              d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-            ></path>
-          </svg>
-          <p className="text-gray-600 font-medium">加载中...</p>
+      <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50">
+        <div className="flex justify-center items-center min-h-screen">
+          <div className="text-center space-y-4">
+            <div className="relative">
+              <div className="w-16 h-16 mx-auto">
+                <div className="absolute inset-0 border-4 border-blue-200 rounded-full"></div>
+                <div className="absolute inset-0 border-4 border-blue-600 rounded-full border-t-transparent animate-spin"></div>
+              </div>
+            </div>
+            <div className="space-y-2">
+              <h3 className="text-lg font-semibold text-gray-700">正在加载</h3>
+              <p className="text-sm text-gray-500">请稍候，正在准备您的提示词...</p>
+            </div>
+          </div>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 py-8">
-      <div className="max-w-6xl mx-auto px-4">
-        {/* 页面标题 */}
-        <div className="mb-8 text-center sm:text-left">
-          <div className="flex items-center justify-between">
-            <div>
-              <h1 className="text-3xl font-bold text-gray-800 inline-flex items-center">
-                提示词管理
-              </h1>
-              <p className="text-gray-500 mt-1">
-                创建并管理您的自定义提示词，随时使用
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <div className="mb-10">
+          <div className="flex flex-col lg:flex-row lg:items-end lg:justify-between gap-6">
+            <div className="space-y-2">
+              <div className="flex items-center space-x-3">
+                <div className="w-10 h-10 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-xl flex items-center justify-center shadow-lg">
+                  <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8 9l3 3-3 3m5 0h3" />
+                  </svg>
+                </div>
+                <h1 className="text-4xl font-bold bg-gradient-to-r from-gray-900 via-blue-900 to-indigo-900 bg-clip-text text-transparent">
+                  提示词管理
+                </h1>
+              </div>
+              <p className="text-lg text-gray-600 max-w-2xl">
+                创建、管理和组织您的自定义提示词，提升工作效率
               </p>
+              
+              {/* 统计卡片 */}
+              <div className="flex flex-wrap gap-4 mt-6">
+                <div className="bg-white/70 backdrop-blur-sm border border-white/20 rounded-2xl px-4 py-3 shadow-sm">
+                  <div className="flex items-center space-x-2">
+                    <div className="w-2 h-2 bg-green-500 rounded-full"></div>
+                    <span className="text-sm font-medium text-gray-700">总计 {prompts.length} 个提示词</span>
+                  </div>
+                </div>
+                <div className="bg-white/70 backdrop-blur-sm border border-white/20 rounded-2xl px-4 py-3 shadow-sm">
+                  <div className="flex items-center space-x-2">
+                    <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
+                    <span className="text-sm font-medium text-gray-700">启用 {prompts.filter(p => p.enabled).length} 个</span>
+                  </div>
+                </div>
+                {selectedCategoryId && (
+                  <div className="bg-white/70 backdrop-blur-sm border border-white/20 rounded-2xl px-4 py-3 shadow-sm">
+                    <div className="flex items-center space-x-2">
+                      <div className="w-2 h-2 bg-purple-500 rounded-full"></div>
+                      <span className="text-sm font-medium text-gray-700">
+                        当前分类 {filteredPrompts.length} 个
+                      </span>
+                    </div>
+                  </div>
+                )}
+              </div>
             </div>
           </div>
         </div>
 
+        {/* 错误提示 */}
         {error && (
-          <div className="bg-red-100 border-l-4 border-red-500 text-red-700 p-4 rounded-md mb-6 flex items-start">
-            <svg
-              className="w-5 h-5 mr-2 mt-0.5 flex-shrink-0"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth="2"
-                d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"
-              />
-            </svg>
-            <span>{error}</span>
+          <div className="mb-6 bg-red-50 border border-red-200 rounded-2xl p-4 shadow-sm">
+            <div className="flex items-start space-x-3">
+              <div className="flex-shrink-0">
+                <div className="w-10 h-10 bg-red-100 rounded-full flex items-center justify-center">
+                  <svg className="w-5 h-5 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                  </svg>
+                </div>
+              </div>
+              <div className="flex-1">
+                <h3 className="text-sm font-medium text-red-800">操作失败</h3>
+                <p className="text-sm text-red-700 mt-1">{error}</p>
+              </div>
+              <button
+                onClick={() => setError(null)}
+                className="flex-shrink-0 text-red-400 hover:text-red-600 transition-colors"
+              >
+                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
+                </svg>
+              </button>
+            </div>
           </div>
         )}
 
-        {/* 搜索栏和按钮组 */}
-        <div className="flex flex-col xl:flex-row gap-4 xl:gap-6 mb-6 xl:items-center">
-          {/* 搜索和分类筛选 */}
-          <div className="flex flex-col sm:flex-row gap-3 xl:flex-1">
-            <div className="flex-1 sm:flex-initial sm:w-80 lg:w-96">
-              <SearchBar value={searchTerm} onChange={setSearchTerm} />
-            </div>
-            
-            {/* 分类筛选下拉框 */}
-            <div className="sm:w-48 lg:w-52 xl:w-44 relative flex-shrink-0">
-              <div className="relative">
-                <svg
-                  className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400 pointer-events-none"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth="2"
-                    d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"
+        {/* 操作栏 */}
+        <div className="mb-8">
+          <div className="bg-white/80 backdrop-blur-sm border border-white/20 rounded-2xl p-4 shadow-xl">
+            <div className="flex flex-col xl:flex-row gap-4 xl:gap-6 items-center">
+              {/* 搜索和筛选区域 */}
+              <div className="flex-1 flex flex-col sm:flex-row gap-3 w-full xl:w-auto">
+                <div className="flex-1 min-w-0">
+                  <div className="relative">
+                    <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                      <svg className="h-5 w-5 text-black" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                      </svg>
+                    </div>
+                    <input
+                      type="text"
+                      value={searchTerm}
+                      onChange={(e) => setSearchTerm(e.target.value)}
+                      placeholder="搜索提示词..."
+                      className="block xl:w-62 w-full pl-10 pr-3 py-3 border border-gray-200 rounded-xl bg-white/50 backdrop-blur-sm text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
+                    />
+                  </div>
+                </div>
+                
+                <div className="w-full sm:w-auto xl:w-32">
+                  <div className="relative">
+                    <select
+                      value={selectedCategoryId || ""}
+                      onChange={(e) => setSelectedCategoryId(e.target.value || null)}
+                      className="block w-full pl-4 pr-8 py-3 bg-white/50 backdrop-blur-sm border border-gray-200 rounded-xl text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 appearance-none cursor-pointer"
+                    >
+                      <option value="">所有分类</option>
+                      {categories.map((category) => (
+                        <option key={category.id} value={category.id}>
+                          {category.name}
+                        </option>
+                      ))}
+                    </select>
+                    <div className="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
+                      <svg className="h-5 w-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7" />
+                      </svg>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              
+              <div className="w-full flex justify-end">
+                <div className="flex flex-wrap gap-2 sm:gap-3">
+                  {/* 导入导出按钮组 */}
+                  <div className="flex gap-2 sm:gap-3">
+                    <button
+                      onClick={exportPrompts}
+                      disabled={prompts.length === 0}
+                      className="inline-flex items-center px-4 py-1 bg-gray-600 hover:bg-gray-700 disabled:bg-gray-300 text-white text-sm font-medium rounded-xl transition-all duration-200 hover:shadow-lg hover:-translate-y-0.5 disabled:transform-none disabled:shadow-none"
+                      title={prompts.length === 0 ? "没有提示词可导出" : "导出所有提示词"}
+                    >
+                      <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" />
+                      </svg>
+                      导出
+                    </button>
+                    
+                    <button
+                      onClick={triggerFileInput}
+                      className="inline-flex items-center px-4 py-2.5 bg-purple-600 hover:bg-purple-700 text-white text-sm font-medium rounded-xl transition-all duration-200 hover:shadow-lg hover:-translate-y-0.5"
+                    >
+                      <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+                      </svg>
+                      本地导入
+                    </button>
+                    
+                    <button
+                      onClick={openRemoteImportModal}
+                      className="inline-flex items-center px-4 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-medium rounded-xl transition-all duration-200 hover:shadow-lg hover:-translate-y-0.5"
+                      title="从URL导入提示词"
+                    >
+                      <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1" />
+                      </svg>
+                      远程导入
+                    </button>
+                  </div>
+                  
+                  <div className="w-px h-8 bg-gray-300 self-center"></div>
+                  
+                  <button
+                    onClick={openAddModal}
+                    className="inline-flex items-center px-6 py-2.5 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white text-sm font-medium rounded-xl transition-all duration-200 hover:shadow-lg hover:-translate-y-0.5 shadow-blue-500/25"
+                  >
+                    <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+                    </svg>
+                    新增提示词
+                  </button>
+
+                  <input
+                    type="file"
+                    ref={fileInputRef}
+                    onChange={importPrompts}
+                    accept=".json"
+                    className="hidden"
                   />
-                </svg>
-                <select
-                  value={selectedCategoryId || ""}
-                  onChange={(e) => setSelectedCategoryId(e.target.value || null)}
-                  className="w-full pl-10 pr-10 py-3 bg-white border border-gray-300 rounded-lg shadow-sm text-gray-700 font-medium focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 hover:border-gray-400 transition-all duration-200 appearance-none cursor-pointer"
-                >
-                  <option value="" className="text-gray-600">所有分类</option>
-                  {categories.map((category) => (
-                    <option key={category.id} value={category.id} className="text-gray-700">
-                      {category.name}
-                    </option>
-                  ))}
-                </select>
-                <svg
-                  className="absolute right-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400 pointer-events-none"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth="2"
-                    d="M19 9l-7 7-7-7"
-                  />
-                </svg>
+                </div>
               </div>
             </div>
-          </div>
-          
-          {/* 操作按钮组 */}
-          <div className="flex flex-wrap gap-2 sm:flex-nowrap xl:flex-shrink-0">
-            {/* 导入导出按钮组 */}
-            <div className="flex gap-2">
-              <button
-                onClick={exportPrompts}
-                className="flex-shrink-0 bg-gray-600 hover:bg-gray-700 text-white py-2 px-3 lg:px-4 rounded-lg transition-colors duration-200 flex items-center justify-center"
-                disabled={prompts.length === 0}
-                title={
-                  prompts.length === 0 ? "没有提示词可导出" : "导出所有提示词"
-                }
-              >
-                <svg
-                  className="w-5 h-5 mr-1"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth="2"
-                    d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"
-                  />
-                </svg>
-                <span className="hidden sm:inline">导出</span>
-              </button>
-              
-              {/* 本地导入按钮 */}
-              <button
-                onClick={triggerFileInput}
-                className="flex-shrink-0 bg-purple-600 hover:bg-purple-700 text-white py-2 px-3 lg:px-4 rounded-lg transition-colors duration-200 flex items-center justify-center"
-              >
-                <svg
-                  className="w-5 h-5 mr-1"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth="2"
-                    d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"
-                  />
-                </svg>
-                <span className="hidden sm:inline">本地导入</span>
-              </button>
-              
-              {/* 远程导入按钮 */}
-              <button
-                onClick={openRemoteImportModal}
-                className="flex-shrink-0 bg-indigo-600 hover:bg-indigo-700 text-white py-2 px-3 lg:px-4 rounded-lg transition-colors duration-200 flex items-center justify-center"
-                title="从URL导入提示词"
-              >
-                <svg
-                  className="w-5 h-5 mr-1"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth="2"
-                    d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1"
-                  />
-                </svg>
-                <span className="hidden sm:inline">远程导入</span>
-              </button>
-            </div>
-            
-            <div className="flex-shrink-0 w-px h-8 bg-gray-300 mx-1 self-center hidden lg:block"></div>
-            
-            <button
-              onClick={openAddModal}
-              className="flex-shrink-0 bg-blue-600 hover:bg-blue-700 text-white py-2 px-4 rounded-lg transition-colors duration-200 flex items-center justify-center"
-            >
-              <svg
-                className="w-5 h-5 mr-1"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth="2"
-                  d="M12 6v6m0 0v6m0-6h6m-6 0H6"
-                />
-              </svg>
-              新增
-            </button>
-
-            {/* 隐藏的文件输入元素 */}
-            <input
-              type="file"
-              ref={fileInputRef}
-              onChange={importPrompts}
-              accept=".json"
-              className="hidden"
-            />
           </div>
         </div>
 
@@ -726,47 +708,66 @@ const PromptManager = () => {
 
         {/* 无结果提示 */}
         {filteredPrompts.length === 0 && (
-          <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6 text-center">
-            {searchTerm || selectedCategoryId ? (
-              <div>
-                <p className="text-gray-600 mb-2">
-                  {searchTerm && selectedCategoryId 
-                    ? `在"${categories.find(c => c.id === selectedCategoryId)?.name}"分类中没有找到匹配"${searchTerm}"的 Prompt`
-                    : searchTerm 
-                    ? `没有找到匹配"${searchTerm}"的 Prompt`
-                    : `"${categories.find(c => c.id === selectedCategoryId)?.name}"分类中暂无 Prompt`
-                  }
-                </p>
-                <div className="space-x-2">
-                  {searchTerm && (
-                    <button
-                      onClick={() => setSearchTerm("")}
-                      className="text-blue-600 hover:text-blue-800 font-medium"
-                    >
-                      清除搜索
-                    </button>
-                  )}
-                  {selectedCategoryId && (
-                    <button
-                      onClick={() => setSelectedCategoryId(null)}
-                      className="text-blue-600 hover:text-blue-800 font-medium"
-                    >
-                      查看所有分类
-                    </button>
-                  )}
+          <div className="text-center py-16">
+            <div className="max-w-md mx-auto">
+              <div className="w-24 h-24 mx-auto mb-6 bg-gradient-to-br from-gray-100 to-gray-200 rounded-full flex items-center justify-center">
+                <svg className="w-12 h-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                </svg>
+              </div>
+              
+              {searchTerm || selectedCategoryId ? (
+                <div className="space-y-4">
+                  <h3 className="text-xl font-semibold text-gray-900">未找到匹配的提示词</h3>
+                  <p className="text-gray-600">
+                    {searchTerm && selectedCategoryId 
+                      ? `在"${categories.find(c => c.id === selectedCategoryId)?.name}"分类中没有找到匹配"${searchTerm}"的提示词`
+                      : searchTerm 
+                      ? `没有找到匹配"${searchTerm}"的提示词`
+                      : `"${categories.find(c => c.id === selectedCategoryId)?.name}"分类中暂无提示词`
+                    }
+                  </p>
+                  <div className="flex flex-wrap justify-center gap-3">
+                    {searchTerm && (
+                      <button
+                        onClick={() => setSearchTerm("")}
+                        className="inline-flex items-center px-4 py-2 bg-blue-50 text-blue-700 rounded-lg hover:bg-blue-100 transition-colors font-medium"
+                      >
+                        <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
+                        </svg>
+                        清除搜索
+                      </button>
+                    )}
+                    {selectedCategoryId && (
+                      <button
+                        onClick={() => setSelectedCategoryId(null)}
+                        className="inline-flex items-center px-4 py-2 bg-purple-50 text-purple-700 rounded-lg hover:bg-purple-100 transition-colors font-medium"
+                      >
+                        <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
+                        </svg>
+                        查看所有分类
+                      </button>
+                    )}
+                  </div>
                 </div>
-              </div>
-            ) : (
-              <div>
-                <p className="text-gray-600 mb-2">您还没有创建任何 Prompt</p>
-                <button
-                  onClick={openAddModal}
-                  className="text-blue-600 hover:text-blue-800 font-medium"
-                >
-                  创建第一个 Prompt
-                </button>
-              </div>
-            )}
+              ) : (
+                <div className="space-y-4">
+                  <h3 className="text-xl font-semibold text-gray-900">还没有提示词</h3>
+                  <p className="text-gray-600">创建您的第一个提示词，开始提升工作效率</p>
+                  <button
+                    onClick={openAddModal}
+                    className="inline-flex items-center px-6 py-3 bg-gradient-to-r from-blue-600 to-indigo-600 text-white rounded-xl hover:from-blue-700 hover:to-indigo-700 transition-all duration-200 hover:shadow-lg hover:-translate-y-0.5 font-medium"
+                  >
+                    <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+                    </svg>
+                    创建第一个提示词
+                  </button>
+                </div>
+              )}
+            </div>
           </div>
         )}
 
@@ -774,8 +775,22 @@ const PromptManager = () => {
         <Modal
           isOpen={isModalOpen}
           onClose={closeModal}
-          title={editingPrompt ? "编辑 Prompt" : "新建 Prompt"}
+          title={editingPrompt ? "编辑提示词" : "新建提示词"}
         >
+          <div className="flex items-center space-x-3 mb-4">
+            <div className={`w-8 h-8 rounded-lg flex items-center justify-center shadow-md ${editingPrompt ? 'bg-gradient-to-br from-amber-500 to-orange-500' : 'bg-gradient-to-br from-blue-500 to-indigo-600'}`}>
+              <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                {editingPrompt ? (
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
+                ) : (
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+                )}
+              </svg>
+            </div>
+            <span className="text-xl font-semibold text-gray-900">
+              {editingPrompt ? "编辑提示词" : "新建提示词"}
+            </span>
+          </div>
           <PromptForm
             onSubmit={handlePromptSubmit}
             initialData={
@@ -805,78 +820,102 @@ const PromptManager = () => {
           onClose={closeRemoteImportModal}
           title="从URL导入提示词"
         >
-          <div className="space-y-4">
-            <p className="text-gray-600 text-sm">
-              输入包含有效提示词JSON数据的URL链接，支持以下格式:
-              <br />
-              - 普通URL: https://example.com/prompts.json
-            </p>
-
-            <div className="space-y-2">
-              <label
-                htmlFor="remote-url"
-                className="block text-sm font-medium text-gray-700"
-              >
-                远程URL
-              </label>
-              <input
-                type="text"
-                id="remote-url"
-                value={remoteUrl}
-                onChange={handleRemoteUrlChange}
-                placeholder="输入URL"
-                className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
-              />
+          <div className="flex items-center space-x-3 mb-4">
+            <div className="w-8 h-8 bg-gradient-to-br from-purple-500 to-pink-500 rounded-lg flex items-center justify-center shadow-md">
+              <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1" />
+              </svg>
+            </div>
+            <span className="text-xl font-semibold text-gray-900">
+              从URL导入提示词
+            </span>
+          </div>
+          <div className="space-y-6 pt-2">
+            <div className="bg-blue-50 border border-blue-200 rounded-xl p-4">
+              <div className="flex items-start space-x-3">
+                <div className="flex-shrink-0">
+                  <svg className="w-5 h-5 text-blue-600 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                  </svg>
+                </div>
+                <div className="flex-1">
+                  <h4 className="text-sm font-medium text-blue-900">导入说明</h4>
+                  <p className="text-sm text-blue-800 mt-1">
+                    输入包含有效提示词 JSON 数据的 URL 链接，系统将自动获取并导入数据。
+                  </p>
+                </div>
+              </div>
             </div>
 
-            {error && (
-              <div className="bg-red-50 text-red-600 p-3 rounded-md text-sm">
-                {error}
+            <div className="space-y-4">
+              <div>
+                <label htmlFor="remote-url" className="block text-sm font-semibold text-gray-900 mb-2">
+                  远程 URL
+                </label>
+                <div className="relative">
+                  <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                    <svg className="h-5 w-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1" />
+                    </svg>
+                  </div>
+                  <input
+                    type="text"
+                    id="remote-url"
+                    value={remoteUrl}
+                    onChange={handleRemoteUrlChange}
+                    placeholder="https://example.com/prompts.json"
+                    className="block w-full pl-10 pr-3 py-3 border border-gray-300 rounded-xl bg-white text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
+                  />
+                </div>
               </div>
-            )}
 
-            <div className="flex justify-end space-x-3 pt-2">
+              {error && (
+                <div className="bg-red-50 border border-red-200 rounded-xl p-4">
+                  <div className="flex items-start space-x-3">
+                    <div className="flex-shrink-0">
+                      <svg className="w-5 h-5 text-red-600 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                      </svg>
+                    </div>
+                    <div className="flex-1">
+                      <h4 className="text-sm font-medium text-red-900">导入失败</h4>
+                      <p className="text-sm text-red-800 mt-1">{error}</p>
+                    </div>
+                  </div>
+                </div>
+              )}
+            </div>
+
+            <div className="flex justify-end space-x-3 pt-4 border-t border-gray-200">
               <button
                 onClick={closeRemoteImportModal}
-                className="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+                className="px-6 py-2.5 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-xl hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-all duration-200"
               >
                 取消
               </button>
               <button
                 onClick={importFromRemoteUrl}
                 disabled={isRemoteImporting || !remoteUrl.trim()}
-                className={`px-4 py-2 text-sm font-medium text-white rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 ${
+                className={`px-6 py-2.5 text-sm font-medium text-white rounded-xl focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-all duration-200 ${
                   isRemoteImporting || !remoteUrl.trim()
                     ? "bg-blue-400 cursor-not-allowed"
-                    : "bg-blue-600 hover:bg-blue-700"
+                    : "bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 hover:shadow-lg hover:-translate-y-0.5"
                 }`}
               >
                 {isRemoteImporting ? (
                   <div className="flex items-center">
-                    <svg
-                      className="animate-spin -ml-1 mr-2 h-4 w-4 text-white"
-                      xmlns="http://www.w3.org/2000/svg"
-                      fill="none"
-                      viewBox="0 0 24 24"
-                    >
-                      <circle
-                        className="opacity-25"
-                        cx="12"
-                        cy="12"
-                        r="10"
-                        stroke="currentColor"
-                        strokeWidth="4"
-                      ></circle>
-                      <path
-                        className="opacity-75"
-                        fill="currentColor"
-                        d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-                      ></path>
-                    </svg>
+                    <div className="w-4 h-4 mr-2">
+                      <div className="border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                    </div>
                     正在导入...
                   </div>
                 ) : (
-                  "开始导入"
+                  <div className="flex items-center">
+                    <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+                    </svg>
+                    开始导入
+                  </div>
                 )}
               </button>
             </div>
@@ -892,10 +931,11 @@ const PromptManager = () => {
           }}
           onConfirm={handleConfirmDelete}
           title="确认删除"
-          message="确定要删除这个 Prompt 吗？"
+          message=""
           confirmText="删除"
           cancelText="取消"
-        />
+        >
+        </ConfirmModal>
       </div>
     </div>
   );

@@ -1,14 +1,14 @@
-import React from 'react'
-import Modal from './Modal'
+import React from "react";
+import Modal from "./Modal";
 
 interface ConfirmModalProps {
-  isOpen: boolean
-  onClose: () => void
-  onConfirm: () => void
-  title: string
-  message: string
-  confirmText?: string
-  cancelText?: string
+  isOpen: boolean;
+  onClose: () => void;
+  onConfirm: () => void;
+  title: string;
+  message: string;
+  confirmText?: string;
+  cancelText?: string;
 }
 
 const ConfirmModal: React.FC<ConfirmModalProps> = ({
@@ -17,19 +17,41 @@ const ConfirmModal: React.FC<ConfirmModalProps> = ({
   onConfirm,
   title,
   message,
-  confirmText = '确定',
-  cancelText = '取消'
+  confirmText = "确定",
+  cancelText = "取消",
 }) => {
   const handleConfirm = () => {
-    onConfirm()
-    onClose()
-  }
+    onConfirm();
+    onClose();
+  };
 
   return (
     <Modal isOpen={isOpen} onClose={onClose} title={title}>
       <div className="space-y-4">
-        <p className="text-gray-600">{message}</p>
-        
+        <div className="text-center py-4">
+          <div className="w-16 h-16 bg-gradient-to-br from-red-400 to-rose-500 rounded-full flex items-center justify-center shadow-lg mx-auto mb-5">
+            <svg
+              className="w-8 h-8 text-white"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth="2"
+                d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
+              />
+            </svg>
+          </div>
+          <h3 className="text-xl font-semibold text-gray-900 mb-2">
+            确定删除提示词？
+          </h3>
+          <p className="text-gray-600 text-sm">
+            此操作无法撤销，提示词将被永久删除。
+          </p>
+        </div>
+
         <div className="flex justify-end space-x-3 pt-2">
           <button
             onClick={onClose}
@@ -46,7 +68,7 @@ const ConfirmModal: React.FC<ConfirmModalProps> = ({
         </div>
       </div>
     </Modal>
-  )
-}
+  );
+};
 
-export default ConfirmModal 
+export default ConfirmModal;
