@@ -138,41 +138,37 @@ const CategoryForm = ({ onSubmit, initialData, onCancel, isEditing }: CategoryFo
           </label>
           <div className='flex flex-wrap gap-2'>
             {colorOptions.map((option) => (
-              <label
+              <div
                 key={option.value}
-                className='relative flex items-center cursor-pointer'
+                onClick={() => setColor(option.value)}
+                className={`w-8 h-8 rounded-full cursor-pointer ring-1 ring-gray-300 hover:ring-2 hover:ring-offset-1 hover:ring-gray-400 relative flex items-center justify-center transition-all duration-200`}
+                style={{ backgroundColor: option.value }}
                 title={option.name}
               >
-                <input
-                  type='radio'
-                  name='color'
-                  value={option.value}
-                  checked={color === option.value}
-                  onChange={(e) => setColor(e.target.value)}
-                  className='sr-only'
-                />
                 <div
-                  className={`w-8 h-8 rounded-full border-2 transition-all duration-200 ${
-                    color === option.value 
-                      ? 'border-gray-800 ring-2 ring-gray-200' 
-                      : 'border-gray-300 hover:border-gray-400'
+                  className={`absolute -inset-0.5 rounded-full transition-all duration-200 ease-in-out ${
+                    color === option.value
+                      ? 'ring-2 ring-offset-1 ring-indigo-500 opacity-100'
+                      : 'ring-0 ring-offset-0 ring-transparent opacity-0'
                   }`}
-                  style={{ backgroundColor: option.value }}
-                />
-                {color === option.value && (
-                  <svg
-                    className='absolute inset-0 w-8 h-8 text-white pointer-events-none'
-                    fill='currentColor'
-                    viewBox='0 0 20 20'
-                  >
-                    <path
-                      fillRule='evenodd'
-                      d='M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z'
-                      clipRule='evenodd'
-                    />
-                  </svg>
-                )}
-              </label>
+                ></div>
+
+                <svg
+                  className={`w-5 h-5 text-white pointer-events-none transition-all duration-200 ease-in-out transform ${
+                    color === option.value
+                      ? 'opacity-100 scale-100'
+                      : 'opacity-0 scale-0'
+                  }`}
+                  fill='currentColor'
+                  viewBox='0 0 20 20'
+                >
+                  <path
+                    fillRule='evenodd'
+                    d='M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z'
+                    clipRule='evenodd'
+                  />
+                </svg>
+              </div>
             ))}
           </div>
         </div>
