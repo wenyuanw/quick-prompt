@@ -62,24 +62,25 @@ function App() {
       
       // 从浏览器API获取真实配置的快捷键
       const commands = await browser.commands.getAll()
-      const promptCommand = commands.find(cmd => cmd.name === 'open-prompt-selector')
-      const saveCommand = commands.find(cmd => cmd.name === 'save-selected-prompt')
-      
-      if (promptCommand && promptCommand.shortcut) {
-        setShortcutKey(promptCommand.shortcut)
-        setShowShortcutHelp(false)
-      } else {
-        // 如果未找到快捷键配置或未设置，且用户未选择不再提醒，则提示用户进入快捷键设置页面
-        setShortcutKey('')
-        setShowShortcutHelp(!isReminderDismissed)
+      const commandMap = {
+        prompt: commands.find(cmd => cmd.name === 'open-prompt-selector'),
+        save: commands.find(cmd => cmd.name === 'save-selected-prompt')
       }
       
-      if (saveCommand && saveCommand.shortcut) {
-        setSaveShortcutKey(saveCommand.shortcut)
-      } else {
-        // 如果未找到快捷键配置或未设置，不显示此快捷键
-        setSaveShortcutKey('')
+      // 提取快捷键字符串
+      const shortcuts = {
+        prompt: commandMap.prompt?.shortcut || '',
+        save: commandMap.save?.shortcut || ''
       }
+      
+      // 更新状态
+      setShortcutKey(shortcuts.prompt)
+      setSaveShortcutKey(shortcuts.save)
+      
+      // 判断是否显示帮助信息：当任一快捷键未设置且用户未选择不再提醒时显示
+      const hasAllShortcuts = shortcuts.prompt && shortcuts.save
+      setShowShortcutHelp(!hasAllShortcuts && !isReminderDismissed)
+      
     } catch (err) {
       console.error('获取快捷键设置失败', err)
       
