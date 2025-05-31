@@ -402,27 +402,6 @@ export default defineBackground(() => {
           checkedAt: Date.now()
         }
       });
-
-      // 如果存在快捷键问题，发送通知
-      if (shortcutIssues.length > 0) {
-        console.log('背景脚本: 检测到快捷键配置问题，将显示通知');
-
-        // 创建通知显示快捷键配置问题
-        if (browser.notifications) {
-          await browser.notifications.create('shortcut-config-issue', {
-            type: 'basic',
-            iconUrl: '/icon/32.png',
-            title: 'Quick Prompt - 快捷键配置提醒',
-            message: '部分快捷键可能因冲突未能配置成功，建议手动设置。点击查看详情。'
-          });
-        }
-
-        // 设置标记，让用户下次打开弹出窗口时能看到详细提示
-        await browser.storage.local.set({
-          'show_shortcut_setup_reminder': true
-        });
-      }
-
     } catch (error) {
       console.error('背景脚本: 检测快捷键配置时出错:', error);
     }
