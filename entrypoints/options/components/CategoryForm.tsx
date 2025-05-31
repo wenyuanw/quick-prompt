@@ -85,7 +85,7 @@ const CategoryForm = ({ onSubmit, initialData, onCancel, isEditing }: CategoryFo
   return (
     <div>
       {error && (
-        <div className='bg-red-50 border-l-4 border-red-500 text-red-700 p-4 rounded-md mb-4 flex items-start'>
+        <div className='bg-red-50 dark:bg-red-900/20 border-l-4 border-red-500 dark:border-red-400 text-red-700 dark:text-red-300 p-4 rounded-md mb-4 flex items-start'>
           <svg
             className='w-5 h-5 mr-2 mt-0.5 flex-shrink-0'
             fill='none'
@@ -105,7 +105,7 @@ const CategoryForm = ({ onSubmit, initialData, onCancel, isEditing }: CategoryFo
 
       <form onSubmit={handleSubmit} className='space-y-5'>
         <div>
-          <label htmlFor='name' className='block text-sm font-medium text-gray-700 mb-1'>
+          <label htmlFor='name' className='block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1'>
             分类名称
           </label>
           <input
@@ -113,27 +113,27 @@ const CategoryForm = ({ onSubmit, initialData, onCancel, isEditing }: CategoryFo
             id='name'
             value={name}
             onChange={(e) => setName(e.target.value)}
-            className='w-full px-3 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors duration-200'
+            className='w-full px-3 py-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors duration-200'
             placeholder='例如：编程开发'
           />
         </div>
 
         <div>
-          <label htmlFor='description' className='block text-sm font-medium text-gray-700 mb-1'>
-            描述 <span className='text-gray-400 font-normal'>(可选)</span>
+          <label htmlFor='description' className='block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1'>
+            描述 <span className='text-gray-400 dark:text-gray-500 font-normal'>(可选)</span>
           </label>
           <textarea
             id='description'
             value={description}
             onChange={(e) => setDescription(e.target.value)}
             rows={3}
-            className='w-full px-3 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors duration-200'
+            className='w-full px-3 py-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors duration-200'
             placeholder='简单描述这个分类的用途...'
           />
         </div>
 
         <div>
-          <label className='block text-sm font-medium text-gray-700 mb-2'>
+          <label className='block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2'>
             分类颜色
           </label>
           <div className='flex flex-wrap gap-2'>
@@ -141,14 +141,14 @@ const CategoryForm = ({ onSubmit, initialData, onCancel, isEditing }: CategoryFo
               <div
                 key={option.value}
                 onClick={() => setColor(option.value)}
-                className={`w-8 h-8 rounded-full cursor-pointer ring-1 ring-gray-300 hover:ring-2 hover:ring-offset-1 hover:ring-gray-400 relative flex items-center justify-center transition-all duration-200`}
+                className={`w-8 h-8 rounded-full cursor-pointer ring-1 ring-gray-300 dark:ring-gray-600 hover:ring-2 hover:ring-offset-1 hover:ring-gray-400 dark:hover:ring-gray-500 relative flex items-center justify-center transition-all duration-200`}
                 style={{ backgroundColor: option.value }}
                 title={option.name}
               >
                 <div
                   className={`absolute -inset-0.5 rounded-full transition-all duration-200 ease-in-out ${
                     color === option.value
-                      ? 'ring-2 ring-offset-1 ring-indigo-500 opacity-100'
+                      ? 'ring-2 ring-offset-1 ring-indigo-500 dark:ring-indigo-400 opacity-100'
                       : 'ring-0 ring-offset-0 ring-transparent opacity-0'
                   }`}
                 ></div>
@@ -181,9 +181,9 @@ const CategoryForm = ({ onSubmit, initialData, onCancel, isEditing }: CategoryFo
               onChange={(e) => setEnabled(e.target.checked)}
               className='sr-only peer'
             />
-            <div className='w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-blue-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[""] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600'></div>
-            <span className='ml-3 text-sm font-medium text-gray-700'>
-              {enabled ? '已启用' : '已停用'} <span className='text-gray-400 font-normal'>(停用后该分类下的提示词不会显示)</span>
+            <div className='w-11 h-6 bg-gray-200 dark:bg-gray-700 peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-blue-300 dark:peer-focus:ring-blue-800 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[""] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 dark:after:border-gray-600 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600'></div>
+            <span className='ml-3 text-sm font-medium text-gray-700 dark:text-gray-300'>
+              {enabled ? '已启用' : '已停用'} <span className='text-gray-400 dark:text-gray-500 font-normal'>(停用后该分类下的提示词不会显示)</span>
             </span>
           </label>
         </div>
@@ -200,7 +200,7 @@ const CategoryForm = ({ onSubmit, initialData, onCancel, isEditing }: CategoryFo
           <button
             type='button'
             onClick={onCancel}
-            className='px-4 py-2 bg-gray-100 text-gray-800 rounded-lg hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-gray-400 focus:ring-offset-2 transition-colors duration-200'
+            className='px-4 py-2 bg-gray-100 dark:bg-gray-700 text-gray-800 dark:text-gray-200 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-gray-400 dark:focus:ring-gray-500 focus:ring-offset-2 transition-colors duration-200'
           >
             取消
           </button>

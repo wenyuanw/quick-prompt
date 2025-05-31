@@ -231,18 +231,18 @@ const CategoryManager = () => {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-slate-50 via-purple-50 to-pink-50">
+      <div className="min-h-screen bg-gradient-to-br from-slate-50 via-purple-50 to-pink-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900">
         <div className="flex justify-center items-center min-h-screen">
           <div className="text-center space-y-4">
             <div className="relative">
               <div className="w-16 h-16 mx-auto">
-                <div className="absolute inset-0 border-4 border-purple-200 rounded-full"></div>
-                <div className="absolute inset-0 border-4 border-purple-600 rounded-full border-t-transparent animate-spin"></div>
+                <div className="absolute inset-0 border-4 border-purple-200 dark:border-purple-800 rounded-full"></div>
+                <div className="absolute inset-0 border-4 border-purple-600 dark:border-purple-400 rounded-full border-t-transparent animate-spin"></div>
               </div>
             </div>
             <div className="space-y-2">
-              <h3 className="text-lg font-semibold text-gray-700">正在加载</h3>
-              <p className="text-sm text-gray-500">请稍候，正在准备您的分类...</p>
+              <h3 className="text-lg font-semibold text-gray-700 dark:text-gray-300">正在加载</h3>
+              <p className="text-sm text-gray-500 dark:text-gray-400">请稍候，正在准备您的分类...</p>
             </div>
           </div>
         </div>
@@ -251,7 +251,7 @@ const CategoryManager = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-purple-50 to-pink-50">
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-purple-50 to-pink-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* 页面头部 */}
         <div className="mb-10">
@@ -263,32 +263,32 @@ const CategoryManager = () => {
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
                   </svg>
                 </div>
-                <h1 className="text-4xl font-bold bg-gradient-to-r from-gray-900 via-purple-900 to-pink-900 bg-clip-text text-transparent">
+                <h1 className="text-4xl font-bold bg-gradient-to-r from-gray-900 via-purple-900 to-pink-900 dark:from-gray-100 dark:via-purple-100 dark:to-pink-100 bg-clip-text text-transparent">
                   分类管理
                 </h1>
               </div>
-              <p className="text-lg text-gray-600 max-w-2xl">
+              <p className="text-lg text-gray-600 dark:text-gray-300 max-w-2xl">
                 创建和管理提示词分类，让您的提示词更有条理
               </p>
               
               {/* 统计卡片 */}
               <div className="flex flex-wrap gap-4 mt-6">
-                <div className="bg-white/70 backdrop-blur-sm border border-white/20 rounded-2xl px-4 py-3 shadow-sm">
+                <div className="bg-white/70 dark:bg-gray-800/70 backdrop-blur-sm border border-white/20 dark:border-gray-700/50 rounded-2xl px-4 py-3 shadow-sm">
                   <div className="flex items-center space-x-2">
                     <div className="w-2 h-2 bg-green-500 rounded-full"></div>
-                    <span className="text-sm font-medium text-gray-700">总计 {categories.length} 个分类</span>
+                    <span className="text-sm font-medium text-gray-700 dark:text-gray-300">总计 {categories.length} 个分类</span>
                   </div>
                 </div>
-                <div className="bg-white/70 backdrop-blur-sm border border-white/20 rounded-2xl px-4 py-3 shadow-sm">
+                <div className="bg-white/70 dark:bg-gray-800/70 backdrop-blur-sm border border-white/20 dark:border-gray-700/50 rounded-2xl px-4 py-3 shadow-sm">
                   <div className="flex items-center space-x-2">
                     <div className="w-2 h-2 bg-purple-500 rounded-full"></div>
-                    <span className="text-sm font-medium text-gray-700">启用 {categories.filter(c => c.enabled).length} 个</span>
+                    <span className="text-sm font-medium text-gray-700 dark:text-gray-300">启用 {categories.filter(c => c.enabled).length} 个</span>
                   </div>
                 </div>
-                <div className="bg-white/70 backdrop-blur-sm border border-white/20 rounded-2xl px-4 py-3 shadow-sm">
+                <div className="bg-white/70 dark:bg-gray-800/70 backdrop-blur-sm border border-white/20 dark:border-gray-700/50 rounded-2xl px-4 py-3 shadow-sm">
                   <div className="flex items-center space-x-2">
                     <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
-                    <span className="text-sm font-medium text-gray-700">
+                    <span className="text-sm font-medium text-gray-700 dark:text-gray-300">
                       提示词总数 {Object.values(promptCounts).reduce((a, b) => a + b, 0)} 个
                     </span>
                   </div>
@@ -300,22 +300,22 @@ const CategoryManager = () => {
 
         {/* 错误提示 */}
         {error && (
-          <div className="mb-6 bg-red-50 border border-red-200 rounded-2xl p-4 shadow-sm">
+          <div className="mb-6 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800/50 rounded-2xl p-4 shadow-sm">
             <div className="flex items-start space-x-3">
               <div className="flex-shrink-0">
-                <div className="w-10 h-10 bg-red-100 rounded-full flex items-center justify-center">
-                  <svg className="w-5 h-5 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <div className="w-10 h-10 bg-red-100 dark:bg-red-900/30 rounded-full flex items-center justify-center">
+                  <svg className="w-5 h-5 text-red-600 dark:text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
                   </svg>
                 </div>
               </div>
               <div className="flex-1">
-                <h3 className="text-sm font-medium text-red-800">操作失败</h3>
-                <p className="text-sm text-red-700 mt-1">{error}</p>
+                <h3 className="text-sm font-medium text-red-800 dark:text-red-300">操作失败</h3>
+                <p className="text-sm text-red-700 dark:text-red-400 mt-1">{error}</p>
               </div>
               <button
                 onClick={() => setError(null)}
-                className="flex-shrink-0 text-red-400 hover:text-red-600 transition-colors"
+                className="flex-shrink-0 text-red-400 dark:text-red-500 hover:text-red-600 dark:hover:text-red-300 transition-colors"
               >
                 <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
@@ -327,13 +327,13 @@ const CategoryManager = () => {
 
         {/* 操作栏 */}
         <div className="mb-8">
-          <div className="bg-white/80 backdrop-blur-sm border border-white/20 rounded-2xl p-4 shadow-xl"> {/* p-6 to p-4 */}
+          <div className="bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm border border-white/20 dark:border-gray-700/50 rounded-2xl p-4 shadow-xl"> {/* p-6 to p-4 */}
             <div className="flex flex-col sm:flex-row gap-4 sm:justify-between sm:items-center"> {/* Reduced gap */}
               {/* 搜索区域 */}
               <div className="flex-1 min-w-0 sm:max-w-xl"> {/* Added min-w-0 and max-width */}
                 <div className="relative">
                   <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                    <svg className="h-5 w-5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"> {/* Icon color */}
+                    <svg className="h-5 w-5 text-gray-600 dark:text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"> {/* Icon color */}
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
                     </svg>
                   </div>
@@ -342,7 +342,7 @@ const CategoryManager = () => {
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}
                     placeholder="搜索分类名称或描述..."
-                    className="block w-full pl-10 pr-3 py-3 border border-gray-200 rounded-xl bg-white/50 backdrop-blur-sm text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all duration-200"
+                    className="block w-full pl-10 pr-3 py-3 border border-gray-200 dark:border-gray-600 rounded-xl bg-white/50 dark:bg-gray-800/50 backdrop-blur-sm text-gray-900 dark:text-gray-100 placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all duration-200"
                   />
                 </div>
               </div>
@@ -386,14 +386,14 @@ const CategoryManager = () => {
               
               {searchTerm ? (
                 <div className="space-y-4">
-                  <h3 className="text-xl font-semibold text-gray-900">未找到匹配的分类</h3>
-                  <p className="text-gray-600">
+                  <h3 className="text-xl font-semibold text-gray-900 dark:text-gray-100">未找到匹配的分类</h3>
+                  <p className="text-gray-600 dark:text-gray-300">
                     没有找到匹配 "{searchTerm}" 的分类。
                   </p>
                   <div className="flex justify-center">
                     <button
                       onClick={() => setSearchTerm("")}
-                      className="inline-flex items-center px-4 py-2 bg-purple-50 text-purple-700 rounded-lg hover:bg-purple-100 transition-colors font-medium"
+                      className="inline-flex items-center px-4 py-2 bg-purple-50 dark:bg-purple-900/30 text-purple-700 dark:text-purple-300 rounded-lg hover:bg-purple-100 dark:hover:bg-purple-900/50 transition-colors font-medium"
                     >
                       <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
@@ -404,8 +404,8 @@ const CategoryManager = () => {
                 </div>
               ) : (
                 <div className="space-y-4">
-                  <h3 className="text-xl font-semibold text-gray-900">还没有分类</h3>
-                  <p className="text-gray-600">创建您的第一个分类，开始组织您的提示词吧！</p>
+                  <h3 className="text-xl font-semibold text-gray-900 dark:text-gray-100">还没有分类</h3>
+                  <p className="text-gray-600 dark:text-gray-300">创建您的第一个分类，开始组织您的提示词吧！</p>
                   <button
                     onClick={openAddModal}
                     className="inline-flex items-center px-6 py-3 bg-gradient-to-r from-purple-600 to-pink-600 text-white rounded-xl hover:from-purple-700 hover:to-pink-700 transition-all duration-200 hover:shadow-lg hover:-translate-y-0.5 font-medium shadow-purple-500/25"
@@ -438,7 +438,7 @@ const CategoryManager = () => {
                 )}
               </svg>
             </div>
-            <span className="text-xl font-semibold text-gray-900">
+            <span className="text-xl font-semibold text-gray-900 dark:text-gray-100">
               {editingCategory ? "编辑分类" : "新建分类"}
             </span>
           </div>
