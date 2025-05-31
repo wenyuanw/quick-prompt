@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Switch } from '@headlessui/react';
 import { browser } from '#imports';
+import NotionLogo from './NotionLogo';
 
 interface NotionIntegrationProps {
   // 不需要额外的props
@@ -319,134 +320,232 @@ const NotionIntegration: React.FC<NotionIntegrationProps> = () => {
     }
   };
 
-  if (isLoading) return <div className="animate-pulse p-4">加载 Notion 设置中...</div>;
+  if (isLoading) return <div className="p-4 font-medium text-center animate-pulse">加载 Notion 设置中...</div>;
 
   return (
-    <div className="bg-white dark:bg-gray-800 shadow rounded-lg p-6">
-      <div className="flex justify-between items-center mb-4">
-        <h2 className="text-xl font-semibold text-gray-800 dark:text-white">Notion 整合</h2>
+    <div className="p-6 mx-auto max-w-4xl bg-white rounded-lg shadow dark:bg-gray-800">
+      <div className="flex justify-between items-center pb-4 mb-6 border-b border-gray-200 dark:border-gray-700">
+        <h2 className="flex items-center text-2xl font-bold text-gray-800 dark:text-white">
+          <NotionLogo />
+          Notion 整合
+        </h2>
         <a 
           href="https://github.com/wenyuanw/quick-prompt/blob/main/docs/notion-sync-guide.md"
           target="_blank" 
           rel="noopener noreferrer"
-          className="inline-flex items-center text-sm text-blue-600 dark:text-blue-400 hover:underline"
+          className="inline-flex items-center text-sm bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 hover:bg-blue-100 dark:hover:bg-blue-800/40 px-3 py-1.5 rounded-full transition-colors font-medium"
         >
-          <svg className="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+          <svg className="w-4 h-4 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
           </svg>
           查看配置指南
         </a>
       </div>
       
-      <div className="mb-6 border-b pb-4">
-        <div className="flex items-center justify-between">
-          <div>
-            <h3 className="text-md font-medium text-gray-700 dark:text-gray-300">启用同步到 Notion (本地 → Notion)</h3>
-            <p className="text-sm text-gray-500 dark:text-gray-400">当本地提示词变更时，自动更新到 Notion</p>
-          </div>
-          <Switch
-            checked={isSyncToNotionEnabled}
-            onChange={handleSyncToNotionToggle}
-            className={`${isSyncToNotionEnabled ? 'bg-blue-600' : 'bg-gray-200 dark:bg-gray-700'} relative inline-flex h-6 w-11 items-center rounded-full transition-colors`}
-          >
-            <span className={`${isSyncToNotionEnabled ? 'translate-x-6' : 'translate-x-1'} inline-block h-4 w-4 transform rounded-full bg-white transition-transform`}/>
-          </Switch>
+      {testMessage && (
+        <div className={`mb-6 p-4 rounded-md border-l-4 shadow-sm ${
+          testMessage.type === 'success' ? 'bg-green-50 border-green-500 text-green-800 dark:bg-green-900/30 dark:text-green-200 dark:border-green-500' : 
+          testMessage.type === 'error' ? 'bg-red-50 border-red-500 text-red-800 dark:bg-red-900/30 dark:text-red-200 dark:border-red-500' : 
+          'bg-blue-50 border-blue-500 text-blue-800 dark:bg-blue-900/30 dark:text-blue-200 dark:border-blue-500'
+        } flex items-center`}>
+          <span className={`mr-2 flex-shrink-0 ${
+            testMessage.type === 'success' ? 'text-green-600' : 
+            testMessage.type === 'error' ? 'text-red-600' : 
+            'text-blue-600'
+          }`}>
+            {testMessage.type === 'success' ? (
+              <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+              </svg>
+            ) : testMessage.type === 'error' ? (
+              <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
+              </svg>
+            ) : (
+              <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2h-1V9a1 1 0 00-1-1z" clipRule="evenodd" />
+              </svg>
+            )}
+          </span>
+          <span className="flex-1">{testMessage.text}</span>
         </div>
-      </div>
-
-      <form onSubmit={handleSubmit} className="space-y-4">
-        <div>
-          <label htmlFor="apiKey" className="block text-sm font-medium text-gray-700 dark:text-gray-300">Notion API 密钥</label>
-          <input 
-            type="password" 
-            id="apiKey" 
-            value={apiKey} 
-            onChange={(e) => setApiKey(e.target.value)} 
-            placeholder="secret_xxxxxxxxxxxxx" 
-            required 
-            className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white"
-          />
-          <p className="mt-1 text-xs text-gray-500 dark:text-gray-400">在 <a href="https://www.notion.so/my-integrations" target="_blank" rel="noopener noreferrer" className="text-blue-600 dark:text-blue-400 hover:underline">Notion 整合页面</a> 创建一个新的整合并获取 API 密钥</p>
-        </div>
-        <div>
-          <label htmlFor="databaseId" className="block text-sm font-medium text-gray-700 dark:text-gray-300">Notion 数据库 ID</label>
-          <input 
-            type="text" 
-            id="databaseId" 
-            value={databaseId} 
-            onChange={(e) => setDatabaseId(e.target.value)} 
-            placeholder="xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx" 
-            required 
-            className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white"
-          />
-          <p className="mt-1 text-xs text-gray-500 dark:text-gray-400">您可以从 Notion 数据库页面 URL 中提取 ID</p>
-        </div>
-        <div className="flex justify-end">
-          <button 
-            type="submit" 
-            className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 dark:focus:ring-offset-gray-800"
-          >
-            保存设置 & 测试连接
-          </button>
-        </div>
-      </form>
-
-      <div className="mt-4 border-t pt-4 text-sm text-gray-500 dark:text-gray-400">
-        <h4 className="font-medium text-gray-700 dark:text-gray-300 mb-2">注意事项:</h4>
-        <ul className="list-disc pl-5 space-y-1">
-          <li>您的 API 密钥将安全地存储在浏览器同步存储中。</li>
-          <li>"同步到 Notion"会在您于插件中修改提示词时，将变动推送到 Notion。</li>
-          <li>您需要确保 Notion 整合具有对数据库的读取和写入权限。</li>
-        </ul>
-      </div>
-
-      <div className="mt-6 border-t pt-4">
-        <h3 className="text-md font-medium text-gray-700 dark:text-gray-300 mb-3">手动同步操作</h3>
-        <div className="space-y-4">
-          <div>
-            <h4 className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">从 Notion 同步到本地</h4>
-            <div className="flex space-x-2">
-              <button
-                type="button"
-                onClick={handleSyncFromNotionReplaceClick}
-                className="px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 dark:focus:ring-offset-gray-800"
+      )}
+      
+      <div className="grid grid-cols-1 gap-6 mb-8 md:grid-cols-3">
+        <div className="md:col-span-2">
+          <form onSubmit={handleSubmit} className="p-5 space-y-5 bg-gray-50 rounded-lg shadow-sm dark:bg-gray-750">
+            <div className="pb-4 mb-4 border-b border-gray-200 dark:border-gray-700">
+              <h3 className="mb-4 text-lg font-semibold text-gray-800 dark:text-gray-200">基本设置</h3>
+              
+              <div className="space-y-4">
+                <div className="space-y-1">
+                  <label htmlFor="apiKey" className="block text-sm font-medium text-gray-700 dark:text-gray-300">Notion API 密钥</label>
+                  <input 
+                    type="password" 
+                    id="apiKey" 
+                    value={apiKey} 
+                    onChange={(e) => setApiKey(e.target.value)} 
+                    placeholder="secret_xxxxxxxxxxxxx" 
+                    required 
+                    className="block px-3 py-2 mt-1 w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+                  />
+                  <p className="mt-1.5 text-xs text-gray-500 dark:text-gray-400">在 <a href="https://www.notion.so/my-integrations" target="_blank" rel="noopener noreferrer" className="text-blue-600 dark:text-blue-400 hover:underline">Notion 整合页面</a> 创建一个新的整合并获取 API 密钥</p>
+                </div>
+                
+                <div className="space-y-1">
+                  <label htmlFor="databaseId" className="block text-sm font-medium text-gray-700 dark:text-gray-300">Notion 数据库 ID</label>
+                  <input 
+                    type="text" 
+                    id="databaseId" 
+                    value={databaseId} 
+                    onChange={(e) => setDatabaseId(e.target.value)} 
+                    placeholder="xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx" 
+                    required 
+                    className="block px-3 py-2 mt-1 w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+                  />
+                  <p className="mt-1.5 text-xs text-gray-500 dark:text-gray-400">您可以从 Notion 数据库页面 URL 中提取 ID</p>
+                </div>
+              </div>
+            </div>
+            
+            <div className="flex justify-end">
+              <button 
+                type="submit" 
+                className="flex items-center px-4 py-2 font-medium text-white bg-blue-600 rounded-md transition-colors hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 dark:focus:ring-offset-gray-800"
               >
-                覆盖本地数据
-              </button>
-              <button
-                type="button"
-                onClick={handleSyncFromNotionAppendClick}
-                className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 dark:focus:ring-offset-gray-800"
-              >
-                追加到本地
+                <svg className="w-4 h-4 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7" />
+                </svg>
+                保存设置 & 测试连接
               </button>
             </div>
-            <p className="mt-2 text-xs text-gray-500 dark:text-gray-400">
-              <strong>覆盖模式</strong>：完全用 Notion 数据替换本地数据（会删除本地独有的提示词）<br/>
-              <strong>追加模式</strong>：只添加 Notion 中有但本地没有的提示词（安全模式）<br/>
-              <span className="text-red-500 font-medium">注意：这是一次性操作</span>
-            </p>
+          </form>
+        </div>
+        
+        <div className="flex flex-col p-5 bg-gray-50 rounded-lg shadow-sm dark:bg-gray-750">
+          <h3 className="pb-2 mb-3 text-lg font-semibold text-gray-800 border-b border-gray-200 dark:text-gray-200 dark:border-gray-700">自动同步设置</h3>
+          
+          <div className="flex justify-between items-center mb-3">
+            <div>
+              <h4 className="font-medium text-gray-700 text-md dark:text-gray-300">启用自动同步</h4>
+              <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">本地更改自动同步到 Notion</p>
+            </div>
+            <Switch
+              checked={isSyncToNotionEnabled}
+              onChange={handleSyncToNotionToggle}
+              className={`${isSyncToNotionEnabled ? 'bg-blue-600' : 'bg-gray-200 dark:bg-gray-700'} 
+                relative inline-flex h-6 w-11 items-center rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 dark:focus:ring-offset-gray-800`}
+            >
+              <span className="sr-only">启用同步</span>
+              <span className={`${isSyncToNotionEnabled ? 'translate-x-6' : 'translate-x-1'} 
+                inline-block h-4 w-4 transform rounded-full bg-white transition-transform`}/>
+            </Switch>
           </div>
+          
+          <div className="pt-4 mt-auto text-sm text-gray-500 border-t border-gray-200 dark:text-gray-400 dark:border-gray-700">
+            <h4 className="mb-2 font-medium text-gray-700 dark:text-gray-300">注意事项:</h4>
+            <ul className="list-disc pl-5 space-y-1.5">
+              <li>API 密钥安全存储在浏览器中</li>
+              <li>需要确保 Notion 整合具有读写权限</li>
+            </ul>
+          </div>
+        </div>
+      </div>
 
-          <div className="pt-2">
-            <h4 className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">从本地同步到 Notion</h4>
+      <div className="grid grid-cols-1 gap-6 mb-6 md:grid-cols-2">
+        <div className="p-5 bg-indigo-50 rounded-lg border border-indigo-100 shadow-sm dark:bg-indigo-900/20 dark:border-indigo-800">
+          <div className="flex items-center mb-4">
+            <svg className="mr-2 w-5 h-5 text-indigo-600 dark:text-indigo-400" fill="currentColor" viewBox="0 0 20 20">
+              <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-11a1 1 0 10-2 0v3.586L7.707 9.293a1 1 0 00-1.414 1.414l3 3a1 1 0 001.414 0l3-3a1 1 0 00-1.414-1.414L11 10.586V7z" clipRule="evenodd" />
+            </svg>
+            <h4 className="text-lg font-semibold text-gray-800 dark:text-gray-200">从 Notion 同步到本地</h4>
+          </div>
+          
+          <div className="mb-4 space-y-3">
+            <button
+              type="button"
+              onClick={handleSyncFromNotionReplaceClick}
+              disabled={currentSyncId !== null}
+              className="flex justify-center items-center px-4 py-2 w-full font-medium text-white bg-red-600 rounded-md transition-colors hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 dark:focus:ring-offset-gray-800 disabled:opacity-60 disabled:cursor-not-allowed"
+            >
+              <svg className="w-4 h-4 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+              </svg>
+              覆盖本地数据
+            </button>
+            <button
+              type="button"
+              onClick={handleSyncFromNotionAppendClick}
+              disabled={currentSyncId !== null}
+              className="flex justify-center items-center px-4 py-2 w-full font-medium text-white bg-blue-600 rounded-md transition-colors hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 dark:focus:ring-offset-gray-800 disabled:opacity-60 disabled:cursor-not-allowed"
+            >
+              <svg className="w-4 h-4 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+              </svg>
+              追加到本地
+            </button>
+          </div>
+          
+          <div className="p-3 text-xs text-gray-600 bg-white rounded-md border border-gray-100 shadow-sm dark:text-gray-400 dark:bg-gray-700 dark:border-gray-600">
+            <div className="mb-1.5"><span className="inline-block bg-blue-100 dark:bg-blue-800/60 text-blue-800 dark:text-blue-200 px-1.5 py-0.5 rounded font-semibold text-xs mr-1">追加模式</span>只添加 Notion 中有但本地没有的提示词</div>
+            <div className="mb-1.5"><span className="inline-block bg-red-100 dark:bg-red-800/60 text-red-800 dark:text-red-200 px-1.5 py-0.5 rounded font-semibold text-xs mr-1">覆盖模式</span>完全用 Notion 数据替换本地数据</div>
+            <div className="flex items-center mt-2 text-xs font-medium text-red-600 dark:text-red-400">
+              <svg className="w-3.5 h-3.5 mr-1" fill="currentColor" viewBox="0 0 20 20">
+                <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2h-1V9a1 1 0 00-1-1z" clipRule="evenodd" />
+              </svg>
+              注意：这是一次性操作
+            </div>
+          </div>
+        </div>
+
+        <div className="p-5 bg-green-50 rounded-lg border border-green-100 shadow-sm dark:bg-green-900/20 dark:border-green-800">
+          <div className="flex items-center mb-4">
+            <svg className="mr-2 w-5 h-5 text-green-600 dark:text-green-400" fill="currentColor" viewBox="0 0 20 20">
+              <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-8.707l-3-3a1 1 0 00-1.414 0l-3 3a1 1 0 001.414 1.414L9 9.414V13a1 1 0 102 0V9.414l1.293 1.293a1 1 0 001.414-1.414z" clipRule="evenodd" />
+            </svg>
+            <h4 className="text-lg font-semibold text-gray-800 dark:text-gray-200">从本地同步到 Notion</h4>
+          </div>
+          
+          <div className="mb-4">
             <button
               type="button"
               onClick={handleSyncToNotionClick}
-              className="px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 dark:focus:ring-offset-gray-800"
+              disabled={currentSyncId !== null}
+              className="flex justify-center items-center px-4 py-2 w-full font-medium text-white bg-green-600 rounded-md transition-colors hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 dark:focus:ring-offset-gray-800 disabled:opacity-60 disabled:cursor-not-allowed"
             >
+              <svg className="w-4 h-4 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+              </svg>
               同步到 Notion
             </button>
-            <p className="mt-2 text-xs text-gray-500 dark:text-gray-400">
-              此操作会将本地提示词同步到 Notion，包括：<br/>
-              - 创建 Notion 中不存在的提示词<br/>
-              - 更新 Notion 中已存在但内容有变化的提示词<br/>
-              - 处理已在本地删除的提示词（在 Notion 中标记）<br/>
-              <span className="text-red-500 font-medium">注意：这是一次性操作</span>
-            </p>
+          </div>
+          
+          <div className="p-3 text-xs text-gray-600 bg-white rounded-md border border-gray-100 shadow-sm dark:text-gray-400 dark:bg-gray-700 dark:border-gray-600">
+            <div className="mb-2">此操作会将本地提示词同步到 Notion，包括：</div>
+            <ul className="pl-5 space-y-1 list-disc">
+              <li>创建 Notion 中不存在的提示词</li>
+              <li>更新 Notion 中已有但内容变化的提示词</li>
+              <li>在 Notion 中标记已删除的提示词</li>
+            </ul>
+            <div className="flex items-center mt-2 text-xs font-medium text-red-600 dark:text-red-400">
+              <svg className="w-3.5 h-3.5 mr-1" fill="currentColor" viewBox="0 0 20 20">
+                <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2h-1V9a1 1 0 00-1-1z" clipRule="evenodd" />
+              </svg>
+              注意：这是一次性操作
+            </div>
           </div>
         </div>
       </div>
+      
+      {currentSyncId && (
+        <div className="flex fixed right-4 bottom-4 items-center px-4 py-2 text-white bg-blue-600 rounded-md shadow-lg">
+          <svg className="mr-2 -ml-1 w-4 h-4 text-white animate-spin" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+            <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+            <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+          </svg>
+          同步正在进行中...
+        </div>
+      )}
     </div>
   );
 };

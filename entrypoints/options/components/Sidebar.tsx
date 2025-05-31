@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { NavLink } from "react-router-dom";
 import Logo from "~/assets/icon.png";
+import NotionLogo from "./NotionLogo";
 
 interface SidebarProps {
   className?: string;
@@ -86,18 +87,7 @@ const Sidebar: React.FC<SidebarProps> = ({ className = "" }) => {
       {isMobile && !isOpen && (
         <button
           onClick={toggleSidebar}
-          className="
-            fixed top-2 left-4 z-50 
-            w-12 h-12 
-            flex items-center justify-center
-            bg-white dark:bg-gray-800 
-            border border-gray-200 dark:border-gray-600 
-            rounded-xl shadow-lg hover:shadow-xl
-            hover:bg-gray-50 dark:hover:bg-gray-700 
-            active:scale-95
-            transition-all duration-200 ease-in-out
-            md:hidden
-          "
+          className="flex fixed top-2 left-4 z-50 justify-center items-center w-12 h-12 bg-white rounded-xl border border-gray-200 shadow-lg transition-all duration-200 ease-in-out  dark:bg-gray-800 dark:border-gray-600 hover:shadow-xl hover:bg-gray-50 dark:hover:bg-gray-700 active:scale-95 md:hidden"
           aria-label="打开菜单"
         >
           <svg
@@ -119,7 +109,7 @@ const Sidebar: React.FC<SidebarProps> = ({ className = "" }) => {
       {/* 遮罩层 - 只在移动端且打开时显示 */}
       {isMobile && isOpen && (
         <div
-          className="fixed inset-0 bg-black bg-opacity-50 z-30 md:hidden backdrop-blur-sm animate-fadeIn"
+          className="fixed inset-0 z-30 bg-black bg-opacity-50 backdrop-blur-sm md:hidden animate-fadeIn"
           onClick={closeSidebar}
         />
       )}
@@ -143,21 +133,13 @@ const Sidebar: React.FC<SidebarProps> = ({ className = "" }) => {
       >
         <div className="flex flex-col h-full">
           {/* 头部区域 */}
-          <div className="p-6 flex-shrink-0">
+          <div className="flex-shrink-0 p-6">
             {/* 移动端关闭按钮 */}
             {isMobile && isOpen && (
               <div className="flex justify-end mb-4">
                 <button
                   onClick={closeSidebar}
-                  className="
-                    w-10 h-10 
-                    flex items-center justify-center
-                    rounded-lg 
-                    text-gray-500 dark:text-gray-400 
-                    hover:text-gray-700 dark:hover:text-gray-200 
-                    hover:bg-gray-100 dark:hover:bg-gray-700 
-                    transition-all duration-200
-                  "
+                  className="flex justify-center items-center w-10 h-10 text-gray-500 rounded-lg transition-all duration-200  dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700"
                   aria-label="关闭菜单"
                 >
                   <svg
@@ -182,37 +164,37 @@ const Sidebar: React.FC<SidebarProps> = ({ className = "" }) => {
               <NavLink 
                 to="/" 
                 onClick={closeSidebar}
-                className="block relative p-4 rounded-xl bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-800 dark:to-gray-700 border border-gray-200 dark:border-gray-600 hover:from-gray-100 hover:to-gray-150 dark:hover:from-gray-700 dark:hover:to-gray-600 transition-all duration-200 group shadow-sm hover:shadow-md overflow-hidden"
+                className="block overflow-hidden relative p-4 bg-gradient-to-br from-gray-50 to-gray-100 rounded-xl border border-gray-200 shadow-sm transition-all duration-200 dark:from-gray-800 dark:to-gray-700 dark:border-gray-600 hover:from-gray-100 hover:to-gray-150 dark:hover:from-gray-700 dark:hover:to-gray-600 group hover:shadow-md"
               >
                 {/* 背景装饰渐变 */}
-                <div className="absolute inset-0 bg-gradient-to-br from-purple-500/5 to-violet-500/5 dark:from-purple-400/10 dark:to-violet-400/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                <div className="absolute inset-0 bg-gradient-to-br opacity-0 transition-opacity duration-300 from-purple-500/5 to-violet-500/5 dark:from-purple-400/10 dark:to-violet-400/10 group-hover:opacity-100"></div>
                 
                 {/* 装饰性光点群 */}
-                <div className="absolute top-2 right-2 w-2 h-2 bg-purple-400 rounded-full opacity-60 group-hover:opacity-80 transition-all duration-300 group-hover:scale-110"></div>
+                <div className="absolute top-2 right-2 w-2 h-2 bg-purple-400 rounded-full opacity-60 transition-all duration-300 group-hover:opacity-80 group-hover:scale-110"></div>
                 <div className="absolute top-4 right-4 w-1.5 h-1.5 bg-violet-400 rounded-full opacity-50 group-hover:opacity-70 transition-all duration-300 group-hover:scale-125"></div>
-                <div className="absolute top-6 right-6 w-1 h-1 bg-purple-300 rounded-full opacity-40 group-hover:opacity-60 transition-all duration-300"></div>
+                <div className="absolute top-6 right-6 w-1 h-1 bg-purple-300 rounded-full opacity-40 transition-all duration-300 group-hover:opacity-60"></div>
                 <div className="absolute bottom-3 left-3 w-1.5 h-1.5 bg-blue-400 rounded-full opacity-30 group-hover:opacity-50 transition-all duration-300 group-hover:scale-110"></div>
-                <div className="absolute bottom-5 left-5 w-1 h-1 bg-indigo-400 rounded-full opacity-25 group-hover:opacity-40 transition-all duration-300"></div>
+                <div className="absolute bottom-5 left-5 w-1 h-1 bg-indigo-400 rounded-full opacity-25 transition-all duration-300 group-hover:opacity-40"></div>
                 
                 {/* 微妙的几何装饰 */}
-                <div className="absolute top-1 left-1 w-3 h-3 border border-purple-200 dark:border-purple-600 rounded-full opacity-20 group-hover:opacity-40 transition-opacity duration-300"></div>
-                <div className="absolute bottom-1 right-1 w-2 h-2 border border-violet-200 dark:border-violet-600 rounded-sm opacity-15 group-hover:opacity-30 transition-opacity duration-300 rotate-45"></div>
+                <div className="absolute top-1 left-1 w-3 h-3 rounded-full border border-purple-200 opacity-20 transition-opacity duration-300 dark:border-purple-600 group-hover:opacity-40"></div>
+                <div className="absolute right-1 bottom-1 w-2 h-2 rounded-sm border border-violet-200 transition-opacity duration-300 rotate-45 dark:border-violet-600 opacity-15 group-hover:opacity-30"></div>
                 
-                <div className="flex flex-col items-center space-y-3 relative z-10">
+                <div className="flex relative z-10 flex-col items-center space-y-3">
                   {/* Logo */}
-                  <div className="relative transform group-hover:scale-105 transition-all duration-200 ease-out">
+                  <div className="relative transition-all duration-200 ease-out transform group-hover:scale-105">
                     {/* Logo光晕效果 */}
-                    <div className="absolute inset-0 bg-purple-400/20 rounded-xl blur-md opacity-0 group-hover:opacity-100 transition-opacity duration-300 scale-110"></div>
+                    <div className="absolute inset-0 rounded-xl opacity-0 blur-md transition-opacity duration-300 scale-110 bg-purple-400/20 group-hover:opacity-100"></div>
                     <img
                       src={Logo}
                       alt="Quick Prompt Logo"
-                      className="w-14 h-14 rounded-xl relative z-10"
+                      className="relative z-10 w-14 h-14 rounded-xl"
                     />
                   </div>
 
                   {/* 品牌名称 */}
-                  <div className="text-center relative">
-                    <h1 className="text-lg font-bold bg-gradient-to-r from-gray-800 to-gray-600 dark:from-gray-100 dark:to-gray-300 bg-clip-text text-transparent group-hover:from-purple-700 group-hover:to-violet-600 dark:group-hover:from-purple-300 dark:group-hover:to-violet-200 transition-all duration-300">
+                  <div className="relative text-center">
+                    <h1 className="text-lg font-bold text-transparent bg-clip-text bg-gradient-to-r from-gray-800 to-gray-600 transition-all duration-300 dark:from-gray-100 dark:to-gray-300 group-hover:from-purple-700 group-hover:to-violet-600 dark:group-hover:from-purple-300 dark:group-hover:to-violet-200">
                       Quick Prompt
                     </h1>
                   </div>
@@ -235,7 +217,7 @@ const Sidebar: React.FC<SidebarProps> = ({ className = "" }) => {
                     }`
                   }
                 >
-                  <span className="mr-3 flex-shrink-0">{item.icon}</span>
+                  <span className="flex-shrink-0 mr-3">{item.icon}</span>
                   <div className="flex-1 min-w-0">
                     <div className="font-medium">{item.name}</div>
                     <div className="text-xs text-gray-500 dark:text-gray-400 group-hover:text-gray-600 dark:group-hover:text-gray-300 mt-0.5">
@@ -248,8 +230,8 @@ const Sidebar: React.FC<SidebarProps> = ({ className = "" }) => {
           </div>
 
           {/* 底部区域 */}
-          <div className="mt-auto p-4 border-t border-gray-200 dark:border-gray-700 flex-shrink-0">
-            <div className="space-y-2 mb-3">
+          <div className="flex-shrink-0 p-4 mt-auto border-t border-gray-200 dark:border-gray-700">
+            <div className="mb-3 space-y-2">
               <NavLink
                 to="/integrations/notion"
                 onClick={closeSidebar}
@@ -261,13 +243,7 @@ const Sidebar: React.FC<SidebarProps> = ({ className = "" }) => {
                   }`
                 }
               >
-                <svg
-                  className="flex-shrink-0 w-5 h-5 mr-2"
-                  viewBox="0 0 385 385"
-                  fill="currentColor"
-                >
-                  <path d="M48.6,49.4c-26.7,26.8-42.6,46.1-42.6,51.8c0,9.8,16.5,25.9,68.2,66.4C110.1,199,136,225.2,136,229c0,2-15.3,18.8-34,37.5c-41,40.8-48.7,50.5-45.3,56.9c8.1,15.4,28.4,8.9,85.5-27.2c25.3-16,46.7-28.8,47.5-28.4c0.8,0.4,7.3,6.4,14.5,13.5c16.2,15.9,93.8,77.4,103,81.7c15.1,7.1,38-13.4,32.8-29.3c-1.6-4.9-11.5-16.2-30-34.2c-15.4-15-28-28.4-28-29.9c0-1.4,6.8-9.6,15-18.2c8.3-8.6,22.5-24.1,31.7-34.6c27.8-31.5,32.5-35.9,41.7-38.8c17.9-5.6,32.7,5.8,43.6,33.6c22.3,56.2,11.6,118.9-28.9,168.4c-54.4,66.6-145.2,87.1-223.4,50.2c-83.3-39.4-128-135.9-106.3-228.9C63.9,125.1,93.9,75.6,141,44.1c20.2-13.5,56.8-30.1,72.5-33.1c18.7-3.5,35.1,1.7,57.4,18.2c20.6,15.3,57.3,59.2,65.5,78.5c3.2,7.6,6.4,13.8,7,13.8c2.5,0,22.3-15.9,24.5-19.8c5.9-10.3-20.7-53.8-50.6-82.6C261.9-34.6,131.3-34.1,48.6,49.4z"/>
-                </svg>
+                <NotionLogo/>
                 Notion 同步
               </NavLink>
               <NavLink
@@ -282,7 +258,7 @@ const Sidebar: React.FC<SidebarProps> = ({ className = "" }) => {
                 }
               >
                 <svg
-                  className="flex-shrink-0 w-5 h-5 mr-2"
+                  className="flex-shrink-0 mr-2 w-5 h-5"
                   viewBox="0 0 24 24"
                   xmlns="http://www.w3.org/2000/svg"
                 >
@@ -295,7 +271,7 @@ const Sidebar: React.FC<SidebarProps> = ({ className = "" }) => {
                 Google 认证
               </NavLink>
             </div>
-            <div className="text-xs text-gray-500 dark:text-gray-400 text-center space-y-1">
+            <div className="space-y-1 text-xs text-center text-gray-500 dark:text-gray-400">
               <p>© {new Date().getFullYear()} Quick Prompt</p>
             </div>
           </div>
