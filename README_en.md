@@ -14,13 +14,13 @@ A powerful browser extension focused on prompt management and quick input. Helps
 
 - 📚 **Prompt Management**: Easily create, edit and manage your prompt library
 - 🚀 **Quick Input**: Quickly trigger the prompt selector by typing `/p` in any webpage input field
-- ⌨️ Support keyboard shortcuts (Ctrl+Shift+P / Command+Shift+P) to open the prompt selector
-- 📋 Support keyboard shortcuts (Ctrl+Shift+S / Command+Shift+S) to save selected text as a prompt
+- ⌨️ Support configurable keyboard shortcuts to open prompt selector & save selected text as prompts
 - 📑 Support right-click context menu to save selected text as a prompt
-- 🎯 Customize prompts with titles, content, and tags
-- 🔄 **Variable Support**: Use variables in prompts with `{{variable_name}}` format, fill in specific values when using
+- 🎯 Support customizing prompts with categories, titles, content, tags and variables
+- 🧑‍💻 **Variable Support**: Use variables in prompts with `{{variable_name}}` format, fill in specific values when using
 - 💾 **Data Backup**: Export and import your prompt library for easy cross-device migration and backup
-- 🔍 Search and filter prompts
+- 🔗 **Notion Sync**: Support synchronizing prompt library with Notion database
+- 🔍 Search and filter prompts functionality
 - 🌙 Automatically adapt to system light/dark theme
 
 ## ⚠️ Known Issues
