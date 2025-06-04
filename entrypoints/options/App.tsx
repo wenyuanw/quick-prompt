@@ -8,7 +8,7 @@ import GoogleAuthPage from "./components/GoogleAuthPage";
 import ToastContainer from "./components/ToastContainer";
 import "./App.css";
 import "~/assets/tailwind.css";
-
+import { t } from "~/utils/i18n";
 const App = () => {
   // 添加回到顶部按钮相关状态
   const [showBackToTop, setShowBackToTop] = useState(false);
@@ -105,8 +105,8 @@ const App = () => {
                   <button
                     onClick={scrollToTop}
                     className="bg-blue-600 hover:bg-blue-700 text-white p-3 rounded-full shadow-lg transition-all duration-300 transform hover:scale-110 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
-                    title="回到顶部"
-                    aria-label="回到顶部"
+                    title={t('backToTop')}
+                    aria-label={t('backToTop')}
                   >
                     <svg
                       className="w-6 h-6"

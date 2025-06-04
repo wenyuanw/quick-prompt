@@ -1,0 +1,280 @@
+{
+  "appDescription": {
+    "message": "Quickly insert preset Prompt content in web input fields through commands."
+  },
+  "openPromptSelector": {
+    "message": "Open the prompt selector popup"
+  },
+  "saveSelectedPrompt": {
+    "message": "Save the selected text as a prompt"
+  },
+  "promptLibrary": {
+    "message": "Prompt Library"
+  },
+  "availablePrompts": {
+    "message": "prompts available"
+  },
+  "managePrompts": {
+    "message": "Manage Prompts"
+  },
+  "usage": {
+    "message": "Usage"
+  },
+  "quickInput": {
+    "message": "Quick input: Type in any input field"
+  },
+  "orPress": {
+    "message": "or press"
+  },
+  "quickSave": {
+    "message": "Quick save: Select text and press"
+  },
+  "savePrompt": {
+    "message": "to save prompt"
+  },
+  "rightClickSave": {
+    "message": "Right-click save: Select text and right-click to choose \"Save this prompt\""
+  },
+  "shortcutNotConfigured": {
+    "message": "Shortcut not configured, possibly due to conflicts."
+  },
+  "configureShortcut": {
+    "message": "Configure Shortcut"
+  },
+  "noReminder": {
+    "message": "Don't remind"
+  },
+  "dismissReminderTitle": {
+    "message": "Don't remind me about shortcut setup"
+  },
+  "errorCannotReadStorage": {
+    "message": "Cannot read data from storage"
+  },
+  "errorCannotLoadPrompts": {
+    "message": "Cannot load prompts"
+  },
+  "firefoxShortcutHelp": {
+    "message": "After opening the extensions page, please click the gear icon at the top right and select \"Manage Extension Shortcuts\""
+  },
+  "backToTop": {
+    "message": "Back to top"
+  },
+  "blue": {
+    "message": "Blue"
+  },
+  "green": {
+    "message": "Green"
+  },
+  "yellow": {
+    "message": "Yellow"
+  },
+  "red": {
+    "message": "Red"
+  },
+  "purple": {
+    "message": "Purple"
+  },
+  "pink": {
+    "message": "Pink"
+  },
+  "cyan": {
+    "message": "Cyan"
+  },
+  "orange": {
+    "message": "Orange"
+  },
+  "categoryNameCannotBeEmpty": {
+    "message": "Category name cannot be empty"
+  },
+  "saveFailed": {
+    "message": "Save failed, please try again later"
+  },  
+  "categoryName": {
+    "message": "Category Name"
+  },
+  "categoryExample": {
+    "message": "Example: Programming Development"
+  },
+  "description": {
+    "message": "Description"
+  },
+  "optional": {
+    "message": "Optional"
+  },
+  "descriptionExample": {
+    "message": "Describe the purpose of this category..."
+  },
+  "categoryColor": {
+    "message": "Category Color"
+  },
+  "enabled": {
+    "message": "Enabled"
+  },
+  "disabled": {
+    "message": "Disabled"
+  },
+  "disabledTips": {
+    "message": "When disabled, prompts in this category will not be displayed" 
+  },
+  "saving": {
+    "message": "Saving..."
+  },
+  "updateCategory": {
+    "message": "Update Category"
+  },
+  "saveCategory": {
+    "message": "Save Category"
+  },
+  "cancel": {
+    "message": "Cancel"
+  },
+  "noCategoriesAdded": {
+    "message": "No categories added"
+  },
+  "clickAddCategory": {
+    "message": "Click the \"Add Category\" button to create your first category."
+  },
+  "noMatchingCategories": {
+    "message": "No categories found matching $searchTerm$",
+    "placeholders": {
+      "searchTerm": {
+        "content": "$1"
+      }
+    }
+  },
+  "tryOtherSearchTerms": {
+    "message": "Please try other search terms"
+  },
+  "default": {
+    "message": "Default"
+  },
+  "noDescription": {
+    "message": "No description"
+  },
+  "prompts": {
+    "message": "$count$ prompts",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
+  },
+  "edit": {
+    "message": "Edit"
+  },
+  "delete": {
+    "message": "Delete"
+  },
+  "loadCategoriesFailed": {
+    "message": "Load categories failed, please try again later"
+  },
+  "addCategoryFailed": {
+    "message": "Add category failed, please try again later"
+  },
+  "updateCategoryFailed": {
+    "message": "Update category failed, please try again later"
+  },
+  "cannotDeleteDefaultCategory": {
+    "message": "Cannot delete default category"
+  },
+  "deleteCategoryFailed": {
+    "message": "Delete category failed, please try again later"
+  },
+  "toggleCategoryStatusFailed": {
+    "message": "Toggle category status failed, please try again later"
+  },
+  "loading": {
+    "message": "Loading"
+  },
+  "loadingMessage": {
+    "message": "Please wait, preparing your categories..."
+  },
+  "categoryManagement": {
+    "message": "Category Management"
+  },
+  "categoryManagementDescription": {
+    "message": "Here, you can manage your categories, including adding, editing, deleting, and enabling/disabling categories."
+  },
+  "totalCategories": {
+    "message": "Total: $count$ categories",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
+  },
+  "totalPrompts": {
+    "message": "Total prompts"
+  },
+  "operationFailed": {
+    "message": "Operation failed"
+  },
+  "searchCategory": {
+    "message": "Search category name or description..."
+  },
+  "addCategory": {
+    "message": "Add Category"
+  },
+  "noMatchingCategories2": {
+    "message": "No matching categories found"
+  },
+  "clearSearch": {
+    "message": "Clear search"
+  },
+  "noCategories": {
+    "message": "No categories yet"
+  },
+  "createFirstCategory": {
+    "message": "Create your first category to start organizing your prompts!"
+  },
+  "createFirstCategoryButton": {
+    "message": "Create first category"
+  },
+  "editCategory": {
+    "message": "Edit Category"
+  },
+  "confirmDeleteCategory": {
+    "message": "Confirm Delete Category"
+  },
+  "confirmDeleteCategoryMessage": {
+    "message": "Are you sure you want to delete this category? All prompts in this category will be moved to the default category. This action cannot be undone."
+  },
+  "confirm": {
+    "message": "Confirm"
+  },
+  "confirmDeletePrompt": {
+    "message": "Confirm delete prompt?"
+  },
+  "confirmDeletePromptMessage": {
+    "message": "This action cannot be undone, the prompt will be permanently deleted."
+  },
+  "promptManagement": {
+    "message": "Prompt Management"
+  },
+  "promptManagementDescription": {
+    "message": "Manage your prompts"
+  },
+  "promptCategoryManagement": {
+    "message": "Prompt Category Management"
+  },
+  "openMenu": {
+    "message": "Open Menu"
+  },
+  "closeMenu": {
+    "message": "Close Menu"
+  },
+  "googleAuth": {
+    "message": "Google Auth"
+  },
+  "notionSync": {
+    "message": "Notion Sync"
+  },
+  "enable": {
+    "message": "Enabled: $count$",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
+  }
+} 

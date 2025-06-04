@@ -1,0 +1,280 @@
+{
+  "appDescription": {
+    "message": "在网页输入框中通过指令快速插入预设的 Prompt 内容。"
+  },
+  "openPromptSelector": {
+    "message": "打开提示词选择弹窗"
+  },
+  "saveSelectedPrompt": {
+    "message": "保存选中的文本作为提示词"
+  },
+  "promptLibrary": {
+    "message": "提示词库"
+  },
+  "availablePrompts": {
+    "message": "个可用提示"
+  },
+  "managePrompts": {
+    "message": "管理提示词"
+  },
+  "usage": {
+    "message": "使用方式"
+  },
+  "quickInput": {
+    "message": "快捷输入: 任意输入框中输入"
+  },
+  "orPress": {
+    "message": "或按下"
+  },
+  "quickSave": {
+    "message": "快捷保存：选中文本后按下"
+  },
+  "savePrompt": {
+    "message": "即可保存提示词"
+  },
+  "rightClickSave": {
+    "message": "右键保存：选中文本后单击右键菜单选择\"保存该提示词\""
+  },
+  "shortcutNotConfigured": {
+    "message": "未检测到快捷键配置，可能是因为快捷键冲突。"
+  },
+  "configureShortcut": {
+    "message": "前往设置快捷键"
+  },
+  "noReminder": {
+    "message": "不再提醒"
+  },
+  "dismissReminderTitle": {
+    "message": "不再提醒快捷键设置问题"
+  },
+  "errorCannotReadStorage": {
+    "message": "无法从存储中读取数据"
+  },
+  "errorCannotLoadPrompts": {
+    "message": "无法加载提示"
+  },
+  "firefoxShortcutHelp": {
+    "message": "打开扩展页面后，请点击右上角的齿轮图标，并选择\"管理扩展快捷键\"选项"
+  },
+  "backToTop": {
+    "message": "回到顶部"
+  },
+  "blue": {
+    "message": "蓝色"
+  },
+  "green": {
+    "message": "绿色"
+  },
+  "yellow": {
+    "message": "黄色"
+  },
+  "red": {
+    "message": "红色"
+  },
+  "purple": {
+    "message": "紫色"
+  },
+  "pink": {
+    "message": "粉色"
+  },
+  "cyan": {
+    "message": "青色"
+  },
+  "orange": {
+    "message": "橙色"
+  },
+  "categoryNameCannotBeEmpty": {
+    "message": "分类名称不能为空"
+  },
+  "saveFailed": {
+    "message": "保存失败，请稍后再试"
+  },
+  "categoryName": {
+    "message": "分类名称"
+  },
+  "categoryExample": {
+    "message": "例如：编程开发"
+  },
+  "description": {
+    "message": "描述"
+  },
+  "optional": {
+    "message": "可选"
+  },
+  "descriptionExample": {
+    "message": "简单描述这个分类的用途..."
+  },
+  "categoryColor": {
+    "message": "分类颜色"
+  },
+  "enabled": {
+    "message": "已启用"
+  },
+  "disabled": {
+    "message": "已停用"
+  },
+  "disabledTips": {
+    "message": "停用后该分类下的提示词不会显示" 
+  },
+  "saving": {
+    "message": "保存中..."
+  },
+  "updateCategory": {
+    "message": "更新分类"
+  },
+  "saveCategory": {
+    "message": "保存分类"
+  },
+  "cancel": {
+    "message": "取消"
+  },
+  "noCategoriesAdded": {
+    "message": "还没有添加任何分类"
+  },
+  "clickAddCategory": {
+    "message": "点击\"新增分类\"按钮来创建您的第一个分类。"
+  },
+  "noMatchingCategories": {
+    "message": "没有找到匹配$searchTerm$的分类",
+    "placeholders": {
+      "searchTerm": {
+        "content": "$1"
+      }
+    }
+  },
+  "tryOtherSearchTerms": {
+    "message": "请尝试其他搜索词"
+  },
+  "default": {
+    "message": "默认"
+  },
+  "noDescription": {
+    "message": "无描述"
+  },
+  "prompts": {
+    "message": "$count$个提示词",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
+  },
+  "edit": {
+    "message": "编辑"
+  },
+  "delete": {
+    "message": "删除"
+  },
+  "loadCategoriesFailed": {
+    "message": "加载分类失败，请稍后再试"
+  },
+  "addCategoryFailed": {
+    "message": "添加分类失败，请稍后再试"
+  },
+  "updateCategoryFailed": {
+    "message": "更新分类失败，请稍后再试"
+  },
+  "cannotDeleteDefaultCategory": {
+    "message": "无法删除默认分类"
+  },
+  "deleteCategoryFailed": {
+    "message": "删除分类失败，请稍后再试"
+  },
+  "toggleCategoryStatusFailed": {
+    "message": "切换分类状态失败，请稍后再试"
+  },
+  "loading": {
+    "message": "加载中"
+  },
+  "loadingMessage": {
+    "message": "请稍候，正在准备您的分类..."
+  },
+  "categoryManagement": {
+    "message": "分类管理"
+  },
+  "categoryManagementDescription": {
+    "message": "在这里，您可以管理您的分类，包括添加、编辑、删除和启用/停用分类。"
+  },
+  "totalCategories": {
+    "message": "总计：$count$个分类",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
+  },
+  "totalPrompts": {
+    "message": "提示词总数"
+  },
+  "operationFailed": {
+    "message": "操作失败"
+  },
+  "searchCategory": {
+    "message": "搜索分类名称或描述..."
+  },
+  "addCategory": {
+    "message": "新增分类"
+  },
+  "noMatchingCategories2": {
+    "message": "未找到匹配的分类"
+  },
+  "clearSearch": {
+    "message": "清除搜索"
+  },
+  "noCategories": {
+    "message": "还没有分类"
+  },
+  "createFirstCategory": {
+    "message": "创建您的第一个分类，开始组织您的提示词吧！"
+  },
+  "createFirstCategoryButton": {
+    "message": "创建第一个分类"
+  },
+  "editCategory": {
+    "message": "编辑分类"
+  },
+  "confirmDeleteCategory": {
+    "message": "确认删除分类"
+  },
+  "confirmDeleteCategoryMessage": {
+    "message": "确定要删除这个分类吗？该分类下的所有提示词将被移动到默认分类。此操作无法撤销。"
+  },
+  "confirm": {
+    "message": "确定"
+  },
+  "confirmDeletePrompt": {
+    "message": "确定删除提示词？"
+  },
+  "confirmDeletePromptMessage": {
+    "message": "此操作无法撤销，提示词将被永久删除。"
+  },
+  "promptManagement": {
+    "message": "提示词管理"
+  },
+  "promptManagementDescription": {
+    "message": "管理您的提示词"
+  },
+  "promptCategoryManagement": {
+    "message": "管理提示词分类"
+  },
+  "openMenu": {
+    "message": "打开菜单"
+  },
+  "closeMenu": {
+    "message": "关闭菜单"
+  },
+  "googleAuth": {
+    "message": "Google 认证"
+  },
+  "notionSync": {
+    "message": "Notion 同步"
+  },
+  "enable": {
+    "message": "启用：$count$个",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
+  }
+} 

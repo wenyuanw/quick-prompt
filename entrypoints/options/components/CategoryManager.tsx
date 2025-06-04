@@ -16,6 +16,7 @@ import {
   getPromptCountByCategory,
 } from "@/utils/categoryUtils";
 import { DEFAULT_CATEGORY_ID } from "@/utils/constants";
+import { t } from '../../../utils/i18n';
 
 const CategoryManager = () => {
   const [categories, setCategories] = useState<Category[]>([]);
@@ -46,7 +47,7 @@ const CategoryManager = () => {
         setPromptCounts(counts);
       } catch (err) {
         console.error("分类管理页：加载分类出错:", err);
-        setError("加载分类失败，请稍后再试");
+        setError(t('loadCategoriesFailed'));
       } finally {
         setIsLoading(false);
       }
@@ -86,7 +87,7 @@ const CategoryManager = () => {
       closeModal();
     } catch (err) {
       console.error("分类管理页：添加分类出错:", err);
-      setError("添加分类失败，请稍后再试");
+      setError(t('addCategoryFailed'));
     }
   };
 
@@ -107,7 +108,7 @@ const CategoryManager = () => {
       closeModal();
     } catch (err) {
       console.error("分类管理页：更新分类出错:", err);
-      setError("更新分类失败，请稍后再试");
+      setError(t('updateCategoryFailed'));
     }
   };
 
@@ -125,7 +126,7 @@ const CategoryManager = () => {
   // Delete a category
   const handleDeleteCategory = async (id: string) => {
     if (id === DEFAULT_CATEGORY_ID) {
-      setError("不能删除默认分类");
+      setError(t('cannotDeleteDefaultCategory'));
       return;
     }
     setCategoryToDelete(id);
@@ -150,7 +151,7 @@ const CategoryManager = () => {
         setCategoryToDelete(null);
       } catch (err) {
         console.error("分类管理页：删除分类出错:", err);
-        setError("删除分类失败，请稍后再试");
+        setError(t('deleteCategoryFailed'));
         setIsConfirmModalOpen(false); // Close modal on error too
         setCategoryToDelete(null);
       }
@@ -194,7 +195,7 @@ const CategoryManager = () => {
       setCategories(newCategories);
     } catch (err) {
       console.error("分类管理页：切换分类状态出错:", err);
-      setError("切换分类状态失败，请稍后再试");
+      setError(t('toggleCategoryStatusFailed'));
     }
   };
 
@@ -241,8 +242,8 @@ const CategoryManager = () => {
               </div>
             </div>
             <div className="space-y-2">
-              <h3 className="text-lg font-semibold text-gray-700 dark:text-gray-300">正在加载</h3>
-              <p className="text-sm text-gray-500 dark:text-gray-400">请稍候，正在准备您的分类...</p>
+              <h3 className="text-lg font-semibold text-gray-700 dark:text-gray-300">{t('loading')}</h3>
+              <p className="text-sm text-gray-500 dark:text-gray-400">{t('loadingMessage')}</p>
             </div>
           </div>
         </div>
@@ -264,11 +265,11 @@ const CategoryManager = () => {
                   </svg>
                 </div>
                 <h1 className="text-4xl font-bold bg-gradient-to-r from-gray-900 via-purple-900 to-pink-900 dark:from-gray-100 dark:via-purple-100 dark:to-pink-100 bg-clip-text text-transparent">
-                  分类管理
+                  {t('categoryManagement')}
                 </h1>
               </div>
               <p className="text-lg text-gray-600 dark:text-gray-300 max-w-2xl">
-                创建和管理提示词分类，让您的提示词更有条理
+                {t('categoryManagementDescription')}
               </p>
               
               {/* 统计卡片 */}
@@ -276,20 +277,20 @@ const CategoryManager = () => {
                 <div className="bg-white/70 dark:bg-gray-800/70 backdrop-blur-sm border border-white/20 dark:border-gray-700/50 rounded-2xl px-4 py-3 shadow-sm">
                   <div className="flex items-center space-x-2">
                     <div className="w-2 h-2 bg-green-500 rounded-full"></div>
-                    <span className="text-sm font-medium text-gray-700 dark:text-gray-300">总计 {categories.length} 个分类</span>
+                    <span className="text-sm font-medium text-gray-700 dark:text-gray-300">{t('totalCategories', [`${categories.length}`])}</span>
                   </div>
                 </div>
                 <div className="bg-white/70 dark:bg-gray-800/70 backdrop-blur-sm border border-white/20 dark:border-gray-700/50 rounded-2xl px-4 py-3 shadow-sm">
                   <div className="flex items-center space-x-2">
                     <div className="w-2 h-2 bg-purple-500 rounded-full"></div>
-                    <span className="text-sm font-medium text-gray-700 dark:text-gray-300">启用 {categories.filter(c => c.enabled).length} 个</span>
+                    <span className="text-sm font-medium text-gray-700 dark:text-gray-300">{t('enable', [`${categories.filter(c => c.enabled).length}`])} </span>
                   </div>
                 </div>
                 <div className="bg-white/70 dark:bg-gray-800/70 backdrop-blur-sm border border-white/20 dark:border-gray-700/50 rounded-2xl px-4 py-3 shadow-sm">
                   <div className="flex items-center space-x-2">
                     <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
                     <span className="text-sm font-medium text-gray-700 dark:text-gray-300">
-                      提示词总数 {Object.values(promptCounts).reduce((a, b) => a + b, 0)} 个
+                      {t('totalPrompts')}: {Object.values(promptCounts).reduce((a, b) => a + b, 0)}
                     </span>
                   </div>
                 </div>
@@ -310,7 +311,7 @@ const CategoryManager = () => {
                 </div>
               </div>
               <div className="flex-1">
-                <h3 className="text-sm font-medium text-red-800 dark:text-red-300">操作失败</h3>
+                <h3 className="text-sm font-medium text-red-800 dark:text-red-300">{t('operationFailed')}</h3>
                 <p className="text-sm text-red-700 dark:text-red-400 mt-1">{error}</p>
               </div>
               <button
@@ -341,7 +342,7 @@ const CategoryManager = () => {
                     type="text"
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}
-                    placeholder="搜索分类名称或描述..."
+                    placeholder={t('searchCategory')}
                     className="block w-full pl-10 pr-3 py-3 border border-gray-200 dark:border-gray-600 rounded-xl bg-white/50 dark:bg-gray-800/50 backdrop-blur-sm text-gray-900 dark:text-gray-100 placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all duration-200"
                   />
                 </div>
@@ -356,7 +357,7 @@ const CategoryManager = () => {
                   <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
                   </svg>
-                  新增分类
+                  {t('addCategory')}
                 </button>
               </div>
             </div>
@@ -386,9 +387,9 @@ const CategoryManager = () => {
               
               {searchTerm ? (
                 <div className="space-y-4">
-                  <h3 className="text-xl font-semibold text-gray-900 dark:text-gray-100">未找到匹配的分类</h3>
+                  <h3 className="text-xl font-semibold text-gray-900 dark:text-gray-100">{t('noMatchingCategories2')}</h3>
                   <p className="text-gray-600 dark:text-gray-300">
-                    没有找到匹配 "{searchTerm}" 的分类。
+                     {t('noMatchingCategories', [`${searchTerm}`])}
                   </p>
                   <div className="flex justify-center">
                     <button
@@ -398,14 +399,14 @@ const CategoryManager = () => {
                       <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
                       </svg>
-                      清除搜索
+                      {t('clearSearch')}
                     </button>
                   </div>
                 </div>
               ) : (
                 <div className="space-y-4">
-                  <h3 className="text-xl font-semibold text-gray-900 dark:text-gray-100">还没有分类</h3>
-                  <p className="text-gray-600 dark:text-gray-300">创建您的第一个分类，开始组织您的提示词吧！</p>
+                  <h3 className="text-xl font-semibold text-gray-900 dark:text-gray-100">{t('noCategories')}</h3>
+                  <p className="text-gray-600 dark:text-gray-300">{t('createFirstCategory')}</p>
                   <button
                     onClick={openAddModal}
                     className="inline-flex items-center px-6 py-3 bg-gradient-to-r from-purple-600 to-pink-600 text-white rounded-xl hover:from-purple-700 hover:to-pink-700 transition-all duration-200 hover:shadow-lg hover:-translate-y-0.5 font-medium shadow-purple-500/25"
@@ -413,7 +414,7 @@ const CategoryManager = () => {
                     <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
                     </svg>
-                    创建第一个分类
+                    {t('createFirstCategory')}
                   </button>
                 </div>
               )}
@@ -425,7 +426,7 @@ const CategoryManager = () => {
         <Modal
           isOpen={isModalOpen}
           onClose={closeModal}
-          title={editingCategory ? "编辑分类" : "新建分类"} // Title as string
+          title={editingCategory ? t('editCategory') : t('addCategory')} // Title as string
         >
           {/* Modal Header with Icon */}
           <div className="flex items-center space-x-3 mb-4">
@@ -439,7 +440,7 @@ const CategoryManager = () => {
               </svg>
             </div>
             <span className="text-xl font-semibold text-gray-900 dark:text-gray-100">
-              {editingCategory ? "编辑分类" : "新建分类"}
+              {editingCategory ? t('editCategory') : t('addCategory')}
             </span>
           </div>
           <CategoryForm
@@ -458,10 +459,10 @@ const CategoryManager = () => {
             setCategoryToDelete(null);
           }}
           onConfirm={handleConfirmDelete}
-          title="确认删除分类"
-          message="确定要删除这个分类吗？该分类下的所有提示词将被移动到默认分类。此操作无法撤销。" // Message as string
-          confirmText="删除"
-          cancelText="取消"
+          title={t('confirmDeleteCategory')}
+          message={t('confirmDeleteCategoryMessage')} // Message as string
+          confirmText={t('delete')}
+          cancelText={t('cancel')}
         />
       </div>
     </div>

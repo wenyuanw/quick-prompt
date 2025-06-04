@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { NavLink } from "react-router-dom";
 import Logo from "~/assets/icon.png";
 import NotionLogo from "./NotionLogo";
+import { t } from '../../../utils/i18n';
 
 interface SidebarProps {
   className?: string;
@@ -31,7 +32,7 @@ const Sidebar: React.FC<SidebarProps> = ({ className = "" }) => {
   const menuItems = [
     {
       path: "/",
-      name: "提示词管理",
+      name: t('promptManagement'),
       icon: (
         <svg
           className="w-5 h-5"
@@ -47,11 +48,11 @@ const Sidebar: React.FC<SidebarProps> = ({ className = "" }) => {
           />
         </svg>
       ),
-      description: "管理您的提示词",
+      description: t('promptManagementDescription'),
     },
     {
       path: "/categories",
-      name: "分类管理",
+      name: t('categoryManagement'),
       icon: (
         <svg
           className="w-5 h-5"
@@ -67,7 +68,7 @@ const Sidebar: React.FC<SidebarProps> = ({ className = "" }) => {
           />
         </svg>
       ),
-      description: "管理提示词分类",
+      description: t('promptCategoryManagement'),
     },
   ];
 
@@ -88,7 +89,7 @@ const Sidebar: React.FC<SidebarProps> = ({ className = "" }) => {
         <button
           onClick={toggleSidebar}
           className="flex fixed top-2 left-4 z-50 justify-center items-center w-12 h-12 bg-white rounded-xl border border-gray-200 shadow-lg transition-all duration-200 ease-in-out  dark:bg-gray-800 dark:border-gray-600 hover:shadow-xl hover:bg-gray-50 dark:hover:bg-gray-700 active:scale-95 md:hidden"
-          aria-label="打开菜单"
+          aria-label={t('openMenu')}
         >
           <svg
             className="w-6 h-6 text-gray-600 dark:text-gray-300"
@@ -140,7 +141,7 @@ const Sidebar: React.FC<SidebarProps> = ({ className = "" }) => {
                 <button
                   onClick={closeSidebar}
                   className="flex justify-center items-center w-10 h-10 text-gray-500 rounded-lg transition-all duration-200  dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700"
-                  aria-label="关闭菜单"
+                  aria-label={t('closeMenu')}
                 >
                   <svg
                     className="w-6 h-6"
@@ -244,7 +245,7 @@ const Sidebar: React.FC<SidebarProps> = ({ className = "" }) => {
                 }
               >
                 <NotionLogo/>
-                Notion 同步
+                {t('notionSync')}
               </NavLink>
               <NavLink
                 to="/integrations/google"
@@ -268,7 +269,7 @@ const Sidebar: React.FC<SidebarProps> = ({ className = "" }) => {
                   <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335" />
                   <path d="M1 1h22v22H1z" fill="none" />
                 </svg>
-                Google 认证
+                {t('googleAuth')}
               </NavLink>
             </div>
             <div className="space-y-1 text-xs text-center text-gray-500 dark:text-gray-400">
