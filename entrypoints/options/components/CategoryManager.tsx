@@ -37,7 +37,7 @@ const CategoryManager = () => {
         setIsLoading(true);
         const storedCategories = await getCategories();
         setCategories(storedCategories);
-        console.log("分类管理页：加载分类:", storedCategories.length);
+        console.log(t('categoryPageLoadCategories'), storedCategories.length);
 
         // 加载每个分类下的提示词数量
         const counts: Record<string, number> = {};
@@ -46,7 +46,7 @@ const CategoryManager = () => {
         }
         setPromptCounts(counts);
       } catch (err) {
-        console.error("分类管理页：加载分类出错:", err);
+        console.error(t('categoryPageLoadError'), err);
         setError(t('loadCategoriesFailed'));
       } finally {
         setIsLoading(false);
@@ -86,7 +86,7 @@ const CategoryManager = () => {
       setPromptCounts((prev) => ({ ...prev, [newCategory.id]: 0 }));
       closeModal();
     } catch (err) {
-      console.error("分类管理页：添加分类出错:", err);
+      console.error(t('categoryPageAddError'), err);
       setError(t('addCategoryFailed'));
     }
   };
@@ -107,7 +107,7 @@ const CategoryManager = () => {
       setEditingCategory(null);
       closeModal();
     } catch (err) {
-      console.error("分类管理页：更新分类出错:", err);
+      console.error(t('categoryPageUpdateError'), err);
       setError(t('updateCategoryFailed'));
     }
   };
@@ -150,7 +150,7 @@ const CategoryManager = () => {
         setIsConfirmModalOpen(false); // Close modal on success
         setCategoryToDelete(null);
       } catch (err) {
-        console.error("分类管理页：删除分类出错:", err);
+        console.error(t('categoryPageDeleteError'), err);
         setError(t('deleteCategoryFailed'));
         setIsConfirmModalOpen(false); // Close modal on error too
         setCategoryToDelete(null);
@@ -194,7 +194,7 @@ const CategoryManager = () => {
       );
       setCategories(newCategories);
     } catch (err) {
-      console.error("分类管理页：切换分类状态出错:", err);
+      console.error(t('categoryPageToggleError'), err);
       setError(t('toggleCategoryStatusFailed'));
     }
   };

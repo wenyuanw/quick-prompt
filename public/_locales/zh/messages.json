@@ -166,7 +166,7 @@
     "message": "删除"
   },
   "loadCategoriesFailed": {
-    "message": "加载分类失败，请稍后再试"
+    "message": "加载分类失败"
   },
   "addCategoryFailed": {
     "message": "添加分类失败，请稍后再试"
@@ -276,5 +276,605 @@
         "content": "$1"
       }
     }
+  },
+  "notionSyncDisabled": {
+    "message": "本地到Notion的同步已禁用。"
+  },
+  "searchPromptTitleContentTag": {
+    "message": "搜索标题、内容或标签..."
+  },
+  "collapseDetails": {
+    "message": "收起详情"
+  },
+  "showDetails": {
+    "message": "显示详情"
+  },
+  "close": {
+    "message": "关闭"
+  },
+  "syncSuccess": {
+    "message": "同步成功!"
+  },
+  "syncFailed": {
+    "message": "同步失败"
+  },
+  "syncing": {
+    "message": "正在同步中，请稍候..."
+  },
+  "syncingToNotion": {
+    "message": "正在同步到Notion，请稍候..."
+  },
+  "syncingFromNotion": {
+    "message": "正在从Notion同步，请稍候..."
+  },
+  "noPromptsAdded": {
+    "message": "还没有添加任何 Prompt"
+  },
+  "clickAddPrompt": {
+    "message": "点击\"添加新 Prompt\"按钮来创建您的第一个 Prompt。"
+  },
+  "noMatchingPrompts": {
+    "message": "没有找到匹配的 Prompt"
+  },
+  "tryOtherTermsOrCategories": {
+    "message": "请尝试其他搜索词或选择其他分类。"
+  },
+  "noTags": {
+    "message": "(无标签)"
+  },
+  "loadDataFailed": {
+    "message": "加载数据失败，请稍后再试"
+  },
+  "savePromptsFailed": {
+    "message": "保存 Prompts 失败，请稍后再试"
+  },
+  "exportPromptsFailed": {
+    "message": "导出 Prompts 失败，请稍后再试"
+  },
+  "invalidFileFormat": {
+    "message": "导入的文件格式不正确"
+  },
+  "noValidPromptsInFile": {
+    "message": "导入的文件中没有有效的提示词"
+  },
+  "importPromptsConfirm": {
+    "message": "您已有$existingCount$个提示词，发现$newCount$个待导入提示词。\n点击\"确定\"导入新提示词，点击\"取消\"不进行任何操作。",
+    "placeholders": {
+      "existingCount": {
+        "content": "$1"
+      },
+      "newCount": {
+        "content": "$2"
+      }
+    }
+  },
+  "noNewPromptsFound": {
+    "message": "没有发现新的提示词，导入已取消。"
+  },
+  "importPromptsFailed": {
+    "message": "导入 Prompts 失败: $error$",
+    "placeholders": {
+      "error": {
+        "content": "$1"
+      }
+    }
+  },
+  "enterValidUrl": {
+    "message": "请输入有效的URL"
+  },
+  "invalidRemoteDataFormat": {
+    "message": "导入的数据格式不正确"
+  },
+  "noValidPromptsInRemoteData": {
+    "message": "远程数据中没有有效的提示词"
+  },
+  "remoteImportPromptsConfirm": {
+    "message": "您已有$existingCount$个提示词，从远程发现$newCount$个待导入提示词。\n点击\"确定\"导入新提示词，点击\"取消\"不进行任何操作。",
+    "placeholders": {
+      "existingCount": {
+        "content": "$1"
+      },
+      "newCount": {
+        "content": "$2"
+      }
+    }
+  },
+  "remoteImportFailed": {
+    "message": "远程导入失败: $error$",
+    "placeholders": {
+      "error": {
+        "content": "$1"
+      }
+    }
+  },
+  "searchPrompts": {
+    "message": "搜索提示词..."
+  },
+  "noPromptsToExport": {
+    "message": "没有提示词可导出"
+  },
+  "exportAllPrompts": {
+    "message": "导出所有提示词"
+  },
+  "importFromUrl": {
+    "message": "从URL导入提示词"
+  },
+  "noMatchingPromptsInCategory": {
+    "message": "在\"$categoryName$\"分类中没有找到匹配\"$searchTerm$\"的提示词",
+    "placeholders": {
+      "categoryName": {
+        "content": "$1"
+      },
+      "searchTerm": {
+        "content": "$2"
+      }
+    }
+  },
+  "editPrompt": {
+    "message": "编辑提示词"
+  },
+  "newPrompt": {
+    "message": "新建提示词"
+  },
+  "confirmDelete": {
+    "message": "确认删除"
+  },
+  "loadingData": {
+    "message": "正在加载"
+  },
+  "loadingDataMessage": {
+    "message": "请稍候，正在准备您的提示词..."
+  },
+  "importFailed": {
+    "message": "导入失败"
+  },
+  "importSuccessful": {
+    "message": "成功导入了 $count$ 个提示词！",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
+  },
+  "totalCount": {
+    "message": "总计 $count$ 个提示词",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
+  },
+  "enabledCount": {
+    "message": "启用 $count$ 个",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
+  },
+  "currentCategoryCount": {
+    "message": "当前分类 $count$ 个",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
+  },
+  "allCategories": {
+    "message": "所有分类"
+  },
+  "localImport": {
+    "message": "本地导入"
+  },
+  "remoteImport": {
+    "message": "远程导入"
+  },
+  "addNewPrompt": {
+    "message": "新增提示词"
+  },
+  "viewAllCategories": {
+    "message": "查看所有分类"
+  },
+  "createFirstPrompt": {
+    "message": "创建您的第一个提示词，开始提升工作效率"
+  },
+  "categoryEmpty": {
+    "message": "\"$categoryName$\"分类中暂无提示词",
+    "placeholders": {
+      "categoryName": {
+        "content": "$1"
+      }
+    }
+  },
+  "importInstructions": {
+    "message": "导入说明"
+  },
+  "importInstructionsDetail": {
+    "message": "输入包含有效提示词 JSON 数据的 URL 链接，系统将自动获取并导入数据。"
+  },
+  "remoteUrl": {
+    "message": "远程 URL"
+  },
+  "importing": {
+    "message": "正在导入..."
+  },
+  "startImport": {
+    "message": "开始导入"
+  },
+  "loadingNotionSettings": {
+    "message": "加载 Notion 设置中..."
+  },
+  "basicSettings": {
+    "message": "基本设置"
+  },
+  "configurationGuide": {
+    "message": "配置指南"
+  },
+  "notionAPIKey": {
+    "message": "Notion API 密钥"
+  },
+  "notionAPIKeyPlaceholder": {
+    "message": "secret_xxxxxxxxxxxxx"
+  },
+  "notionAPIKeyHelp": {
+    "message": "在"
+  },
+  "notionIntegrationsPage": {
+    "message": "Notion 整合页面"
+  },
+  "notionAPIKeyHelp2": {
+    "message": "创建一个新的整合并获取 API 密钥"
+  },
+  "notionDatabaseID": {
+    "message": "Notion 数据库 ID"
+  },
+  "notionDatabaseIDPlaceholder": {
+    "message": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
+  },
+  "notionDatabaseIDHelp": {
+    "message": "您可以从 Notion 数据库页面 URL 中提取 ID"
+  },
+  "saveSettingsAndTest": {
+    "message": "保存设置 & 测试连接"
+  },
+  "autoSyncSettings": {
+    "message": "自动同步设置"
+  },
+  "enableAutoSync": {
+    "message": "启用自动同步"
+  },
+  "autoSyncDescription": {
+    "message": "本地更改自动同步到 Notion"
+  },
+  "enableSync": {
+    "message": "启用同步"
+  },
+  "importantNotes": {
+    "message": "注意事项:"
+  },
+  "apiKeyStorageNote": {
+    "message": "API 密钥安全存储在浏览器中"
+  },
+  "permissionsNote": {
+    "message": "需要确保 Notion 整合具有读写权限"
+  },
+  "syncFromNotionToLocal": {
+    "message": "从 Notion 同步到本地"
+  },
+  "overwriteLocalData": {
+    "message": "覆盖本地数据"
+  },
+  "appendToLocal": {
+    "message": "追加到本地"
+  },
+  "appendMode": {
+    "message": "追加模式"
+  },
+  "appendModeDescription": {
+    "message": "只添加 Notion 中有但本地没有的提示词"
+  },
+  "overwriteMode": {
+    "message": "覆盖模式"
+  },
+  "overwriteModeDescription": {
+    "message": "完全用 Notion 数据替换本地数据"
+  },
+  "oneTimeOperationNote": {
+    "message": "注意：这是一次性操作"
+  },
+  "syncFromLocalToNotion": {
+    "message": "从本地同步到 Notion"
+  },
+  "syncToNotion": {
+    "message": "同步到 Notion"
+  },
+  "syncToNotionDescription": {
+    "message": "此操作会将本地提示词同步到 Notion，包括："
+  },
+  "createMissingPrompts": {
+    "message": "创建 Notion 中不存在的提示词"
+  },
+  "updateChangedPrompts": {
+    "message": "更新 Notion 中已有但内容变化的提示词"
+  },
+  "markDeletedPrompts": {
+    "message": "在 Notion 中标记已删除的提示词"
+  },
+  "syncInProgress": {
+    "message": "同步正在进行中..."
+  },
+  "notionAPIKeyOrDatabaseNotConfigured": {
+    "message": "Notion API密钥或数据库ID未配置，无法同步。请先完成配置。"
+  },
+  "syncTaskInProgress": {
+    "message": "已有同步任务正在进行中，请稍候。"
+  },
+  "startingSyncToNotion": {
+    "message": "正在启动同步到Notion，请稍候..."
+  },
+  "syncStartFailed": {
+    "message": "启动同步失败"
+  },
+  "unknownError": {
+    "message": "未知错误"
+  },
+  "errorTriggeringSyncToNotion": {
+    "message": "触发同步到Notion时发生错误"
+  },
+  "startingNotionOverwriteSync": {
+    "message": "正在启动从Notion覆盖本地数据，请稍候..."
+  },
+  "errorTriggeringNotionOverwriteSync": {
+    "message": "触发从Notion覆盖同步时发生错误"
+  },
+  "startingNotionAppendSync": {
+    "message": "正在启动从Notion追加数据到本地，请稍候..."
+  },
+  "errorTriggeringNotionAppendSync": {
+    "message": "触发从Notion追加同步时发生错误"
+  },
+  "syncingToNotionMessage": {
+    "message": "正在同步到Notion，请稍候..."
+  },
+  "syncingFromNotionOverwriteMessage": {
+    "message": "正在从Notion覆盖同步到本地，请稍候..."
+  },
+  "syncingFromNotionAppendMessage": {
+    "message": "正在从Notion追加同步到本地，请稍候..."
+  },
+  "connectionSuccessNotionSaved": {
+    "message": "连接成功! Notion 设置已保存。"
+  },
+  "fillAPIKeyAndDatabaseID": {
+    "message": "请填写 API 密钥和数据库 ID"
+  },
+  "loadSettingsError": {
+    "message": "加载设置时出错"
+  },
+  "saveSettingsError": {
+    "message": "保存设置时出错"
+  },
+  "testConnectionError": {
+    "message": "测试连接时出错"
+  },
+  "notionConnectionSuccessful": {
+    "message": "Notion连接成功"
+  },
+  "invalidNotionAPIKeyOrDatabase": {
+    "message": "无效的Notion API密钥或数据库ID"
+  },
+  "notionConnectionFailed": {
+    "message": "Notion连接失败"
+  },
+  "variableInputCanceled": {
+    "message": "变量输入已取消"
+  },
+  "errorProcessingContentEditable": {
+    "message": "处理 contenteditable 元素时发生错误"
+  },
+  "cannotTriggerInputEvent": {
+    "message": "无法触发输入事件"
+  },
+  "searchKeywordPlaceholder": {
+    "message": "输入关键词搜索提示..."
+  },
+  "noAvailablePrompts": {
+    "message": "没有可用的提示"
+  },
+  "tryChangingSearchOrCategory": {
+    "message": "尝试更改搜索词或选择其他分类"
+  },
+  "tryOtherKeywords": {
+    "message": "尝试使用其他关键词搜索"
+  },
+  "noCategoryPrompts": {
+    "message": "该分类中暂无提示词"
+  },
+  "pleaseAddPrompts": {
+    "message": "请先添加一些提示词"
+  },
+  "totalPrompts2": {
+    "message": "共 $count$ 个提示",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
+  },
+  "navigationHelp": {
+    "message": "↑↓ 导航 · Enter 选择 · Tab 切换分类"
+  },
+  "contentScriptLoaded": {
+    "message": "内容脚本 (WXT): 已加载"
+  },
+  "clickInputBoxFirst": {
+    "message": "请先点击一个文本输入框或可编辑元素，然后再使用快捷键打开提示词选择器。"
+  },
+  "restoreFocus": {
+    "message": "恢复焦点"
+  },
+  "noEnabledPromptsFound": {
+    "message": "没有找到已启用的提示词"
+  },
+  "noEnabledPromptsAlert": {
+    "message": "没有找到已启用的提示词。请先在扩展中添加并启用一些提示词。"
+  },
+  "errorGettingPrompts": {
+    "message": "获取提示词时发生错误"
+  },
+  "errorGettingSelectedText": {
+    "message": "内容脚本: 获取选中文本时出错"
+  },
+  "getSelectedTextFailed": {
+    "message": "获取选中文本失败"
+  },
+  "popupPromptsInfo": {
+    "message": "弹出窗口：共有 $total$ 个提示词，其中 $enabled$ 个已启用",
+    "placeholders": {
+      "total": {
+        "content": "$1"
+      },
+      "enabled": {
+        "content": "$2"
+      }
+    }
+  },
+  "popupShortcutReminderSet": {
+    "message": "弹出窗口: 已设置不再提醒快捷键设置问题"
+  },
+  "categoryPageLoadCategories": {
+    "message": "分类管理页：加载分类"
+  },
+  "categoryPageLoadError": {
+    "message": "分类管理页：加载分类出错"
+  },
+  "categoryPageAddError": {
+    "message": "分类管理页：添加分类出错"
+  },
+  "categoryPageUpdateError": {
+    "message": "分类管理页：更新分类出错"
+  },
+  "categoryPageDeleteError": {
+    "message": "分类管理页：删除分类出错"
+  },
+  "categoryPageToggleError": {
+    "message": "分类管理页：切换分类状态出错"
+  },
+  "optionsPageLoadPrompts": {
+    "message": "选项页：加载 Prompts"
+  },
+  "optionsPageLoadCategories": {
+    "message": "选项页：加载分类"
+  },
+  "optionsPageLoadDataError": {
+    "message": "选项页：加载数据出错"
+  },
+  "optionsPagePromptsSaved": {
+    "message": "选项页：Prompts 已保存"
+  },
+  "optionsPageSavePromptsError": {
+    "message": "选项页：保存 Prompts 出错"
+  },
+  "exportPromptsSuccess": {
+    "message": "导出 Prompts 成功"
+  },
+  "exportPromptsError": {
+    "message": "导出 Prompts 出错"
+  },
+  "importPromptsError": {
+    "message": "导入 Prompts 出错"
+  },
+  "remoteImportPromptsError": {
+    "message": "远程导入 Prompts 出错"
+  },
+  "receivedSyncStartResponse": {
+    "message": "收到同步启动响应:"
+  },
+  "receivedNotionOverwriteSyncResponse": {
+    "message": "收到从Notion覆盖同步启动响应:"
+  },
+  "receivedNotionAppendSyncResponse": {
+    "message": "收到从Notion追加同步启动响应:"
+  },
+  "shortcutSetupTip": {
+    "message": "在扩展页面点击右上角齿轮图标，选择\"管理扩展快捷键\""
+  },
+  "shortcutSaveNoTextResponse": {
+    "message": "快捷键保存：未从内容脚本获取到文本，或内容脚本未响应。"
+  },
+  "backgroundExtensionInstalled": {
+    "message": "背景脚本: 扩展首次安装"
+  },
+  "backgroundNotionSyncInitialized": {
+    "message": "背景脚本: 已初始化 Notion 同步设置 (本地->Notion 为关闭状态)"
+  },
+  "backgroundPromptsLoaded": {
+    "message": "背景脚本: 获取到"
+  },
+  "backgroundPromptsEnabled": {
+    "message": "个Prompts，其中"
+  },
+  "backgroundPromptsEnabledSuffix": {
+    "message": "个已启用"
+  },
+  "backgroundGetPromptsError": {
+    "message": "背景脚本: 获取Prompts时出错:"
+  },
+  "backgroundGetPromptsDataError": {
+    "message": "无法获取Prompts数据"
+  },
+  "backgroundOpenOptionsError": {
+    "message": "打开选项页失败:"
+  },
+  "backgroundOpenOptionsWithTextError": {
+    "message": "背景脚本: 打开选项页(带文本)失败:"
+  },
+  "backgroundLoginFailed": {
+    "message": "登录失败，请稍后再试"
+  },
+  "backgroundShortcutOpenSelector": {
+    "message": "背景脚本: 接收到打开提示词选择器的快捷键命令"
+  },
+  "backgroundShortcutSelectorSent": {
+    "message": "背景脚本: 已发送打开提示词选择器的消息到活动标签页"
+  },
+  "backgroundNoActiveTab": {
+    "message": "背景脚本: 未找到活动的标签页"
+  },
+  "backgroundSendMessageError": {
+    "message": "背景脚本: 发送消息到标签页失败:"
+  },
+  "backgroundSaveShortcut": {
+    "message": "背景脚本: 接收到保存选中文本的快捷键命令"
+  },
+  "backgroundGetSelectedTextError": {
+    "message": "背景脚本: 获取选中文本或打开选项页失败:"
+  },
+  "backgroundPromptsDataExists": {
+    "message": "背景脚本: 已存在Prompts数据，无需初始化默认提示词"
+  },
+  "backgroundPromptsInitialized": {
+    "message": "背景脚本: 成功初始化默认Prompts"
+  },
+  "backgroundShortcutCheckStart": {
+    "message": "背景脚本: 开始检测快捷键配置状态"
+  },
+  "backgroundPromptSelectorShortcutFailed": {
+    "message": "背景脚本: 提示词选择器快捷键配置失败"
+  },
+  "backgroundPromptSelectorShortcutSuccess": {
+    "message": "背景脚本: 提示词选择器快捷键配置成功:"
+  },
+  "backgroundSavePromptShortcutFailed": {
+    "message": "背景脚本: 保存提示词快捷键配置失败"
+  },
+  "backgroundSavePromptShortcutSuccess": {
+    "message": "背景脚本: 保存提示词快捷键配置成功:"
+  },
+  "backgroundContextMenuClicked": {
+    "message": "背景脚本: 右键菜单被点击，选中文本:"
+  },
+  "backgroundShortcutNotificationClicked": {
+    "message": "背景脚本: 用户点击了快捷键配置通知"
   }
 } 

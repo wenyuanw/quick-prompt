@@ -28,7 +28,7 @@ function App() {
           const enabledPrompts = allPrompts.filter((prompt: any) => prompt.enabled !== false)
           setPromptCount(enabledPrompts.length)
 
-          console.log(`弹出窗口：共有 ${allPrompts.length} 个提示词，其中 ${enabledPrompts.length} 个已启用`)
+          console.log(t('popupPromptsInfo', [allPrompts.length.toString(), enabledPrompts.length.toString()]))
         } else {
           setPromptCount(0)
         }
@@ -177,7 +177,7 @@ function App() {
         'shortcut_reminder_dismissed_at': Date.now()
       })
       setShowShortcutHelp(false)
-      console.log('弹出窗口: 已设置不再提醒快捷键设置问题')
+      console.log(t('popupShortcutReminderSet'))
     } catch (error) {
       console.error('弹出窗口: 设置不再提醒时出错:', error)
     }

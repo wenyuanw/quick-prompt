@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import Toast, { ToastProps } from './Toast';
 import { browser } from '#imports';
+import { t } from '../../../utils/i18n'
 
 interface ToastItem extends ToastProps {
   id: string;
@@ -73,7 +74,7 @@ const ToastContainer: React.FC = () => {
                 addToast({
                   id: statusId,
                   type: syncStatus.status === 'success' ? 'success' : 'error',
-                  message: syncStatus.message || (syncStatus.status === 'success' ? '同步成功!' : '同步失败'),
+                  message: syncStatus.message || (syncStatus.status === 'success' ? t('syncSuccess') : t('syncFailed')),
                   error: syncStatus.error,
                   duration: syncStatus.error ? 10000 : 5000
                 });
@@ -86,11 +87,11 @@ const ToastContainer: React.FC = () => {
             else if (syncStatus.status === 'in_progress') {
               const loadingId = `loading_${statusId}`;
               if (!processedToastsRef.current.has(loadingId) && !toastsRef.current.some(t => t.id === loadingId)) {
-                let loadingMessage = '正在同步中，请稍候...';
+                let loadingMessage = t('syncing');
                 if (storageKey === 'notion_sync_status') {
-                  loadingMessage = '正在同步到Notion，请稍候...';
+                  loadingMessage = t('syncingToNotion');
                 } else if (storageKey === 'notion_from_sync_status') {
-                  loadingMessage = '正在从Notion同步，请稍候...';
+                  loadingMessage = t('syncingFromNotion');
                 }
                 
                 addToast({

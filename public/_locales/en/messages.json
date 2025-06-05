@@ -166,7 +166,7 @@
     "message": "Delete"
   },
   "loadCategoriesFailed": {
-    "message": "Load categories failed, please try again later"
+    "message": "Failed to load categories"
   },
   "addCategoryFailed": {
     "message": "Add category failed, please try again later"
@@ -276,5 +276,605 @@
         "content": "$1"
       }
     }
+  },
+  "notionSyncDisabled": {
+    "message": "Local to Notion sync is disabled."
+  },
+  "searchPromptTitleContentTag": {
+    "message": "Search prompts by title, content or tags..."
+  },
+  "collapseDetails": {
+    "message": "Collapse details"
+  },
+  "showDetails": {
+    "message": "Show details"
+  },
+  "close": {
+    "message": "Close"
+  },
+  "syncSuccess": {
+    "message": "Sync successful!"
+  },
+  "syncFailed": {
+    "message": "Sync failed"
+  },
+  "syncing": {
+    "message": "Syncing in progress, please wait..."
+  },
+  "syncingToNotion": {
+    "message": "Syncing to Notion, please wait..."
+  },
+  "syncingFromNotion": {
+    "message": "Syncing from Notion, please wait..."
+  },
+  "noPromptsAdded": {
+    "message": "No prompts added yet"
+  },
+  "clickAddPrompt": {
+    "message": "Click the \"Add New Prompt\" button to create your first prompt."
+  },
+  "noMatchingPrompts": {
+    "message": "No matching prompts found"
+  },
+  "tryOtherTermsOrCategories": {
+    "message": "Please try other search terms or select other categories."
+  },
+  "noTags": {
+    "message": "(No tags)"
+  },
+  "loadDataFailed": {
+    "message": "Failed to load data, please try again later"
+  },
+  "savePromptsFailed": {
+    "message": "Failed to save prompts, please try again later"
+  },
+  "exportPromptsFailed": {
+    "message": "Failed to export prompts, please try again later"
+  },
+  "invalidFileFormat": {
+    "message": "Invalid file format"
+  },
+  "noValidPromptsInFile": {
+    "message": "No valid prompts found in the file"
+  },
+  "importPromptsConfirm": {
+    "message": "You already have $existingCount$ prompts, found $newCount$ prompts to import.\nClick \"OK\" to import new prompts, or \"Cancel\" to abort.",
+    "placeholders": {
+      "existingCount": {
+        "content": "$1"
+      },
+      "newCount": {
+        "content": "$2"
+      }
+    }
+  },
+  "noNewPromptsFound": {
+    "message": "No new prompts found, import cancelled."
+  },
+  "importPromptsFailed": {
+    "message": "Failed to import prompts: $error$",
+    "placeholders": {
+      "error": {
+        "content": "$1"
+      }
+    }
+  },
+  "enterValidUrl": {
+    "message": "Please enter a valid URL"
+  },
+  "invalidRemoteDataFormat": {
+    "message": "Invalid remote data format"
+  },
+  "noValidPromptsInRemoteData": {
+    "message": "No valid prompts found in remote data"
+  },
+  "remoteImportPromptsConfirm": {
+    "message": "You already have $existingCount$ prompts, found $newCount$ prompts from remote source.\nClick \"OK\" to import new prompts, or \"Cancel\" to abort.",
+    "placeholders": {
+      "existingCount": {
+        "content": "$1"
+      },
+      "newCount": {
+        "content": "$2"
+      }
+    }
+  },
+  "remoteImportFailed": {
+    "message": "Remote import failed: $error$",
+    "placeholders": {
+      "error": {
+        "content": "$1"
+      }
+    }
+  },
+  "searchPrompts": {
+    "message": "Search prompts..."
+  },
+  "noPromptsToExport": {
+    "message": "No prompts to export"
+  },
+  "exportAllPrompts": {
+    "message": "Export all prompts"
+  },
+  "importFromUrl": {
+    "message": "Import prompts from URL"
+  },
+  "noMatchingPromptsInCategory": {
+    "message": "No prompts matching \"$searchTerm$\" found in \"$categoryName$\" category",
+    "placeholders": {
+      "categoryName": {
+        "content": "$1"
+      },
+      "searchTerm": {
+        "content": "$2"
+      }
+    }
+  },
+  "editPrompt": {
+    "message": "Edit prompt"
+  },
+  "newPrompt": {
+    "message": "New prompt"
+  },
+  "confirmDelete": {
+    "message": "Confirm delete"
+  },
+  "loadingData": {
+    "message": "Loading"
+  },
+  "loadingDataMessage": {
+    "message": "Please wait, preparing your prompts..."
+  },
+  "importFailed": {
+    "message": "Import failed"
+  },
+  "importSuccessful": {
+    "message": "Successfully imported $count$ prompts!",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
+  },
+  "totalCount": {
+    "message": "Total $count$ prompts",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
+  },
+  "enabledCount": {
+    "message": "Enabled $count$",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
+  },
+  "currentCategoryCount": {
+    "message": "Current category $count$",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
+  },
+  "allCategories": {
+    "message": "All categories"
+  },
+  "localImport": {
+    "message": "Local import"
+  },
+  "remoteImport": {
+    "message": "Remote import"
+  },
+  "addNewPrompt": {
+    "message": "Add new prompt"
+  },
+  "viewAllCategories": {
+    "message": "View all categories"
+  },
+  "createFirstPrompt": {
+    "message": "Create your first prompt to boost productivity"
+  },
+  "categoryEmpty": {
+    "message": "No prompts in \"$categoryName$\" category",
+    "placeholders": {
+      "categoryName": {
+        "content": "$1"
+      }
+    }
+  },
+  "importInstructions": {
+    "message": "Import instructions"
+  },
+  "importInstructionsDetail": {
+    "message": "Enter the URL link containing valid prompt JSON data, and the system will automatically fetch and import the data."
+  },
+  "remoteUrl": {
+    "message": "Remote URL"
+  },
+  "importing": {
+    "message": "Importing..."
+  },
+  "startImport": {
+    "message": "Start import"
+  },
+  "loadingNotionSettings": {
+    "message": "Loading Notion settings..."
+  },
+  "basicSettings": {
+    "message": "Basic Settings"
+  },
+  "configurationGuide": {
+    "message": "Configuration Guide"
+  },
+  "notionAPIKey": {
+    "message": "Notion API Key"
+  },
+  "notionAPIKeyPlaceholder": {
+    "message": "secret_xxxxxxxxxxxxx"
+  },
+  "notionAPIKeyHelp": {
+    "message": "Create a new integration at"
+  },
+  "notionIntegrationsPage": {
+    "message": "Notion Integrations page"
+  },
+  "notionAPIKeyHelp2": {
+    "message": "and get the API key"
+  },
+  "notionDatabaseID": {
+    "message": "Notion Database ID"
+  },
+  "notionDatabaseIDPlaceholder": {
+    "message": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
+  },
+  "notionDatabaseIDHelp": {
+    "message": "You can extract the ID from the Notion database page URL"
+  },
+  "saveSettingsAndTest": {
+    "message": "Save Settings & Test Connection"
+  },
+  "autoSyncSettings": {
+    "message": "Auto Sync Settings"
+  },
+  "enableAutoSync": {
+    "message": "Enable Auto Sync"
+  },
+  "autoSyncDescription": {
+    "message": "Automatically sync local changes to Notion"
+  },
+  "enableSync": {
+    "message": "Enable sync"
+  },
+  "importantNotes": {
+    "message": "Important Notes:"
+  },
+  "apiKeyStorageNote": {
+    "message": "API key is securely stored in browser"
+  },
+  "permissionsNote": {
+    "message": "Ensure Notion integration has read/write permissions"
+  },
+  "syncFromNotionToLocal": {
+    "message": "Sync from Notion to Local"
+  },
+  "overwriteLocalData": {
+    "message": "Overwrite Local Data"
+  },
+  "appendToLocal": {
+    "message": "Append to Local"
+  },
+  "appendMode": {
+    "message": "Append Mode"
+  },
+  "appendModeDescription": {
+    "message": "Only add prompts that exist in Notion but not locally"
+  },
+  "overwriteMode": {
+    "message": "Overwrite Mode"
+  },
+  "overwriteModeDescription": {
+    "message": "Completely replace local data with Notion data"
+  },
+  "oneTimeOperationNote": {
+    "message": "Note: This is a one-time operation"
+  },
+  "syncFromLocalToNotion": {
+    "message": "Sync from Local to Notion"
+  },
+  "syncToNotion": {
+    "message": "Sync to Notion"
+  },
+  "syncToNotionDescription": {
+    "message": "This operation will sync local prompts to Notion, including:"
+  },
+  "createMissingPrompts": {
+    "message": "Create prompts that don't exist in Notion"
+  },
+  "updateChangedPrompts": {
+    "message": "Update existing prompts in Notion with changes"
+  },
+  "markDeletedPrompts": {
+    "message": "Mark deleted prompts in Notion"
+  },
+  "syncInProgress": {
+    "message": "Sync in progress..."
+  },
+  "notionAPIKeyOrDatabaseNotConfigured": {
+    "message": "Notion API key or database ID not configured. Cannot sync. Please complete configuration first."
+  },
+  "syncTaskInProgress": {
+    "message": "A sync task is already in progress. Please wait."
+  },
+  "startingSyncToNotion": {
+    "message": "Starting sync to Notion, please wait..."
+  },
+  "syncStartFailed": {
+    "message": "Failed to start sync"
+  },
+  "unknownError": {
+    "message": "Unknown error"
+  },
+  "errorTriggeringSyncToNotion": {
+    "message": "Error triggering sync to Notion"
+  },
+  "startingNotionOverwriteSync": {
+    "message": "Starting overwrite sync from Notion to local, please wait..."
+  },
+  "errorTriggeringNotionOverwriteSync": {
+    "message": "Error triggering overwrite sync from Notion"
+  },
+  "startingNotionAppendSync": {
+    "message": "Starting append sync from Notion to local, please wait..."
+  },
+  "errorTriggeringNotionAppendSync": {
+    "message": "Error triggering append sync from Notion"
+  },
+  "syncingToNotionMessage": {
+    "message": "Syncing to Notion, please wait..."
+  },
+  "syncingFromNotionOverwriteMessage": {
+    "message": "Syncing from Notion with overwrite, please wait..."
+  },
+  "syncingFromNotionAppendMessage": {
+    "message": "Syncing from Notion with append, please wait..."
+  },
+  "connectionSuccessNotionSaved": {
+    "message": "Connection successful! Notion settings saved."
+  },
+  "fillAPIKeyAndDatabaseID": {
+    "message": "Please fill in API key and database ID"
+  },
+  "loadSettingsError": {
+    "message": "Error loading settings"
+  },
+  "saveSettingsError": {
+    "message": "Error saving settings"
+  },
+  "testConnectionError": {
+    "message": "Error testing connection"
+  },
+  "notionConnectionSuccessful": {
+    "message": "Notion connection successful"
+  },
+  "invalidNotionAPIKeyOrDatabase": {
+    "message": "Invalid Notion API key or database ID"
+  },
+  "notionConnectionFailed": {
+    "message": "Notion connection failed"
+  },
+  "variableInputCanceled": {
+    "message": "Variable input canceled"
+  },
+  "errorProcessingContentEditable": {
+    "message": "Error processing contenteditable element"
+  },
+  "cannotTriggerInputEvent": {
+    "message": "Cannot trigger input event"
+  },
+  "searchKeywordPlaceholder": {
+    "message": "Enter keywords to search prompts..."
+  },
+  "noAvailablePrompts": {
+    "message": "No available prompts"
+  },
+  "tryChangingSearchOrCategory": {
+    "message": "Try changing search terms or selecting another category"
+  },
+  "tryOtherKeywords": {
+    "message": "Try using other keywords to search"
+  },
+  "noCategoryPrompts": {
+    "message": "No prompts in this category"
+  },
+  "pleaseAddPrompts": {
+    "message": "Please add some prompts first"
+  },
+  "totalPrompts2": {
+    "message": "Total $count$ prompts",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
+  },
+  "navigationHelp": {
+    "message": "↑↓ Navigate · Enter Select · Tab Switch Category"
+  },
+  "contentScriptLoaded": {
+    "message": "Content script (WXT): Loaded"
+  },
+  "clickInputBoxFirst": {
+    "message": "Please click on a text input box or editable element first, then use the shortcut to open the prompt selector."
+  },
+  "restoreFocus": {
+    "message": "Restore focus"
+  },
+  "noEnabledPromptsFound": {
+    "message": "No enabled prompts found"
+  },
+  "noEnabledPromptsAlert": {
+    "message": "No enabled prompts found. Please add and enable some prompts in the extension first."
+  },
+  "errorGettingPrompts": {
+    "message": "Error getting prompts"
+  },
+  "errorGettingSelectedText": {
+    "message": "Content script: Error getting selected text"
+  },
+  "getSelectedTextFailed": {
+    "message": "Failed to get selected text"
+  },
+  "popupPromptsInfo": {
+    "message": "Popup: Total $total$ prompts, $enabled$ enabled",
+    "placeholders": {
+      "total": {
+        "content": "$1"
+      },
+      "enabled": {
+        "content": "$2"
+      }
+    }
+  },
+  "popupShortcutReminderSet": {
+    "message": "Popup: Set to not remind shortcut setup issues"
+  },
+  "categoryPageLoadCategories": {
+    "message": "Category page: Load categories"
+  },
+  "categoryPageLoadError": {
+    "message": "Category page: Error loading categories"
+  },
+  "categoryPageAddError": {
+    "message": "Category page: Error adding category"
+  },
+  "categoryPageUpdateError": {
+    "message": "Category page: Error updating category"
+  },
+  "categoryPageDeleteError": {
+    "message": "Category page: Error deleting category"
+  },
+  "categoryPageToggleError": {
+    "message": "Category page: Error toggling category status"
+  },
+  "optionsPageLoadPrompts": {
+    "message": "Options page: Load prompts"
+  },
+  "optionsPageLoadCategories": {
+    "message": "Options page: Load categories"
+  },
+  "optionsPageLoadDataError": {
+    "message": "Options page: Error loading data"
+  },
+  "optionsPagePromptsSaved": {
+    "message": "Options page: Prompts saved"
+  },
+  "optionsPageSavePromptsError": {
+    "message": "Options page: Error saving prompts"
+  },
+  "exportPromptsSuccess": {
+    "message": "Export prompts successful"
+  },
+  "exportPromptsError": {
+    "message": "Error exporting prompts"
+  },
+  "importPromptsError": {
+    "message": "Error importing prompts"
+  },
+  "remoteImportPromptsError": {
+    "message": "Remote import prompts error"
+  },
+  "receivedSyncStartResponse": {
+    "message": "Received sync start response:"
+  },
+  "receivedNotionOverwriteSyncResponse": {
+    "message": "Received Notion overwrite sync start response:"
+  },
+  "receivedNotionAppendSyncResponse": {
+    "message": "Received Notion append sync start response:"
+  },
+  "shortcutSetupTip": {
+    "message": "Click the gear icon in the top right corner of the extension page and select \"Manage extension shortcuts\""
+  },
+  "shortcutSaveNoTextResponse": {
+    "message": "Shortcut save: No text received from content script or content script did not respond."
+  },
+  "backgroundExtensionInstalled": {
+    "message": "Background script: Extension first installed"
+  },
+  "backgroundNotionSyncInitialized": {
+    "message": "Background script: Initialized Notion sync settings (Local->Notion is disabled)"
+  },
+  "backgroundPromptsLoaded": {
+    "message": "Background script: Loaded"
+  },
+  "backgroundPromptsEnabled": {
+    "message": "prompts, of which"
+  },
+  "backgroundPromptsEnabledSuffix": {
+    "message": "are enabled"
+  },
+  "backgroundGetPromptsError": {
+    "message": "Background script: Error getting prompts:"
+  },
+  "backgroundGetPromptsDataError": {
+    "message": "Unable to get prompts data"
+  },
+  "backgroundOpenOptionsError": {
+    "message": "Failed to open options page:"
+  },
+  "backgroundOpenOptionsWithTextError": {
+    "message": "Background script: Failed to open options page (with text):"
+  },
+  "backgroundLoginFailed": {
+    "message": "Login failed, please try again later"
+  },
+  "backgroundShortcutOpenSelector": {
+    "message": "Background script: Received shortcut command to open prompt selector"
+  },
+  "backgroundShortcutSelectorSent": {
+    "message": "Background script: Sent open prompt selector message to active tab"
+  },
+  "backgroundNoActiveTab": {
+    "message": "Background script: No active tab found"
+  },
+  "backgroundSendMessageError": {
+    "message": "Background script: Failed to send message to tab:"
+  },
+  "backgroundSaveShortcut": {
+    "message": "Background script: Received shortcut command to save selected text"
+  },
+  "backgroundGetSelectedTextError": {
+    "message": "Background script: Failed to get selected text or open options page:"
+  },
+  "backgroundPromptsDataExists": {
+    "message": "Background script: Prompts data already exists, no need to initialize default prompts"
+  },
+  "backgroundPromptsInitialized": {
+    "message": "Background script: Successfully initialized default prompts"
+  },
+  "backgroundShortcutCheckStart": {
+    "message": "Background script: Starting shortcut configuration detection"
+  },
+  "backgroundPromptSelectorShortcutFailed": {
+    "message": "Background script: Prompt selector shortcut configuration failed"
+  },
+  "backgroundPromptSelectorShortcutSuccess": {
+    "message": "Background script: Prompt selector shortcut configuration successful:"
+  },
+  "backgroundSavePromptShortcutFailed": {
+    "message": "Background script: Save prompt shortcut configuration failed"
+  },
+  "backgroundSavePromptShortcutSuccess": {
+    "message": "Background script: Save prompt shortcut configuration successful:"
+  },
+  "backgroundContextMenuClicked": {
+    "message": "Background script: Context menu clicked, selected text:"
+  },
+  "backgroundShortcutNotificationClicked": {
+    "message": "Background script: User clicked shortcut configuration notification"
   }
 } 

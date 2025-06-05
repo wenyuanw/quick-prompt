@@ -5,12 +5,13 @@ import { extractVariables } from './utils/variableParser'
 import { BROWSER_STORAGE_KEY } from '@/utils/constants'
 import { migratePromptsWithCategory } from '@/utils/categoryUtils'
 import type { EditableElement, PromptItem, PromptItemWithVariables } from '@/utils/types'
+import { t } from '@/utils/i18n'
 
 export default defineContentScript({
   matches: ['*://*/*'],
 
   async main(ctx) {
-    console.log('内容脚本 (WXT): 已加载')
+    console.log(t('contentScriptLoaded'))
 
     // 记录上次输入的状态
     let lastInputValue = ''
@@ -158,7 +159,7 @@ export default defineContentScript({
 
         // 如果找不到任何输入框，给出提示并返回
         if (!targetInput) {
-          alert('请先点击一个文本输入框或可编辑元素，然后再使用快捷键打开提示词选择器。')
+          alert(t('clickInputBoxFirst'))
           isPromptSelectorOpen = false
           return
         }
@@ -186,7 +187,7 @@ export default defineContentScript({
             // 在选择器关闭时恢复焦点
             if (activeElement && typeof activeElement.focus === 'function') {
               setTimeout(() => {
-                console.log('恢复焦点')
+                console.log(t('restoreFocus'))
                 activeElement.focus()
               }, 100)
             }
@@ -199,12 +200,12 @@ export default defineContentScript({
           }
 
         } else {
-          console.log('没有找到已启用的提示词')
-          alert('没有找到已启用的提示词。请先在扩展中添加并启用一些提示词。')
+          console.log(t('noEnabledPromptsFound'))
+          alert(t('noEnabledPromptsAlert'))
           isPromptSelectorOpen = false
         }
       } catch (error) {
-        console.error('获取提示词时发生错误:', error)
+        console.error(t('errorGettingPrompts'), error)
         isPromptSelectorOpen = false
       }
     }
@@ -280,8 +281,8 @@ export default defineContentScript({
             return { success: true, text: '' }
           }
         } catch (error) {
-          console.error('内容脚本: 获取选中文本时出错:', error)
-          return { success: false, error: '获取选中文本失败' }
+          console.error(t('errorGettingSelectedText'), error)
+          return { success: false, error: t('getSelectedTextFailed') }
         }
       }
 
