@@ -32,6 +32,9 @@
   "savePrompt": {
     "message": "即可保存提示词"
   },
+  "savePromptButton": {
+    "message": "保存 Prompt"
+  },
   "rightClickSave": {
     "message": "右键保存：选中文本后单击右键菜单选择\"保存该提示词\""
   },
@@ -876,5 +879,192 @@
   },
   "backgroundShortcutNotificationClicked": {
     "message": "背景脚本: 用户点击了快捷键配置通知"
+  },
+  "export": {
+    "message": "导出"
+  },
+  "useGoogleLogin": {
+    "message": "使用 Google 登录"
+  },
+  "logoutGoogle": {
+    "message": "退出登录"
+  },
+  "loginFailed": {
+    "message": "登录失败，请稍后再试"
+  },
+  "errorOccurred": {
+    "message": "发生错误: $error$",
+    "placeholders": {
+      "error": {
+        "content": "$1"
+      }
+    }
+  },
+  "loginStatusChanged": {
+    "message": "检测到登录状态变化，更新UI"
+  },
+  "foundLoggedInUser": {
+    "message": "找到已登录用户:"
+  },
+  "checkAuthStatusError": {
+    "message": "检查认证状态时出错:"
+  },
+  "attemptGoogleLogin": {
+    "message": "尝试进行Google交互式登录"
+  },
+  "loginProcessError": {
+    "message": "启动登录过程中发生错误"
+  },
+  "googleLoginRequestError": {
+    "message": "Google登录请求发送错误:"
+  },
+  "loggingOutGoogle": {
+    "message": "正在登出Google账号"
+  },
+  "logoutRequestError": {
+    "message": "发送登出请求出错:"
+  },
+  "confirmedLogout": {
+    "message": "确认用户已成功登出"
+  },
+  "googleLogoutSuccess": {
+    "message": "Google账号登出成功"
+  },
+  "logoutMaybeIncomplete": {
+    "message": "登出可能未完全完成，请刷新页面"
+  },
+  "logoutProcessIncomplete": {
+    "message": "登出过程可能未完全完成"
+  },
+  "logoutProcessError": {
+    "message": "登出过程中发生错误"
+  },
+  "googleLogoutRequestError": {
+    "message": "Google登出请求错误:"
+  },
+  "loginInProgress": {
+    "message": "正在进行登录，请在打开的窗口中完成认证..."
+  },
+  "checkingLoginSession": {
+    "message": "正在检查登录会话..."
+  },
+  "loginFailedTryAgain": {
+    "message": "登录失败，请重新尝试"
+  },
+  "loginErrorTryLater": {
+    "message": "登录过程中发生错误，请稍后再试"
+  },
+  "monitorAuthStatusError": {
+    "message": "监控认证状态时出错:"
+  },
+  "notionIntegration": {
+    "message": "Notion 集成"
+  },
+  "notionIntegrationDescription": {
+    "message": "通过 Notion API 集成，您可以在 Quick Prompt 与 Notion 数据库之间同步您的提示词库，实现跨平台的数据共享和备份。"
+  },
+  "titleCannotBeEmpty": {
+    "message": "标题不能为空"
+  },
+  "contentCannotBeEmpty": {
+    "message": "内容不能为空"
+  },
+  "pleaseSelectCategory": {
+    "message": "请选择分类"
+  },
+  "formSubmitError": {
+    "message": "提交表单出错:"
+  },
+  "loadCategoriesError": {
+    "message": "加载分类失败:"
+  },
+  "titleLabel": {
+    "message": "标题"
+  },
+  "titlePlaceholder": {
+    "message": "例如：代码审查请求"
+  },
+  "contentLabel": {
+    "message": "内容"
+  },
+  "contentPlaceholder": {
+    "message": "输入你的 Prompt 模板..."
+  },
+  "variableFormatTip": {
+    "message": "可以使用 {{变量名}} 格式添加变量，例如："
+  },
+  "variableExample": {
+    "message": "你现在是一个{{角色}}，有着{{年限}}年的开发经验，擅长{{技能}}。"
+  },
+  "categoryLabel": {
+    "message": "分类"
+  },
+  "loadingCategories": {
+    "message": "加载分类中..."
+  },
+  "noAvailableCategories": {
+    "message": "没有可用的分类，请先"
+  },
+  "createCategory": {
+    "message": "创建分类"
+  },
+  "tagsLabel": {
+    "message": "标签"
+  },
+  "tagsOptional": {
+    "message": "可选，用逗号分隔"
+  },
+  "tagsPlaceholder": {
+    "message": "例如：编程, 工作, 邮件"
+  },
+  "enabledStatus": {
+    "message": "已启用"
+  },
+  "disabledStatus": {
+    "message": "已停用"
+  },
+  "disabledStatusTip": {
+    "message": "停用后不会在选择器中显示"
+  },
+  "savingPrompt": {
+    "message": "保存中..."
+  },
+  "updatePrompt": {
+    "message": "更新 Prompt"
+  },
+  "logoutCheckAttempt": {
+    "message": "登出检查尝试 $attempt$/$maxAttempts$...",
+    "placeholders": {
+      "attempt": {
+        "content": "$1"
+      },
+      "maxAttempts": {
+        "content": "$2"
+      }
+    }
+  },
+  "googleAuthDescription": {
+    "message": "连接您的 Google 账号，以便在使用 Quick Prompt 时获得更多功能，例如云同步、跨设备访问等。"
+  },
+  "accountAuthentication": {
+    "message": "账号认证"
+  },
+  "googleAuthExplanation": {
+    "message": "Google 认证说明"
+  },
+  "googleAuthBenefits": {
+    "message": "通过 Google 认证，您可以获得以下功能："
+  },
+  "secureCloudStorage": {
+    "message": "安全地存储和同步您的提示词到云端"
+  },
+  "crossDeviceAccess": {
+    "message": "在不同设备间无缝切换和使用您的提示词库"
+  },
+  "googleServiceIntegration": {
+    "message": "使用 Google 服务进行额外的快捷操作"
+  },
+  "privacyAssurance": {
+    "message": "我们仅会请求必要的权限，并且您的数据安全将受到严格保护。您可以随时取消授权并删除相关数据。"
   }
 } 

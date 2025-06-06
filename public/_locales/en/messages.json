@@ -876,5 +876,195 @@
   },
   "backgroundShortcutNotificationClicked": {
     "message": "Background script: User clicked shortcut configuration notification"
+  },
+  "export": {
+    "message": "Export"
+  },
+  "useGoogleLogin": {
+    "message": "Sign in with Google"
+  },
+  "logoutGoogle": {
+    "message": "Sign out"
+  },
+  "loginFailed": {
+    "message": "Login failed, please try again later"
+  },
+  "errorOccurred": {
+    "message": "Error occurred: $error$",
+    "placeholders": {
+      "error": {
+        "content": "$1"
+      }
+    }
+  },
+  "loginStatusChanged": {
+    "message": "Login status changed, updating UI"
+  },
+  "foundLoggedInUser": {
+    "message": "Found logged in user:"
+  },
+  "checkAuthStatusError": {
+    "message": "Error checking auth status:"
+  },
+  "attemptGoogleLogin": {
+    "message": "Attempting Google interactive login"
+  },
+  "loginProcessError": {
+    "message": "Error starting login process"
+  },
+  "googleLoginRequestError": {
+    "message": "Google login request error:"
+  },
+  "loggingOutGoogle": {
+    "message": "Logging out of Google account"
+  },
+  "logoutRequestError": {
+    "message": "Error sending logout request:"
+  },
+  "confirmedLogout": {
+    "message": "Confirmed user has successfully logged out"
+  },
+  "googleLogoutSuccess": {
+    "message": "Google account logout successful"
+  },
+  "logoutMaybeIncomplete": {
+    "message": "Logout may not be complete, please refresh the page"
+  },
+  "logoutProcessIncomplete": {
+    "message": "Logout process may not be complete"
+  },
+  "logoutProcessError": {
+    "message": "Error during logout process"
+  },
+  "googleLogoutRequestError": {
+    "message": "Google logout request error:"
+  },
+  "loginInProgress": {
+    "message": "Login in progress, please complete authentication in the opened window..."
+  },
+  "checkingLoginSession": {
+    "message": "Checking login session..."
+  },
+  "loginFailedTryAgain": {
+    "message": "Login failed, please try again"
+  },
+  "loginErrorTryLater": {
+    "message": "Error during login process, please try again later"
+  },
+  "monitorAuthStatusError": {
+    "message": "Error monitoring auth status:"
+  },
+  "notionIntegration": {
+    "message": "Notion Integration"
+  },
+  "notionIntegrationDescription": {
+    "message": "Through Notion API integration, you can sync your prompt library between Quick Prompt and Notion database, enabling cross-platform data sharing and backup."
+  },
+  "titleCannotBeEmpty": {
+    "message": "Title cannot be empty"
+  },
+  "contentCannotBeEmpty": {
+    "message": "Content cannot be empty"
+  },
+  "pleaseSelectCategory": {
+    "message": "Please select a category"
+  },
+  "formSubmitError": {
+    "message": "Error submitting form:"
+  },
+  "loadCategoriesError": {
+    "message": "Failed to load categories:"
+  },
+  "titleLabel": {
+    "message": "Title"
+  },
+  "titlePlaceholder": {
+    "message": "e.g., Code Review Request"
+  },
+  "contentLabel": {
+    "message": "Content"
+  },
+  "contentPlaceholder": {
+    "message": "Enter your prompt template..."
+  },
+  "variableFormatTip": {
+    "message": "You can add variables using the {{variableName}} format, for example:"
+  },
+  "variableExample": {
+    "message": "You are now a {{role}} with {{years}} years of development experience, specializing in {{skills}}."
+  },
+  "categoryLabel": {
+    "message": "Category"
+  },
+  "loadingCategories": {
+    "message": "Loading categories..."
+  },
+  "noAvailableCategories": {
+    "message": "No available categories, please"
+  },
+  "createCategory": {
+    "message": "create a category"
+  },
+  "tagsLabel": {
+    "message": "Tags"
+  },
+  "tagsOptional": {
+    "message": "optional, separate with commas"
+  },
+  "tagsPlaceholder": {
+    "message": "e.g., programming, work, email"
+  },
+  "enabledStatus": {
+    "message": "Enabled"
+  },
+  "disabledStatus": {
+    "message": "Disabled"
+  },
+  "disabledStatusTip": {
+    "message": "When disabled, it won't appear in the selector"
+  },
+  "savingPrompt": {
+    "message": "Saving..."
+  },
+  "updatePrompt": {
+    "message": "Update Prompt"
+  },
+  "savePromptButton": {
+    "message": "Save Prompt"
+  },
+  "logoutCheckAttempt": {
+    "message": "Logout check attempt $attempt$/$maxAttempts$...",
+    "placeholders": {
+      "attempt": {
+        "content": "$1"
+      },
+      "maxAttempts": {
+        "content": "$2"
+      }
+    }
+  },
+  "googleAuthDescription": {
+    "message": "Connect your Google account to access more features when using Quick Prompt, such as cloud sync, cross-device access, and more."
+  },
+  "accountAuthentication": {
+    "message": "Account Authentication"
+  },
+  "googleAuthExplanation": {
+    "message": "Google Authentication Explanation"
+  },
+  "googleAuthBenefits": {
+    "message": "Through Google authentication, you can get the following features:"
+  },
+  "secureCloudStorage": {
+    "message": "Securely store and sync your prompts to the cloud"
+  },
+  "crossDeviceAccess": {
+    "message": "Seamlessly switch and use your prompt library across different devices"
+  },
+  "googleServiceIntegration": {
+    "message": "Use Google services for additional shortcuts"
+  },
+  "privacyAssurance": {
+    "message": "We only request necessary permissions, and your data security will be strictly protected. You can revoke authorization and delete related data at any time."
   }
 } 
