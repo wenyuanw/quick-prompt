@@ -181,7 +181,7 @@ const CategoryForm = ({ onSubmit, initialData, onCancel, isEditing }: CategoryFo
               onChange={(e) => setEnabled(e.target.checked)}
               className='sr-only peer'
             />
-            <div className='w-11 h-6 bg-gray-200 dark:bg-gray-700 peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-blue-300 dark:peer-focus:ring-blue-800 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[""] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 dark:after:border-gray-600 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600'></div>
+            <div className='relative w-11 h-6 bg-gray-200 dark:bg-gray-700 peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-blue-300 dark:peer-focus:ring-blue-800 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[""] after:absolute after:top-1/2 after:right-1/2 after:-translate-y-1/2 after:bg-white after:border-gray-300 dark:after:border-gray-600 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600'></div>
             <span className='ml-3 text-sm font-medium text-gray-700 dark:text-gray-300'>
               {enabled ? '已启用' : '已停用'} <span className='text-gray-400 dark:text-gray-500 font-normal'>(停用后该分类下的提示词不会显示)</span>
             </span>
