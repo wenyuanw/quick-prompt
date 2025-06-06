@@ -2,6 +2,7 @@ import { BROWSER_STORAGE_KEY } from '@/utils/constants'
 import { useState, useEffect } from 'react'
 import Logo from '~/assets/icon.png'
 import '~/assets/tailwind.css'
+import { t } from '../../utils/i18n'
 
 function App() {
   const [promptCount, setPromptCount] = useState<number>(0)
@@ -27,18 +28,18 @@ function App() {
           const enabledPrompts = allPrompts.filter((prompt: any) => prompt.enabled !== false)
           setPromptCount(enabledPrompts.length)
 
-          console.log(`弹出窗口：共有 ${allPrompts.length} 个提示词，其中 ${enabledPrompts.length} 个已启用`)
+          console.log(t('popupPromptsInfo', [allPrompts.length.toString(), enabledPrompts.length.toString()]))
         } else {
           setPromptCount(0)
         }
       } catch (storageErr) {
         console.error('弹出窗口：直接读取storage失败', storageErr)
-        setError('无法从存储中读取数据')
+        setError(t('errorCannotReadStorage'))
         setPromptCount(0)
       }
     } catch (err) {
       console.error('弹出窗口：加载提示数量出错', err)
-      setError('无法加载提示')
+      setError(t('errorCannotLoadPrompts'))
     } finally {
       setLoading(false)
     }
@@ -156,7 +157,7 @@ function App() {
     // 对于Firefox，直接打开about:addons后需要用户进一步操作
     if (navigator.userAgent.includes('Firefox')) {
       // 显示额外提示
-      alert('打开扩展页面后，请点击右上角的齿轮图标，并选择"管理扩展快捷键"选项')
+      alert(t('firefoxShortcutHelp'))
     }
     
     // 尝试打开设置页面
@@ -176,7 +177,7 @@ function App() {
         'shortcut_reminder_dismissed_at': Date.now()
       })
       setShowShortcutHelp(false)
-      console.log('弹出窗口: 已设置不再提醒快捷键设置问题')
+      console.log(t('popupShortcutReminderSet'))
     } catch (error) {
       console.error('弹出窗口: 设置不再提醒时出错:', error)
     }
@@ -199,7 +200,7 @@ function App() {
             <svg xmlns="http://www.w3.org/2000/svg" className="h-3.5 w-3.5 mr-1 text-blue-500 dark:text-blue-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
             </svg>
-            <h2 className='text-sm font-semibold m-0 text-gray-700 dark:text-gray-200'>提示词库</h2>
+            <h2 className='text-sm font-semibold m-0 text-gray-700 dark:text-gray-200'>{t('promptLibrary')}</h2>
           </div>
         </div>
 
@@ -222,7 +223,7 @@ function App() {
               <span className='text-xl font-bold text-blue-600 dark:text-blue-400 mr-1.5'>
                 {promptCount}
               </span>
-              <p className='text-gray-500 text-xs m-0 dark:text-gray-400'>个可用提示</p>
+              <p className='text-gray-500 text-xs m-0 dark:text-gray-400'>{t('availablePrompts')}</p>
             </div>
           )}
         </div>
@@ -234,12 +235,12 @@ function App() {
           onClick={openOptionsPage}
           className='bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 dark:bg-blue-700 dark:hover:bg-blue-800 transition-colors duration-200'
         >
-          管理提示词
+          {t('managePrompts')}
         </button>
 
         {/* 快捷方式提示区域 */}
         <div className='mt-3 rounded-lg bg-gray-50 dark:bg-gray-800 p-3 shadow-sm'>
-          <h3 className='text-xs font-medium text-gray-600 dark:text-gray-300 mb-2'>使用方式</h3>
+          <h3 className='text-xs font-medium text-gray-600 dark:text-gray-300 mb-2'>{t('usage')}</h3>
 
           <div className='flex items-start mb-2'>
             <div className='flex-shrink-0 text-blue-500 dark:text-blue-400 mr-2 mt-1'>
@@ -248,9 +249,9 @@ function App() {
               </svg>
             </div>
             <span className='text-xs text-gray-600 dark:text-gray-300 leading-relaxed'>
-              快捷输入: 任意输入框中输入 <kbd className='inline-flex items-center justify-center px-1.5 py-0.5 my-0.5 text-xs font-semibold bg-white dark:bg-gray-700 rounded border border-gray-300 dark:border-gray-600 shadow-sm text-blue-600 dark:text-blue-400 min-h-[20px]'>/p</kbd>
+              {t('quickInput')} <kbd className='inline-flex items-center justify-center px-1.5 py-0.5 my-0.5 text-xs font-semibold bg-white dark:bg-gray-700 rounded border border-gray-300 dark:border-gray-600 shadow-sm text-blue-600 dark:text-blue-400 min-h-[20px]'>/p</kbd>
               {shortcutKey && (
-                <> 或按下 <kbd className='inline-flex items-center justify-center ml-1 px-1.5 py-0.5 my-0.5 text-xs font-semibold bg-white dark:bg-gray-700 rounded border border-gray-300 dark:border-gray-600 shadow-sm text-blue-600 dark:text-blue-400 min-h-[20px]'>{shortcutKey}</kbd></>
+                <> {t('orPress')} <kbd className='inline-flex items-center justify-center ml-1 px-1.5 py-0.5 my-0.5 text-xs font-semibold bg-white dark:bg-gray-700 rounded border border-gray-300 dark:border-gray-600 shadow-sm text-blue-600 dark:text-blue-400 min-h-[20px]'>{shortcutKey}</kbd></>
               )}
             </span>
           </div>
@@ -263,7 +264,7 @@ function App() {
                 </svg>
               </div>
               <span className='text-xs text-gray-600 dark:text-gray-300 leading-relaxed'>
-                快捷保存：选中文本后按下 <kbd className='inline-flex items-center justify-center px-1.5 py-0.5 my-0.5 text-xs font-semibold bg-white dark:bg-gray-700 rounded border border-gray-300 dark:border-gray-600 shadow-sm text-blue-600 dark:text-blue-400 min-h-[20px]'>{saveShortcutKey}</kbd> 即可保存提示词
+                {t('quickSave')} <kbd className='inline-flex items-center justify-center px-1.5 py-0.5 my-0.5 text-xs font-semibold bg-white dark:bg-gray-700 rounded border border-gray-300 dark:border-gray-600 shadow-sm text-blue-600 dark:text-blue-400 min-h-[20px]'>{saveShortcutKey}</kbd> {t('savePrompt')}
               </span>
             </div>
           )}
@@ -275,7 +276,7 @@ function App() {
               </svg>
             </div>
             <span className='text-xs text-gray-600 dark:text-gray-300 leading-relaxed'>
-              右键保存：选中文本后单击右键菜单选择"保存该提示词"
+              {t('rightClickSave')}
             </span>
           </div>
 
@@ -289,20 +290,20 @@ function App() {
                 </div>
                 <div>
                   <p className='text-xs text-yellow-700 dark:text-yellow-300 leading-relaxed mb-1'>
-                    未检测到快捷键配置，可能是因为快捷键冲突。
+                    {t('shortcutNotConfigured')}
                   </p>
                   <button 
                     onClick={openShortcutSettings}
                     className='text-xs bg-yellow-100 hover:bg-yellow-200 dark:bg-yellow-800 dark:hover:bg-yellow-700 text-yellow-800 dark:text-yellow-200 px-2 py-1 rounded-md transition-colors duration-200'
                   >
-                    前往设置快捷键
+                    {t('configureShortcut')}
                   </button>
                   <button
                     onClick={dismissShortcutReminder}
                     className='text-xs text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 px-1 py-1 transition-colors duration-200 ml-2'
-                    title="不再提醒快捷键设置问题"
+                    title={t('dismissReminderTitle')}
                   >
-                    不再提醒
+                    {t('noReminder')}
                   </button>
                 </div>
               </div>

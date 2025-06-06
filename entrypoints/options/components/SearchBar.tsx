@@ -1,4 +1,5 @@
 import React from 'react'
+import { t } from '../../../utils/i18n'
 
 interface SearchBarProps {
   value: string
@@ -34,7 +35,7 @@ const SearchBar = ({ value, onChange }: SearchBarProps) => {
         value={value}
         onChange={(e) => onChange(e.target.value)}
         className='block w-full p-3 pl-10 pr-10 text-gray-700 border border-gray-300 rounded-lg bg-white focus:ring-2 focus:outline-none focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 placeholder:text-gray-400'
-        placeholder='搜索标题、内容或标签...'
+        placeholder={t('searchPromptTitleContentTag')}
       />
 
       {value && (
@@ -42,7 +43,7 @@ const SearchBar = ({ value, onChange }: SearchBarProps) => {
           <button
             onClick={handleClear}
             className='text-gray-400 hover:text-gray-600 focus:outline-none dark:hover:text-gray-300'
-            aria-label='清除搜索'
+            aria-label={t('clearSearch')}
           >
             <svg className='w-5 h-5' fill='none' viewBox='0 0 24 24' stroke='currentColor'>
               <path

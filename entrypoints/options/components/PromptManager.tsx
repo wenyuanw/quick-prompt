@@ -10,6 +10,7 @@ import "~/assets/tailwind.css";
 import { PromptItem, Category } from "@/utils/types";
 import { BROWSER_STORAGE_KEY, DEFAULT_CATEGORY_ID } from "@/utils/constants";
 import { getCategories, migratePromptsWithCategory } from "@/utils/categoryUtils";
+import { t } from "../../../utils/i18n";
 
 const PromptManager = () => {
   const [prompts, setPrompts] = useState<PromptItem[]>([]);
@@ -67,11 +68,11 @@ const PromptManager = () => {
         const storedCategories = await getCategories();
         setCategories(storedCategories);
         
-        console.log("选项页：加载 Prompts:", storedPrompts?.length || 0);
-        console.log("选项页：加载分类:", storedCategories.length);
+        console.log(t('optionsPageLoadPrompts'), storedPrompts?.length || 0);
+        console.log(t('optionsPageLoadCategories'), storedCategories.length);
       } catch (err) {
-        console.error("选项页：加载数据出错:", err);
-        setError("加载数据失败，请稍后再试");
+        console.error(t('optionsPageLoadDataError'), err);
+        setError(t('loadDataFailed'));
       } finally {
         setIsLoading(false);
       }
@@ -109,11 +110,11 @@ const PromptManager = () => {
   const savePrompts = async (newPrompts: PromptItem[]) => {
     try {
       await storage.setItem<PromptItem[]>(`local:${BROWSER_STORAGE_KEY}`, newPrompts);
-      console.log("选项页：Prompts 已保存");
+      console.log(t('optionsPagePromptsSaved'));
       setPrompts(newPrompts);
     } catch (err) {
-      console.error("选项页：保存 Prompts 出错:", err);
-      setError("保存 Prompts 失败，请稍后再试");
+      console.error(t('optionsPageSavePromptsError'), err);
+      setError(t('savePromptsFailed'));
     }
   };
 
@@ -220,31 +221,26 @@ const PromptManager = () => {
 
   // 导出提示词
   const exportPrompts = () => {
+    if (prompts.length === 0) {
+      alert(t('noPromptsToExport'));
+      return;
+    }
+
     try {
-      // 创建要导出的数据
-      const dataToExport = JSON.stringify(prompts, null, 2);
-
-      // 创建Blob对象
-      const blob = new Blob([dataToExport], { type: "application/json" });
-
-      // 创建下载链接
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement("a");
-      a.href = url;
-      a.download = `quick-prompts-export-${
-        new Date().toISOString().split("T")[0]
-      }.json`;
-
-      // 触发下载
-      document.body.appendChild(a);
-      a.click();
-
-      // 清理
-      document.body.removeChild(a);
+      const dataStr = JSON.stringify(prompts, null, 2);
+      const dataBlob = new Blob([dataStr], { type: "application/json" });
+      const url = URL.createObjectURL(dataBlob);
+      const link = document.createElement("a");
+      link.href = url;
+      link.download = `prompts-export-${new Date().toISOString().slice(0, 10)}.json`;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
       URL.revokeObjectURL(url);
+      console.log(t('exportPromptsSuccess'));
     } catch (err) {
-      console.error("导出 Prompts 出错:", err);
-      setError("导出 Prompts 失败，请稍后再试");
+      console.error(t('exportPromptsError'), err);
+      setError(t('exportPromptsFailed'));
     }
   };
 
@@ -266,7 +262,7 @@ const PromptManager = () => {
 
       // 验证导入的数据格式
       if (!Array.isArray(importedPrompts)) {
-        throw new Error("导入的文件格式不正确");
+        throw new Error(t('invalidFileFormat'));
       }
 
       // 验证每个提示词的结构并添加默认分类
@@ -287,13 +283,13 @@ const PromptManager = () => {
       }));
 
       if (validPrompts.length === 0) {
-        throw new Error("导入的文件中没有有效的提示词");
+        throw new Error(t('noValidPromptsInFile'));
       }
 
       // 确认是否需要合并或覆盖现有提示词
       if (prompts.length > 0) {
         const shouldImport = window.confirm(
-          `您已有${prompts.length}个提示词，发现${validPrompts.length}个待导入提示词。\n点击"确定"导入新提示词，点击"取消"不进行任何操作。`
+          t('importPromptsConfirm', [prompts.length.toString(), validPrompts.length.toString()])
         );
 
         if (shouldImport) {
@@ -316,7 +312,7 @@ const PromptManager = () => {
           });
 
           if (uniquePrompts.length === 0) {
-            alert("没有发现新的提示词，导入已取消。");
+            alert(t('noNewPromptsFound'));
             return;
           }
 
@@ -330,13 +326,13 @@ const PromptManager = () => {
           ];
 
           await savePrompts(newPrompts);
-          alert(`成功导入了 ${uniquePrompts.length} 个提示词！`);
+          alert(t('importSuccessful', [uniquePrompts.length.toString()]));
         }
         // 如果用户点击取消，不做任何操作
       } else {
         // 没有现有提示词，直接保存导入的提示词
         await savePrompts(validPrompts);
-        alert(`成功导入了 ${validPrompts.length} 个提示词！`);
+        alert(t('importSuccessful', [validPrompts.length.toString()]));
       }
 
       // 清除文件输入
@@ -344,9 +340,9 @@ const PromptManager = () => {
         fileInputRef.current.value = "";
       }
     } catch (err) {
-      console.error("导入 Prompts 出错:", err);
+      console.error(t('importPromptsError'), err);
       setError(
-        `导入 Prompts 失败: ${err instanceof Error ? err.message : "未知错误"}`
+        t('importPromptsFailed', [err instanceof Error ? err.message : t('unknownError')])
       );
 
       // 清除文件输入
@@ -378,7 +374,7 @@ const PromptManager = () => {
   // 从远程URL导入提示词
   const importFromRemoteUrl = async () => {
     if (!remoteUrl.trim()) {
-      setError("请输入有效的URL");
+      setError(t('enterValidUrl'));
       return;
     }
 
@@ -402,7 +398,7 @@ const PromptManager = () => {
 
       // 验证导入的数据格式
       if (!Array.isArray(importedPrompts)) {
-        throw new Error("导入的数据格式不正确");
+        throw new Error(t('invalidRemoteDataFormat'));
       }
 
       // 验证每个提示词的结构并添加默认分类
@@ -423,13 +419,13 @@ const PromptManager = () => {
       }));
 
       if (validPrompts.length === 0) {
-        throw new Error("远程数据中没有有效的提示词");
+        throw new Error(t('noValidPromptsInRemoteData'));
       }
 
       // 确认是否需要导入
       if (prompts.length > 0) {
         const shouldImport = window.confirm(
-          `您已有${prompts.length}个提示词，从远程发现${validPrompts.length}个待导入提示词。\n点击"确定"导入新提示词，点击"取消"不进行任何操作。`
+          t('remoteImportPromptsConfirm', [prompts.length.toString(), validPrompts.length.toString()])
         );
 
         if (shouldImport) {
@@ -452,7 +448,7 @@ const PromptManager = () => {
           });
 
           if (uniquePrompts.length === 0) {
-            alert("没有发现新的提示词，导入已取消。");
+            alert(t('noNewPromptsFound'));
             closeRemoteImportModal();
             return;
           }
@@ -467,7 +463,7 @@ const PromptManager = () => {
           ];
 
           await savePrompts(newPrompts);
-          alert(`成功导入了 ${uniquePrompts.length} 个提示词！`);
+          alert(t('importSuccessful', [uniquePrompts.length.toString()]));
           closeRemoteImportModal();
         } else {
           // 用户取消导入
@@ -476,13 +472,13 @@ const PromptManager = () => {
       } else {
         // 没有现有提示词，直接保存导入的提示词
         await savePrompts(validPrompts);
-        alert(`成功导入了 ${validPrompts.length} 个提示词！`);
+        alert(t('importSuccessful', [validPrompts.length.toString()]));
         closeRemoteImportModal();
       }
     } catch (err) {
-      console.error("远程导入 Prompts 出错:", err);
+      console.error(t('remoteImportPromptsError'), err);
       setError(
-        `远程导入失败: ${err instanceof Error ? err.message : "未知错误"}`
+        t('remoteImportFailed', [err instanceof Error ? err.message : t('unknownError')])
       );
     } finally {
       setIsRemoteImporting(false);
@@ -501,8 +497,8 @@ const PromptManager = () => {
               </div>
             </div>
             <div className="space-y-2">
-              <h3 className="text-lg font-semibold text-gray-700 dark:text-gray-300">正在加载</h3>
-              <p className="text-sm text-gray-500 dark:text-gray-400">请稍候，正在准备您的提示词...</p>
+              <h3 className="text-lg font-semibold text-gray-700 dark:text-gray-300">{t('loadingData')}</h3>
+              <p className="text-sm text-gray-500 dark:text-gray-400">{t('loadingDataMessage')}</p>
             </div>
           </div>
         </div>
@@ -523,11 +519,11 @@ const PromptManager = () => {
                   </svg>
                 </div>
                 <h1 className="text-4xl font-bold bg-gradient-to-r from-gray-900 via-blue-900 to-indigo-900 dark:from-gray-100 dark:via-blue-100 dark:to-indigo-100 bg-clip-text text-transparent">
-                  提示词管理
+                  {t('promptLibrary')}
                 </h1>
               </div>
               <p className="text-lg text-gray-600 dark:text-gray-300 max-w-2xl">
-                创建、管理和组织您的自定义提示词，提升工作效率
+                {t('appDescription')}
               </p>
               
               {/* 统计卡片 */}
@@ -535,13 +531,13 @@ const PromptManager = () => {
                 <div className="bg-white/70 dark:bg-gray-800/70 backdrop-blur-sm border border-white/20 dark:border-gray-700/50 rounded-2xl px-4 py-3 shadow-sm">
                   <div className="flex items-center space-x-2">
                     <div className="w-2 h-2 bg-green-500 rounded-full"></div>
-                    <span className="text-sm font-medium text-gray-700 dark:text-gray-300">总计 {prompts.length} 个提示词</span>
+                    <span className="text-sm font-medium text-gray-700 dark:text-gray-300">{t('totalCount', [prompts.length.toString()])}</span>
                   </div>
                 </div>
                 <div className="bg-white/70 dark:bg-gray-800/70 backdrop-blur-sm border border-white/20 dark:border-gray-700/50 rounded-2xl px-4 py-3 shadow-sm">
                   <div className="flex items-center space-x-2">
                     <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
-                    <span className="text-sm font-medium text-gray-700 dark:text-gray-300">启用 {prompts.filter(p => p.enabled).length} 个</span>
+                    <span className="text-sm font-medium text-gray-700 dark:text-gray-300">{t('enabledCount', [prompts.filter(p => p.enabled).length.toString()])}</span>
                   </div>
                 </div>
                 {selectedCategoryId && (
@@ -549,7 +545,7 @@ const PromptManager = () => {
                     <div className="flex items-center space-x-2">
                       <div className="w-2 h-2 bg-purple-500 rounded-full"></div>
                       <span className="text-sm font-medium text-gray-700 dark:text-gray-300">
-                        当前分类 {filteredPrompts.length} 个
+                        {t('currentCategoryCount', [filteredPrompts.length.toString()])}
                       </span>
                     </div>
                   </div>
@@ -571,7 +567,7 @@ const PromptManager = () => {
                 </div>
               </div>
               <div className="flex-1">
-                <h3 className="text-sm font-medium text-red-800 dark:text-red-300">操作失败</h3>
+                <h3 className="text-sm font-medium text-red-800 dark:text-red-300">{t('operationFailed')}</h3>
                 <p className="text-sm text-red-700 dark:text-red-400 mt-1">{error}</p>
               </div>
               <button
@@ -603,7 +599,7 @@ const PromptManager = () => {
                       type="text"
                       value={searchTerm}
                       onChange={(e) => setSearchTerm(e.target.value)}
-                      placeholder="搜索提示词..."
+                      placeholder={t('searchPrompts')}
                       className="block xl:w-62 w-full pl-10 pr-3 py-3 border border-gray-200 dark:border-gray-600 rounded-xl bg-white/50 dark:bg-gray-800/50 backdrop-blur-sm text-gray-900 dark:text-gray-100 placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
                     />
                   </div>
@@ -616,7 +612,7 @@ const PromptManager = () => {
                       onChange={(e) => setSelectedCategoryId(e.target.value || null)}
                       className="block w-full pl-4 pr-8 py-3 bg-white/50 dark:bg-gray-800/50 backdrop-blur-sm border border-gray-200 dark:border-gray-600 rounded-xl text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 appearance-none cursor-pointer"
                     >
-                      <option value="">所有分类</option>
+                      <option value="">{t('allCategories')}</option>
                       {categories.map((category) => (
                         <option key={category.id} value={category.id}>
                           {category.name}
@@ -640,12 +636,12 @@ const PromptManager = () => {
                       onClick={exportPrompts}
                       disabled={prompts.length === 0}
                       className="inline-flex items-center px-4 py-1 bg-gray-600 hover:bg-gray-700 disabled:bg-gray-300 text-white text-sm font-medium rounded-xl transition-all duration-200 hover:shadow-lg hover:-translate-y-0.5 disabled:transform-none disabled:shadow-none"
-                      title={prompts.length === 0 ? "没有提示词可导出" : "导出所有提示词"}
+                      title={prompts.length === 0 ? t('noPromptsToExport') : t('exportAllPrompts')}
                     >
                       <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" />
                       </svg>
-                      导出
+                      {t('export')}
                     </button>
                     
                     <button
@@ -655,18 +651,18 @@ const PromptManager = () => {
                       <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
                       </svg>
-                      本地导入
+                      {t('localImport')}
                     </button>
                     
                     <button
                       onClick={openRemoteImportModal}
                       className="inline-flex items-center px-4 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-medium rounded-xl transition-all duration-200 hover:shadow-lg hover:-translate-y-0.5"
-                      title="从URL导入提示词"
+                      title={t('importFromUrl')}
                     >
                       <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1" />
                       </svg>
-                      远程导入
+                      {t('remoteImport')}
                     </button>
                   </div>
                   
@@ -679,7 +675,7 @@ const PromptManager = () => {
                     <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
                     </svg>
-                    新增提示词
+                    {t('addNewPrompt')}
                   </button>
 
                   <input
@@ -718,13 +714,13 @@ const PromptManager = () => {
               
               {searchTerm || selectedCategoryId ? (
                 <div className="space-y-4">
-                  <h3 className="text-xl font-semibold text-gray-900 dark:text-gray-100">未找到匹配的提示词</h3>
+                  <h3 className="text-xl font-semibold text-gray-900 dark:text-gray-100">{t('noMatchingPrompts')}</h3>
                   <p className="text-gray-600 dark:text-gray-300">
                     {searchTerm && selectedCategoryId 
-                      ? `在"${categories.find(c => c.id === selectedCategoryId)?.name}"分类中没有找到匹配"${searchTerm}"的提示词`
+                      ? t('noMatchingPromptsInCategory', [categories.find(c => c.id === selectedCategoryId)?.name || '', searchTerm])
                       : searchTerm 
-                      ? `没有找到匹配"${searchTerm}"的提示词`
-                      : `"${categories.find(c => c.id === selectedCategoryId)?.name}"分类中暂无提示词`
+                      ? t('noMatchingPrompts')
+                      : t('categoryEmpty', [categories.find(c => c.id === selectedCategoryId)?.name || ''])
                     }
                   </p>
                   <div className="flex flex-wrap justify-center gap-3">
@@ -736,7 +732,7 @@ const PromptManager = () => {
                         <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
                         </svg>
-                        清除搜索
+                        {t('clearSearch')}
                       </button>
                     )}
                     {selectedCategoryId && (
@@ -747,15 +743,15 @@ const PromptManager = () => {
                         <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
                         </svg>
-                        查看所有分类
+                        {t('viewAllCategories')}
                       </button>
                     )}
                   </div>
                 </div>
               ) : (
                 <div className="space-y-4">
-                  <h3 className="text-xl font-semibold text-gray-900 dark:text-gray-100">还没有提示词</h3>
-                  <p className="text-gray-600 dark:text-gray-300">创建您的第一个提示词，开始提升工作效率</p>
+                  <h3 className="text-xl font-semibold text-gray-900 dark:text-gray-100">{t('noPromptsAdded')}</h3>
+                  <p className="text-gray-600 dark:text-gray-300">{t('createFirstPrompt')}</p>
                   <button
                     onClick={openAddModal}
                     className="inline-flex items-center px-6 py-3 bg-gradient-to-r from-blue-600 to-indigo-600 text-white rounded-xl hover:from-blue-700 hover:to-indigo-700 transition-all duration-200 hover:shadow-lg hover:-translate-y-0.5 font-medium"
@@ -763,7 +759,7 @@ const PromptManager = () => {
                     <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
                     </svg>
-                    创建第一个提示词
+                    {t('createFirstPrompt')}
                   </button>
                 </div>
               )}
@@ -775,7 +771,7 @@ const PromptManager = () => {
         <Modal
           isOpen={isModalOpen}
           onClose={closeModal}
-          title={editingPrompt ? "编辑提示词" : "新建提示词"}
+          title={editingPrompt ? t('editPrompt') : t('newPrompt')}
         >
           <div className="flex items-center space-x-3 mb-4">
             <div className={`w-8 h-8 rounded-lg flex items-center justify-center shadow-md ${editingPrompt ? 'bg-gradient-to-br from-amber-500 to-orange-500' : 'bg-gradient-to-br from-blue-500 to-indigo-600'}`}>
@@ -788,7 +784,7 @@ const PromptManager = () => {
               </svg>
             </div>
             <span className="text-xl font-semibold text-gray-900 dark:text-gray-100">
-              {editingPrompt ? "编辑提示词" : "新建提示词"}
+              {editingPrompt ? t('editPrompt') : t('newPrompt')}
             </span>
           </div>
           <PromptForm
@@ -818,7 +814,7 @@ const PromptManager = () => {
         <Modal
           isOpen={isRemoteImportModalOpen}
           onClose={closeRemoteImportModal}
-          title="从URL导入提示词"
+          title={t('importFromUrl')}
         >
           <div className="flex items-center space-x-3 mb-4">
             <div className="w-8 h-8 bg-gradient-to-br from-purple-500 to-pink-500 rounded-lg flex items-center justify-center shadow-md">
@@ -827,7 +823,7 @@ const PromptManager = () => {
               </svg>
             </div>
             <span className="text-xl font-semibold text-gray-900 dark:text-gray-100">
-              从URL导入提示词
+              {t('importFromUrl')}
             </span>
           </div>
           <div className="space-y-6 pt-2">
@@ -839,9 +835,9 @@ const PromptManager = () => {
                   </svg>
                 </div>
                 <div className="flex-1">
-                  <h4 className="text-sm font-medium text-blue-900 dark:text-blue-300">导入说明</h4>
+                  <h4 className="text-sm font-medium text-blue-900 dark:text-blue-300">{t('importInstructions')}</h4>
                   <p className="text-sm text-blue-800 dark:text-blue-400 mt-1">
-                    输入包含有效提示词 JSON 数据的 URL 链接，系统将自动获取并导入数据。
+                    {t('importInstructionsDetail')}
                   </p>
                 </div>
               </div>
@@ -850,7 +846,7 @@ const PromptManager = () => {
             <div className="space-y-4">
               <div>
                 <label htmlFor="remote-url" className="block text-sm font-semibold text-gray-900 dark:text-gray-100 mb-2">
-                  远程 URL
+                  {t('remoteUrl')}
                 </label>
                 <div className="relative">
                   <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
@@ -878,7 +874,7 @@ const PromptManager = () => {
                       </svg>
                     </div>
                     <div className="flex-1">
-                      <h4 className="text-sm font-medium text-red-900 dark:text-red-300">导入失败</h4>
+                      <h4 className="text-sm font-medium text-red-900 dark:text-red-300">{t('importFailed')}</h4>
                       <p className="text-sm text-red-800 dark:text-red-400 mt-1">{error}</p>
                     </div>
                   </div>
@@ -891,7 +887,7 @@ const PromptManager = () => {
                 onClick={closeRemoteImportModal}
                 className="px-6 py-2.5 text-sm font-medium text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-xl hover:bg-gray-50 dark:hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-all duration-200"
               >
-                取消
+                {t('cancel')}
               </button>
               <button
                 onClick={importFromRemoteUrl}
@@ -907,14 +903,14 @@ const PromptManager = () => {
                     <div className="w-4 h-4 mr-2">
                       <div className="border-2 border-white border-t-transparent rounded-full animate-spin"></div>
                     </div>
-                    正在导入...
+                    {t('importing')}
                   </div>
                 ) : (
                   <div className="flex items-center">
                     <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
                     </svg>
-                    开始导入
+                    {t('startImport')}
                   </div>
                 )}
               </button>
@@ -930,10 +926,10 @@ const PromptManager = () => {
             setPromptToDelete(null);
           }}
           onConfirm={handleConfirmDelete}
-          title="确认删除"
+          title={t('confirmDelete')}
           message=""
-          confirmText="删除"
-          cancelText="取消"
+          confirmText={t('delete')}
+          cancelText={t('cancel')}
         >
         </ConfirmModal>
       </div>

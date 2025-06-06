@@ -1,5 +1,6 @@
 import React from "react";
 import Modal from "./Modal";
+import { t } from '../../../utils/i18n';
 
 interface ConfirmModalProps {
   isOpen: boolean;
@@ -17,8 +18,8 @@ const ConfirmModal: React.FC<ConfirmModalProps> = ({
   onConfirm,
   title,
   message,
-  confirmText = "确定",
-  cancelText = "取消",
+  confirmText = t('confirm'),
+  cancelText = t('cancel'),
 }) => {
   const handleConfirm = () => {
     onConfirm();
@@ -45,10 +46,10 @@ const ConfirmModal: React.FC<ConfirmModalProps> = ({
             </svg>
           </div>
           <h3 className="text-xl font-semibold text-gray-900 mb-2">
-            确定删除提示词？
+            {t('confirmDeletePrompt')}
           </h3>
           <p className="text-gray-600 text-sm">
-            此操作无法撤销，提示词将被永久删除。
+            {t('confirmDeletePromptMessage')}
           </p>
         </div>
 

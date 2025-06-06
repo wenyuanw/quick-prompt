@@ -1,5 +1,6 @@
 import React from 'react';
 import NotionIntegration from './NotionIntegration';
+import { t } from '../../../utils/i18n';
 
 const NotionIntegrationPage: React.FC = () => {
   return (
@@ -13,11 +14,11 @@ const NotionIntegrationPage: React.FC = () => {
               </svg>
             </div>
             <h1 className="text-4xl font-bold bg-gradient-to-r from-gray-900 via-green-900 to-emerald-900 dark:from-gray-100 dark:via-green-100 dark:to-emerald-100 bg-clip-text text-transparent">
-              Notion 集成
+              {t('notionIntegration')}
             </h1>
           </div>
           <p className="text-lg text-gray-600 dark:text-gray-300 max-w-3xl">
-            通过 Notion API 集成，您可以在 Quick Prompt 与 Notion 数据库之间同步您的提示词库，实现跨平台的数据共享和备份。
+            {t('notionIntegrationDescription')}
           </p>
         </div>
         

@@ -3,6 +3,7 @@ import { initializeDefaultCategories, migratePromptsWithCategory } from "@/utils
 import { generatePromptId } from "@/utils/promptUtils"
 import { syncPromptsFromNotion as syncCorePromptsFromNotion, syncPromptsToNotion as syncCorePromptsToNotion } from "@/entrypoints/content/utils/notionSync"
 import type { PromptItem } from "@/utils/types"
+import { t } from "@/utils/i18n"
 
 // User Info Storage Key
 const USER_INFO_STORAGE_KEY = 'google_user_info';
@@ -328,7 +329,7 @@ export default defineBackground(() => {
 
     if (!forceSync && !notionSyncToNotionEnabled) {
       console.log('Local -> Notion sync is disabled and not forced, skipping.');
-      return {success: false, errors: ['本地到Notion的同步已禁用。']};
+      return {success: false, errors: [t('notionSyncDisabled')]};
     }
 
     const localPromptsResult = await browser.storage.local.get(BROWSER_STORAGE_KEY);
@@ -358,7 +359,7 @@ export default defineBackground(() => {
         const dataToStore: Record<string, any> = {};
         dataToStore[BROWSER_STORAGE_KEY] = DEFAULT_PROMPTS;
         await browser.storage.local.set(dataToStore);
-        console.log('背景脚本: 成功初始化默认Prompts');
+        console.log(t('backgroundNotionSyncInitialized'));
       }
     } catch (error) {
       console.error('背景脚本: 初始化默认数据失败:', error);
@@ -412,20 +413,20 @@ export default defineBackground(() => {
   // 创建插件图标右键菜单项
   browser.contextMenus.create({
     id: 'open-options',
-    title: '提示词管理',
+    title: t('promptManagement'),
     contexts: ['action'], // 插件图标右键菜单
   })
 
   browser.contextMenus.create({
     id: 'category-management',
-    title: '分类管理',
+    title: t('categoryManagement'),
     contexts: ['action'],
   })
 
   // 创建页面内容右键菜单项
   browser.contextMenus.create({
     id: 'save-prompt',
-    title: '保存该提示词',
+    title: t('savePrompt'),
     contexts: ['selection'],
   });
 
@@ -479,7 +480,7 @@ export default defineBackground(() => {
                 type: 'basic',
                 iconUrl: '/icon/32.png',
                 title: 'Quick Prompt - 设置提示',
-                message: '在扩展页面点击右上角齿轮图标，选择"管理扩展快捷键"'
+                message: t('shortcutSetupTip')
               });
             }, 1000);
           }
@@ -503,7 +504,7 @@ export default defineBackground(() => {
       console.log('背景脚本: 扩展首次安装');
       await initializeDefaultData();
       await browser.storage.sync.set({ notionSyncToNotionEnabled: false });
-      console.log('背景脚本: 已初始化 Notion 同步设置 (本地->Notion 为关闭状态)');
+      console.log(t('backgroundNotionSyncInitialized'));
 
       // 安装后延迟一下再检测快捷键，确保扩展完全加载
       setTimeout(async () => {
@@ -598,20 +599,20 @@ export default defineBackground(() => {
 
   browser.commands.onCommand.addListener(async (command) => {
     if (command === 'open-prompt-selector') {
-      console.log('背景脚本: 接收到打开提示词选择器的快捷键命令');
+      console.log(t('backgroundShortcutOpenSelector'));
       try {
         const tabs = await browser.tabs.query({ active: true, currentWindow: true });
         if (tabs.length > 0 && tabs[0].id) {
           await browser.tabs.sendMessage(tabs[0].id, { action: 'openPromptSelector' });
-          console.log('背景脚本: 已发送打开提示词选择器的消息到活动标签页');
+          console.log(t('backgroundShortcutSelectorSent'));
         } else {
-          console.error('背景脚本: 未找到活动的标签页');
+          console.error(t('backgroundNoActiveTab'));
         }
       } catch (error) {
-        console.error('背景脚本: 发送消息到标签页失败:', error);
+        console.error(t('backgroundSendMessageError'), error);
       }
     } else if (command === 'save-selected-prompt') {
-      console.log('背景脚本: 接收到保存选中文本的快捷键命令');
+      console.log(t('backgroundSaveShortcut'));
       try {
         const tabs = await browser.tabs.query({ active: true, currentWindow: true });
         if (tabs.length > 0 && tabs[0].id) {
@@ -621,13 +622,13 @@ export default defineBackground(() => {
             const urlWithParams = `${optionsUrl}?action=new&content=${encodeURIComponent(response.text)}`;
             await browser.tabs.create({ url: urlWithParams });
           } else {
-            console.log("快捷键保存：未从内容脚本获取到文本，或内容脚本未响应。")
+            console.log(t('shortcutSaveNoTextResponse'))
           }
         } else {
-          console.error('背景脚本: 未找到活动的标签页');
+          console.error(t('backgroundNoActiveTab'));
         }
       } catch (error) {
-        console.error('背景脚本: 获取选中文本或打开选项页失败:', error);
+        console.error(t('backgroundGetSelectedTextError'), error);
       }
     }
   });
@@ -642,11 +643,11 @@ export default defineBackground(() => {
         const result = await browser.storage.local.get(BROWSER_STORAGE_KEY);
         const allPrompts = (result[BROWSER_STORAGE_KEY as keyof typeof result] as PromptItem[]) || [];
         const enabledPrompts = allPrompts.filter((prompt: PromptItem) => prompt.enabled !== false);
-        console.log('背景脚本: 获取到', allPrompts.length, '个Prompts，其中', enabledPrompts.length, '个已启用');
+        console.log(t('backgroundPromptsLoaded'), allPrompts.length, t('backgroundPromptsEnabled'), enabledPrompts.length, t('backgroundPromptsEnabledSuffix'));
         return { success: true, data: enabledPrompts };
       } catch (error) {
-        console.error('背景脚本: 获取Prompts时出错:', error);
-        return { success: false, error: '无法获取Prompts数据' };
+        console.error(t('backgroundGetPromptsError'), error);
+        return { success: false, error: t('backgroundGetPromptsDataError') };
       }
     }
 
@@ -656,7 +657,7 @@ export default defineBackground(() => {
         await browser.tabs.create({ url: optionsUrl });
         return { success: true };
       } catch (error) {
-        console.error('打开选项页失败:', error);
+        console.error(t('backgroundOpenOptionsError'), error);
         browser.runtime.openOptionsPage();
         return { success: true, fallback: true };
       }
@@ -669,7 +670,7 @@ export default defineBackground(() => {
         await browser.tabs.create({ url: urlWithParams });
         return { success: true };
       } catch (error: any) {
-        console.error('背景脚本: 打开选项页(带文本)失败:', error);
+        console.error(t('backgroundOpenOptionsWithTextError'), error);
         return { success: false, error: error.message };
       }
     }
@@ -748,7 +749,7 @@ export default defineBackground(() => {
           } else {
             console.warn('[MSG_AUTH V3] Authentication failed or no user info.');
             await updateAuthStatus('failed');
-            resolve({ success: false, error: '登录失败，请稍后再试' });
+            resolve({ success: false, error: t('backgroundLoginFailed') });
           }
         } catch (error: any) {
           console.error('[MSG_AUTH V3] Error during authenticateWithGoogle message processing:', error);

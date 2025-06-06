@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from "react";
 import { Switch } from "@headlessui/react";
 import { browser } from "#imports";
 import NotionLogo from "./NotionLogo";
+import { t } from "../../../utils/i18n";
 
 interface NotionIntegrationProps {
   // 不需要额外的props
@@ -49,22 +50,18 @@ const NotionIntegration: React.FC<NotionIntegrationProps> = () => {
 
   const loadSettings = async () => {
     try {
-      const settings = await browser.storage.sync.get([
+      setIsLoading(true);
+      const result = await browser.storage.sync.get([
         "notionApiKey",
         "notionDatabaseId",
-        "notionSyncToNotionEnabled",
+        "syncToNotionEnabled",
       ]);
-
-      setApiKey(settings.notionApiKey || "");
-      setDatabaseId(settings.notionDatabaseId || "");
-      setIsSyncToNotionEnabled(
-        settings.notionSyncToNotionEnabled !== undefined
-          ? !!settings.notionSyncToNotionEnabled
-          : false
-      );
-      setIsLoading(false);
+      setApiKey(result.notionApiKey || "");
+      setDatabaseId(result.notionDatabaseId || "");
+      setIsSyncToNotionEnabled(result.syncToNotionEnabled || false);
     } catch (error) {
-      console.error("Error loading Notion settings:", error);
+      console.error(t("loadSettingsError"), error);
+    } finally {
       setIsLoading(false);
     }
   };
@@ -103,7 +100,7 @@ const NotionIntegration: React.FC<NotionIntegrationProps> = () => {
 
   const saveSyncToNotionEnabled = async (enabled: boolean) => {
     try {
-      await browser.storage.sync.set({ notionSyncToNotionEnabled: enabled });
+      await browser.storage.sync.set({ syncToNotionEnabled: enabled });
     } catch (error) {
       console.error("Error saving Notion sync setting:", error);
     }
@@ -111,31 +108,27 @@ const NotionIntegration: React.FC<NotionIntegrationProps> = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-
-    // 验证输入
     if (!apiKey || !databaseId) {
-      showMessage("error", "请填写 API 密钥和数据库 ID");
+      showMessage("error", t("fillAPIKeyAndDatabaseID"));
       return;
     }
-
     try {
-      // 保存设置
-      await browser.storage.sync.set({
-        notionApiKey: apiKey,
-        notionDatabaseId: databaseId,
-      });
-
       // 测试连接
       const testResult = await testNotionConnection(apiKey, databaseId);
 
       if (testResult.success) {
-        showMessage("success", "连接成功! Notion 设置已保存。");
+        // 保存设置
+        await browser.storage.sync.set({
+          notionApiKey: apiKey,
+          notionDatabaseId: databaseId,
+        });
+        showMessage("success", t("connectionSuccessNotionSaved"));
       } else {
-        showMessage("error", `连接失败: ${testResult.error}`);
+        showMessage("error", testResult.error || t("testConnectionError"));
       }
     } catch (error) {
-      console.error("Error saving settings:", error);
-      showMessage("error", "保存设置时发生错误");
+      console.error(t("saveSettingsError"), error);
+      showMessage("error", t("testConnectionError"));
     }
   };
 
@@ -144,29 +137,27 @@ const NotionIntegration: React.FC<NotionIntegrationProps> = () => {
     dbId: string
   ): Promise<{ success: boolean; error?: string }> => {
     try {
-      const response = await fetch(
-        `https://api.notion.com/v1/databases/${dbId}`,
-        {
-          method: "GET",
-          headers: {
-            Authorization: `Bearer ${key}`,
-            "Notion-Version": "2022-06-28",
-          },
-        }
-      );
-      if (!response.ok) {
-        const errorData = await response.json();
+      const response = await browser.runtime.sendMessage({
+        action: "testNotionConnection",
+        apiKey: key,
+        databaseId: dbId,
+      });
+
+      if (response.success) {
+        console.log(t("notionConnectionSuccessful"));
+        return { success: true };
+      } else {
+        console.error(t("notionConnectionFailed"), response.error);
         return {
           success: false,
-          error: errorData.message || `API 返回错误: ${response.status}`,
+          error: response.error || t("invalidNotionAPIKeyOrDatabase"),
         };
       }
-      return { success: true };
     } catch (error) {
-      console.error("Error testing Notion connection:", error);
+      console.error(t("testConnectionError"), error);
       return {
         success: false,
-        error: error instanceof Error ? error.message : "未知错误",
+        error: t("testConnectionError"),
       };
     }
   };
@@ -220,24 +211,24 @@ const NotionIntegration: React.FC<NotionIntegrationProps> = () => {
     if (!apiKey || !databaseId) {
       showMessage(
         "error",
-        "Notion API密钥或数据库ID未配置，无法同步。请先完成配置。"
+        t("notionAPIKeyOrDatabaseNotConfigured")
       );
       return;
     }
 
     if (currentSyncId) {
-      showMessage("info", "已有同步任务正在进行中，请稍候。");
+      showMessage("info", t("syncTaskInProgress"));
       return;
     }
     try {
       // 只在界面上显示info消息，不将其保存到storage
-      showMessage("info", "正在启动同步到Notion，请稍候...");
+      showMessage("info", t("startingSyncToNotion"));
 
       const response = await browser.runtime.sendMessage({
         action: "syncToNotion",
         forceSync: true,
       });
-      console.log("收到同步启动响应:", response);
+      console.log(t('receivedSyncStartResponse'), response);
 
       if (response && response.syncInProgress && response.syncId) {
         // 直接将同步状态设置为in_progress，让ToastContainer显示loading状态
@@ -245,7 +236,7 @@ const NotionIntegration: React.FC<NotionIntegrationProps> = () => {
           notion_sync_status: {
             id: response.syncId,
             status: "in_progress",
-            message: "正在同步到Notion，请稍候...",
+            message: t("syncingToNotionMessage"),
             startTime: Date.now(),
           },
         });
@@ -253,11 +244,11 @@ const NotionIntegration: React.FC<NotionIntegrationProps> = () => {
         // 启动轮询检查同步状态
         startSyncStatusPolling(response.syncId, "notion_sync_status");
       } else {
-        showMessage("error", `启动同步失败: ${response?.error || "未知错误"}`);
+        showMessage("error", `${t("syncStartFailed")}: ${response?.error || t("unknownError")}`);
       }
     } catch (error) {
       console.error("Error triggering local to Notion sync:", error);
-      showMessage("error", "触发同步到Notion时发生错误");
+      showMessage("error", t("errorTriggeringSyncToNotion"));
     }
   };
 
@@ -267,24 +258,24 @@ const NotionIntegration: React.FC<NotionIntegrationProps> = () => {
     if (!apiKey || !databaseId) {
       showMessage(
         "error",
-        "Notion API密钥或数据库ID未配置，无法同步。请先完成配置。"
+        t("notionAPIKeyOrDatabaseNotConfigured")
       );
       return;
     }
 
     if (currentSyncId) {
-      showMessage("info", "已有同步任务正在进行中，请稍候。");
+      showMessage("info", t("syncTaskInProgress"));
       return;
     }
     try {
       // 只在界面上显示info消息，不将其保存到storage
-      showMessage("info", "正在启动从Notion覆盖本地数据，请稍候...");
+      showMessage("info", t("startingNotionOverwriteSync"));
 
       const response = await browser.runtime.sendMessage({
         action: "syncFromNotion",
         mode: "replace",
       });
-      console.log("收到从Notion覆盖同步启动响应:", response);
+      console.log(t('receivedNotionOverwriteSyncResponse'), response);
 
       if (response && response.syncInProgress && response.syncId) {
         // 直接将同步状态设置为in_progress，让ToastContainer显示loading状态
@@ -292,7 +283,7 @@ const NotionIntegration: React.FC<NotionIntegrationProps> = () => {
           notion_from_sync_status: {
             id: response.syncId,
             status: "in_progress",
-            message: "正在从Notion覆盖同步到本地，请稍候...",
+            message: t("syncingFromNotionOverwriteMessage"),
             startTime: Date.now(),
           },
         });
@@ -300,11 +291,11 @@ const NotionIntegration: React.FC<NotionIntegrationProps> = () => {
         // 启动轮询检查同步状态
         startSyncStatusPolling(response.syncId, "notion_from_sync_status");
       } else {
-        showMessage("error", `启动同步失败: ${response?.error || "未知错误"}`);
+        showMessage("error", `${t("syncStartFailed")}: ${response?.error || t("unknownError")}`);
       }
     } catch (error) {
       console.error("Error triggering Notion to local sync (replace):", error);
-      showMessage("error", "触发从Notion覆盖同步时发生错误");
+      showMessage("error", t("errorTriggeringNotionOverwriteSync"));
     }
   };
 
@@ -314,24 +305,24 @@ const NotionIntegration: React.FC<NotionIntegrationProps> = () => {
     if (!apiKey || !databaseId) {
       showMessage(
         "error",
-        "Notion API密钥或数据库ID未配置，无法同步。请先完成配置。"
+        t("notionAPIKeyOrDatabaseNotConfigured")
       );
       return;
     }
 
     if (currentSyncId) {
-      showMessage("info", "已有同步任务正在进行中，请稍候。");
+      showMessage("info", t("syncTaskInProgress"));
       return;
     }
     try {
       // 只在界面上显示info消息，不将其保存到storage
-      showMessage("info", "正在启动从Notion追加数据到本地，请稍候...");
+      showMessage("info", t("startingNotionAppendSync"));
 
       const response = await browser.runtime.sendMessage({
         action: "syncFromNotion",
         mode: "append",
       });
-      console.log("收到从Notion追加同步启动响应:", response);
+      console.log(t('receivedNotionAppendSyncResponse'), response);
 
       if (response && response.syncInProgress && response.syncId) {
         // 直接将同步状态设置为in_progress，让ToastContainer显示loading状态
@@ -339,7 +330,7 @@ const NotionIntegration: React.FC<NotionIntegrationProps> = () => {
           notion_from_sync_status: {
             id: response.syncId,
             status: "in_progress",
-            message: "正在从Notion追加同步到本地，请稍候...",
+            message: t("syncingFromNotionAppendMessage"),
             startTime: Date.now(),
           },
         });
@@ -347,18 +338,18 @@ const NotionIntegration: React.FC<NotionIntegrationProps> = () => {
         // 启动轮询检查同步状态
         startSyncStatusPolling(response.syncId, "notion_from_sync_status");
       } else {
-        showMessage("error", `启动同步失败: ${response?.error || "未知错误"}`);
+        showMessage("error", `${t("syncStartFailed")}: ${response?.error || t("unknownError")}`);
       }
     } catch (error) {
       console.error("Error triggering Notion to local sync (append):", error);
-      showMessage("error", "触发从Notion追加同步时发生错误");
+      showMessage("error", t("errorTriggeringNotionAppendSync"));
     }
   };
 
   if (isLoading)
     return (
       <div className="p-4 font-medium text-center animate-pulse">
-        加载 Notion 设置中...
+        {t("loadingNotionSettings")}
       </div>
     );
 
@@ -419,7 +410,7 @@ const NotionIntegration: React.FC<NotionIntegrationProps> = () => {
             <div className="pb-4 mb-4">
               <div className="flex justify-between items-center">
                 <h3 className="mb-4 text-lg font-semibold text-gray-800 dark:text-gray-200">
-                  基本设置
+                  {t("basicSettings")}
                 </h3>
                 <a
                   href="https://github.com/wenyuanw/quick-prompt/blob/main/docs/notion-sync-guide.md"
@@ -441,7 +432,7 @@ const NotionIntegration: React.FC<NotionIntegrationProps> = () => {
                       d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
                     ></path>
                   </svg>
-                  配置指南
+                  {t("configurationGuide")}
                 </a>
               </div>
 
@@ -451,28 +442,28 @@ const NotionIntegration: React.FC<NotionIntegrationProps> = () => {
                     htmlFor="apiKey"
                     className="block text-sm font-medium text-gray-700 dark:text-gray-300"
                   >
-                    Notion API 密钥
+                    {t("notionAPIKey")}
                   </label>
                   <input
                     type="password"
                     id="apiKey"
                     value={apiKey}
                     onChange={(e) => setApiKey(e.target.value)}
-                    placeholder="secret_xxxxxxxxxxxxx"
+                    placeholder={t("notionAPIKeyPlaceholder")}
                     required
                     className="block px-3 py-2 mt-1 w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white"
                   />
                   <p className="mt-1.5 text-xs text-gray-500 dark:text-gray-400">
-                    在{" "}
+                    {t("notionAPIKeyHelp")}{" "}
                     <a
                       href="https://www.notion.so/my-integrations"
                       target="_blank"
                       rel="noopener noreferrer"
                       className="text-blue-600 dark:text-blue-400 hover:underline"
                     >
-                      Notion 整合页面
+                      {t("notionIntegrationsPage")}
                     </a>{" "}
-                    创建一个新的整合并获取 API 密钥
+                    {t("notionAPIKeyHelp2")}
                   </p>
                 </div>
 
@@ -481,19 +472,19 @@ const NotionIntegration: React.FC<NotionIntegrationProps> = () => {
                     htmlFor="databaseId"
                     className="block text-sm font-medium text-gray-700 dark:text-gray-300"
                   >
-                    Notion 数据库 ID
+                    {t("notionDatabaseID")}
                   </label>
                   <input
                     type="text"
                     id="databaseId"
                     value={databaseId}
                     onChange={(e) => setDatabaseId(e.target.value)}
-                    placeholder="xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
+                    placeholder={t("notionDatabaseIDPlaceholder")}
                     required
                     className="block px-3 py-2 mt-1 w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white"
                   />
                   <p className="mt-1.5 text-xs text-gray-500 dark:text-gray-400">
-                    您可以从 Notion 数据库页面 URL 中提取 ID
+                    {t("notionDatabaseIDHelp")}
                   </p>
                 </div>
               </div>
@@ -517,7 +508,7 @@ const NotionIntegration: React.FC<NotionIntegrationProps> = () => {
                     d="M5 13l4 4L19 7"
                   />
                 </svg>
-                保存设置 & 测试连接
+                {t("saveSettingsAndTest")}
               </button>
             </div>
           </form>
@@ -525,16 +516,16 @@ const NotionIntegration: React.FC<NotionIntegrationProps> = () => {
 
         <div className="flex flex-col p-6 bg-gray-50/80 dark:bg-gray-700/80 backdrop-blur-sm rounded-xl border border-gray-200/50 dark:border-gray-600/50 shadow-lg">
           <h3 className="pb-2 mb-3 text-lg font-semibold text-gray-800">
-            自动同步设置
+            {t("autoSyncSettings")}
           </h3>
 
           <div className="flex justify-between items-center mb-3">
             <div>
               <h4 className="font-medium text-gray-700 text-md dark:text-gray-300">
-                启用自动同步
+                {t("enableAutoSync")}
               </h4>
               <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
-                本地更改自动同步到 Notion
+                {t("autoSyncDescription")}
               </p>
             </div>
             <Switch
@@ -547,7 +538,7 @@ const NotionIntegration: React.FC<NotionIntegrationProps> = () => {
               } 
                 relative inline-flex h-6 w-11 items-center rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 dark:focus:ring-offset-gray-800`}
             >
-              <span className="sr-only">启用同步</span>
+              <span className="sr-only">{t("enableSync")}</span>
               <span
                 className={`${
                   isSyncToNotionEnabled ? "translate-x-6" : "translate-x-1"
@@ -559,11 +550,11 @@ const NotionIntegration: React.FC<NotionIntegrationProps> = () => {
 
           <div className="mt-4 p-3 text-xs text-gray-600 bg-white/70 dark:bg-gray-700/70 backdrop-blur-sm rounded-md border border-gray-200/50 dark:border-gray-600/50 shadow-sm dark:text-gray-400">
             <h4 className="mb-2 font-medium text-gray-700 dark:text-gray-300">
-              注意事项:
+              {t("importantNotes")}
             </h4>
             <ul className="list-disc pl-5 space-y-1.5">
-              <li>API 密钥安全存储在浏览器中</li>
-              <li>需要确保 Notion 整合具有读写权限</li>
+              <li>{t("apiKeyStorageNote")}</li>
+              <li>{t("permissionsNote")}</li>
             </ul>
           </div>
         </div>
@@ -584,7 +575,7 @@ const NotionIntegration: React.FC<NotionIntegrationProps> = () => {
               />
             </svg>
             <h4 className="text-lg font-semibold text-gray-800 dark:text-gray-200">
-              从 Notion 同步到本地
+              {t("syncFromNotionToLocal")}
             </h4>
           </div>
 
@@ -608,7 +599,7 @@ const NotionIntegration: React.FC<NotionIntegrationProps> = () => {
                   d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
                 />
               </svg>
-              覆盖本地数据
+              {t("overwriteLocalData")}
             </button>
             <button
               type="button"
@@ -629,22 +620,22 @@ const NotionIntegration: React.FC<NotionIntegrationProps> = () => {
                   d="M12 6v6m0 0v6m0-6h6m-6 0H6"
                 />
               </svg>
-              追加到本地
+              {t("appendToLocal")}
             </button>
           </div>
 
           <div className="p-3 text-xs text-gray-600 bg-white/70 dark:bg-gray-700/70 backdrop-blur-sm rounded-md border border-gray-200/50 dark:border-gray-600/50 shadow-sm dark:text-gray-400">
             <div className="mb-1.5">
               <span className="inline-block bg-blue-100 dark:bg-blue-800/60 text-blue-800 dark:text-blue-200 px-1.5 py-0.5 rounded font-semibold text-xs mr-1">
-                追加模式
+                {t("appendMode")}
               </span>
-              只添加 Notion 中有但本地没有的提示词
+              {t("appendModeDescription")}
             </div>
             <div className="mb-1.5">
               <span className="inline-block bg-red-100 dark:bg-red-800/60 text-red-800 dark:text-red-200 px-1.5 py-0.5 rounded font-semibold text-xs mr-1">
-                覆盖模式
+                {t("overwriteMode")}
               </span>
-              完全用 Notion 数据替换本地数据
+              {t("overwriteModeDescription")}
             </div>
             <div className="flex items-center mt-2 text-xs font-medium text-red-600 dark:text-red-400">
               <svg
@@ -658,7 +649,7 @@ const NotionIntegration: React.FC<NotionIntegrationProps> = () => {
                   clipRule="evenodd"
                 />
               </svg>
-              注意：这是一次性操作
+              {t("oneTimeOperationNote")}
             </div>
           </div>
         </div>
@@ -677,7 +668,7 @@ const NotionIntegration: React.FC<NotionIntegrationProps> = () => {
               />
             </svg>
             <h4 className="text-lg font-semibold text-gray-800 dark:text-gray-200">
-              从本地同步到 Notion
+              {t("syncFromLocalToNotion")}
             </h4>
           </div>
 
@@ -701,18 +692,18 @@ const NotionIntegration: React.FC<NotionIntegrationProps> = () => {
                   d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"
                 />
               </svg>
-              同步到 Notion
+              {t("syncToNotion")}
             </button>
           </div>
 
           <div className="p-3 text-xs text-gray-600 bg-white/70 dark:bg-gray-700/70 backdrop-blur-sm rounded-md border border-gray-200/50 dark:border-gray-600/50 shadow-sm dark:text-gray-400">
             <div className="mb-2">
-              此操作会将本地提示词同步到 Notion，包括：
+              {t("syncToNotionDescription")}
             </div>
             <ul className="pl-5 space-y-1 list-disc">
-              <li>创建 Notion 中不存在的提示词</li>
-              <li>更新 Notion 中已有但内容变化的提示词</li>
-              <li>在 Notion 中标记已删除的提示词</li>
+              <li>{t("createMissingPrompts")}</li>
+              <li>{t("updateChangedPrompts")}</li>
+              <li>{t("markDeletedPrompts")}</li>
             </ul>
             <div className="flex items-center mt-2 text-xs font-medium text-red-600 dark:text-red-400">
               <svg
@@ -726,7 +717,7 @@ const NotionIntegration: React.FC<NotionIntegrationProps> = () => {
                   clipRule="evenodd"
                 />
               </svg>
-              注意：这是一次性操作
+              {t("oneTimeOperationNote")}
             </div>
           </div>
         </div>
@@ -754,7 +745,7 @@ const NotionIntegration: React.FC<NotionIntegrationProps> = () => {
               d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
             ></path>
           </svg>
-          同步正在进行中...
+          {t("syncInProgress")}
         </div>
       )}
     </div>
