@@ -1066,5 +1066,36 @@
   },
   "privacyAssurance": {
     "message": "We only request necessary permissions, and your data security will be strictly protected. You can revoke authorization and delete related data at any time."
+  },
+  "fillVariableValues": {
+    "message": "Fill Variable Values"
+  },
+  "pleaseEnterVariableValues": {
+    "message": "Please enter values for the following variables. The variables in the prompt will be automatically replaced after completion."
+  },
+  "enterVariableValue": {
+    "message": "Enter value for $variable$",
+    "placeholders": {
+      "variable": {
+        "content": "$1"
+      }
+    }
+  },
+  "preview": {
+    "message": "Preview"
+  },
+  "totalVariables": {
+    "message": "Total $count$ variables",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
+  },
+  "escToCancel": {
+    "message": "Esc to cancel"
+  },
+  "ctrlEnterToConfirm": {
+    "message": "Ctrl+Enter to confirm"
   }
 } 

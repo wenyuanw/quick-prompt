@@ -1066,5 +1066,36 @@
   },
   "privacyAssurance": {
     "message": "我们仅会请求必要的权限，并且您的数据安全将受到严格保护。您可以随时取消授权并删除相关数据。"
+  },
+  "fillVariableValues": {
+    "message": "填写变量值"
+  },
+  "pleaseEnterVariableValues": {
+    "message": "请为以下变量填写对应的值，填写完成后将自动替换提示词中的变量。"
+  },
+  "enterVariableValue": {
+    "message": "请输入$variable$的值",
+    "placeholders": {
+      "variable": {
+        "content": "$1"
+      }
+    }
+  },
+  "preview": {
+    "message": "预览"
+  },
+  "totalVariables": {
+    "message": "共 $count$ 个变量",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
+  },
+  "escToCancel": {
+    "message": "Esc 取消"
+  },
+  "ctrlEnterToConfirm": {
+    "message": "Ctrl+Enter 确认"
   }
 } 
