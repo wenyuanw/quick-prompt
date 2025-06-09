@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { browser } from '#imports';
+import { t } from '../../../utils/i18n';
 
 interface UserInfo {
   email: string;
@@ -101,7 +102,7 @@ const GoogleAuthButton: React.FC<GoogleAuthButtonProps> = ({ onAuthSuccess }) =>
         }
         // Background script now handles storage on successful auth
       } else {
-        const errorMessage = (response && response.error) ? String(response.error) : '登录失败，请稍后再试';
+        const errorMessage = (response && response.error) ? String(response.error) : t('loginFailed');
         console.warn('[AUTH_BUTTON V2] Interactive login via background failed:', errorMessage);
         setError(errorMessage);
         setUser(null); // Ensure user state is cleared on failure
@@ -110,7 +111,7 @@ const GoogleAuthButton: React.FC<GoogleAuthButtonProps> = ({ onAuthSuccess }) =>
     } catch (e) {
       console.error('[AUTH_BUTTON V2] Error during sendMessage for interactive login:', e);
       const errorMessage = (e instanceof Error) ? e.message : String(e);
-      setError(`发生错误: ${errorMessage}`);
+      setError(t('errorOccurred', [errorMessage]));
       setUser(null); // Ensure user state is cleared on error
     } finally {
       setIsLoading(false);
@@ -158,7 +159,7 @@ const GoogleAuthButton: React.FC<GoogleAuthButtonProps> = ({ onAuthSuccess }) =>
           onClick={handleLogout}
           className="w-full text-sm px-3 py-1.5 bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors"
         >
-          退出登录
+          {t('logoutGoogle')}
         </button>
       </div>
     );
@@ -184,7 +185,7 @@ const GoogleAuthButton: React.FC<GoogleAuthButtonProps> = ({ onAuthSuccess }) =>
             <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335" />
             <path d="M1 1h22v22H1z" fill="none" />
           </svg>
-          使用 Google 登录
+          {t('useGoogleLogin')}
         </>
       )}
     </button>

@@ -6,6 +6,7 @@ import { extractVariables } from "../utils/variableParser";
 import { showVariableInput } from "./VariableInput";
 import { isDarkMode } from "@/utils/tools";
 import { getCategories } from "@/utils/categoryUtils";
+import { t } from "@/utils/i18n";
 
 interface PromptSelectorProps {
   prompts: PromptItemWithVariables[];
@@ -44,7 +45,7 @@ const PromptSelector: React.FC<PromptSelectorProps> = ({
         });
         setCategoriesMap(categoryMap);
       } catch (err) {
-        console.error('加载分类失败:', err);
+        console.error(t('loadCategoriesFailed'), err);
       }
     };
     
@@ -226,7 +227,7 @@ const PromptSelector: React.FC<PromptSelectorProps> = ({
         },
         () => {
           // 取消变量输入时，不执行任何操作
-          console.log("变量输入已取消");
+          console.log(t('variableInputCanceled'));
         }
       );
       return;
@@ -369,7 +370,7 @@ const PromptSelector: React.FC<PromptSelectorProps> = ({
         // 确保编辑器获得焦点
         editableElement.focus();
       } catch (error) {
-        console.error("处理 contenteditable 元素时发生错误:", error);
+        console.error(t('errorProcessingContentEditable'), error);
       }
     } else {
       // 原有的标准输入框处理逻辑
@@ -397,7 +398,7 @@ const PromptSelector: React.FC<PromptSelectorProps> = ({
         });
         targetElement.dispatchEvent(inputEvent);
       } catch (error) {
-        console.warn("无法触发输入事件:", error);
+        console.warn(t('cannotTriggerInputEvent'), error);
       }
     }
 
@@ -429,7 +430,7 @@ const PromptSelector: React.FC<PromptSelectorProps> = ({
                 ref={searchInputRef}
                 type="text"
                 className="qp-flex-1 qp-search-input"
-                placeholder="输入关键词搜索提示..."
+                placeholder={t('searchKeywordPlaceholder')}
                 value={searchTerm}
                 onChange={(e) => {
                   setSearchTerm(e.target.value);
@@ -440,7 +441,7 @@ const PromptSelector: React.FC<PromptSelectorProps> = ({
                 onChange={(e) => setSelectedCategoryId(e.target.value || null)}
                 className="qp-category-select"
               >
-                <option value="">所有分类</option>
+                <option value="">{t('allCategories')}</option>
                 {categories.map((category) => (
                   <option key={category.id} value={category.id}>
                     {category.name}
@@ -512,16 +513,16 @@ const PromptSelector: React.FC<PromptSelectorProps> = ({
                 />
               </svg>
               <div className="qp-empty-text">
-                {searchTerm || selectedCategoryId ? "没有找到匹配的提示" : "没有可用的提示"}
+                {searchTerm || selectedCategoryId ? t('noMatchingPrompts') : t('noAvailablePrompts')}
               </div>
               <div className="qp-empty-subtext">
                 {searchTerm && selectedCategoryId 
-                  ? "尝试更改搜索词或选择其他分类"
+                  ? t('tryChangingSearchOrCategory')
                   : searchTerm 
-                  ? "尝试使用其他关键词搜索"
+                  ? t('tryOtherKeywords')
                   : selectedCategoryId
-                  ? "该分类中暂无提示词"
-                  : "请先添加一些提示词"
+                  ? t('noCategoryPrompts')
+                  : t('pleaseAddPrompts')
                 }
               </div>
             </div>
@@ -529,8 +530,8 @@ const PromptSelector: React.FC<PromptSelectorProps> = ({
         </div>
 
         <div className="qp-modal-footer">
-          <span>共 {filteredPrompts.length} 个提示</span>
-          <span>↑↓ 导航 · Enter 选择 · Tab 切换分类</span>
+          <span>{t('totalPrompts2', [filteredPrompts.length.toString()])}</span>
+          <span>{t('navigationHelp')}</span>
         </div>
       </div>
     </div>

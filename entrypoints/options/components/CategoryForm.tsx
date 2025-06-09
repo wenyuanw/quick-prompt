@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
 import type { Category } from '@/utils/types'
+import { t } from '@/utils/i18n'
 
 interface CategoryFormProps {
   onSubmit: (category: Category | Omit<Category, 'id' | 'createdAt' | 'updatedAt'>) => Promise<void>
@@ -18,14 +19,14 @@ const CategoryForm = ({ onSubmit, initialData, onCancel, isEditing }: CategoryFo
 
   // 预设颜色选项
   const colorOptions = [
-    { name: '蓝色', value: '#6366f1' },
-    { name: '绿色', value: '#10b981' },
-    { name: '黄色', value: '#f59e0b' },
-    { name: '红色', value: '#ef4444' },
-    { name: '紫色', value: '#8b5cf6' },
-    { name: '粉色', value: '#ec4899' },
-    { name: '青色', value: '#06b6d4' },
-    { name: '橙色', value: '#f97316' },
+    { name: t('blue'), value: '#6366f1' },
+    { name: t('green'), value: '#10b981' },
+    { name: t('yellow'), value: '#f59e0b' },
+    { name: t('red'), value: '#ef4444' },
+    { name: t('purple'), value: '#8b5cf6' },
+    { name: t('pink'), value: '#ec4899' },
+    { name: t('cyan'), value: '#06b6d4' },
+    { name: t('orange'), value: '#f97316' },
   ]
 
   // Reset form when initialData changes
@@ -49,7 +50,7 @@ const CategoryForm = ({ onSubmit, initialData, onCancel, isEditing }: CategoryFo
 
     // Validate form inputs
     if (!name.trim()) {
-      setError('分类名称不能为空')
+      setError(t('categoryNameCannotBeEmpty'))
       return
     }
 
@@ -76,7 +77,7 @@ const CategoryForm = ({ onSubmit, initialData, onCancel, isEditing }: CategoryFo
       }
     } catch (err) {
       console.error('提交分类表单出错:', err)
-      setError('保存失败，请稍后再试')
+      setError(t('saveFailed'))
     } finally {
       setIsSubmitting(false)
     }
@@ -106,7 +107,7 @@ const CategoryForm = ({ onSubmit, initialData, onCancel, isEditing }: CategoryFo
       <form onSubmit={handleSubmit} className='space-y-5'>
         <div>
           <label htmlFor='name' className='block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1'>
-            分类名称
+            {t('categoryName')}
           </label>
           <input
             type='text'
@@ -114,13 +115,13 @@ const CategoryForm = ({ onSubmit, initialData, onCancel, isEditing }: CategoryFo
             value={name}
             onChange={(e) => setName(e.target.value)}
             className='w-full px-3 py-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors duration-200'
-            placeholder='例如：编程开发'
+            placeholder={t('categoryExample')}
           />
         </div>
 
         <div>
           <label htmlFor='description' className='block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1'>
-            描述 <span className='text-gray-400 dark:text-gray-500 font-normal'>(可选)</span>
+            {t('description')} <span className='text-gray-400 dark:text-gray-500 font-normal'>({t('optional')})</span>
           </label>
           <textarea
             id='description'
@@ -128,13 +129,13 @@ const CategoryForm = ({ onSubmit, initialData, onCancel, isEditing }: CategoryFo
             onChange={(e) => setDescription(e.target.value)}
             rows={3}
             className='w-full px-3 py-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors duration-200'
-            placeholder='简单描述这个分类的用途...'
+            placeholder={t('descriptionExample')}
           />
         </div>
 
         <div>
           <label className='block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2'>
-            分类颜色
+            {t('categoryColor')}
           </label>
           <div className='flex flex-wrap gap-2'>
             {colorOptions.map((option) => (
@@ -183,7 +184,7 @@ const CategoryForm = ({ onSubmit, initialData, onCancel, isEditing }: CategoryFo
             />
             <div className='relative w-11 h-6 bg-gray-200 dark:bg-gray-700 peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-blue-300 dark:peer-focus:ring-blue-800 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[""] after:absolute after:top-1/2 after:right-1/2 after:-translate-y-1/2 after:bg-white after:border-gray-300 dark:after:border-gray-600 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600'></div>
             <span className='ml-3 text-sm font-medium text-gray-700 dark:text-gray-300'>
-              {enabled ? '已启用' : '已停用'} <span className='text-gray-400 dark:text-gray-500 font-normal'>(停用后该分类下的提示词不会显示)</span>
+              {enabled ? t('enabled') : t('disabled')} <span className='text-gray-400 dark:text-gray-500 font-normal'>({t('disabledTips')})</span>
             </span>
           </label>
         </div>
@@ -194,7 +195,7 @@ const CategoryForm = ({ onSubmit, initialData, onCancel, isEditing }: CategoryFo
             disabled={isSubmitting}
             className='px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed transition-colors duration-200 font-medium flex-grow sm:flex-grow-0'
           >
-            {isSubmitting ? '保存中...' : isEditing ? '更新分类' : '保存分类'}
+            {isSubmitting ? t('saving') : isEditing ? t('updateCategory') : t('saveCategory')}
           </button>
 
           <button
@@ -202,7 +203,7 @@ const CategoryForm = ({ onSubmit, initialData, onCancel, isEditing }: CategoryFo
             onClick={onCancel}
             className='px-4 py-2 bg-gray-100 dark:bg-gray-700 text-gray-800 dark:text-gray-200 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-gray-400 dark:focus:ring-gray-500 focus:ring-offset-2 transition-colors duration-200'
           >
-            取消
+            {t('cancel')}
           </button>
         </div>
       </form>

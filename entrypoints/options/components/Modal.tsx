@@ -1,4 +1,5 @@
 import React, { ReactNode, useEffect } from 'react'
+import { t } from '../../../utils/i18n'
 
 interface ModalProps {
   isOpen: boolean
@@ -52,7 +53,7 @@ const Modal: React.FC<ModalProps> = ({ isOpen, onClose, title, children }) => {
           {/* 弹窗头部 */}
           <div className='flex items-center justify-between border-b border-gray-200 px-6 py-4'>
             <h3 className='text-xl font-semibold text-gray-800 flex items-center'>
-              {title === '添加新 Prompt' ? (
+              {title === t('newPrompt') ? (
                 <svg
                   className='w-5 h-5 mr-2 text-blue-600'
                   fill='none'
@@ -86,7 +87,7 @@ const Modal: React.FC<ModalProps> = ({ isOpen, onClose, title, children }) => {
             <button
               onClick={onClose}
               className='text-gray-400 hover:text-gray-600 focus:outline-none transition-colors duration-200 dark:hover:text-gray-200'
-              aria-label='关闭'
+              aria-label={t('close')}
             >
               <svg className='h-6 w-6' fill='none' viewBox='0 0 24 24' stroke='currentColor'>
                 <path

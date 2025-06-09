@@ -4,6 +4,7 @@ import type { PromptItemWithVariables, EditableElement } from "@/utils/types";
 import { getPromptSelectorStyles } from "../utils/styles";
 import { extractVariables, replaceVariables } from "../utils/variableParser";
 import { isDarkMode } from "@/utils/tools";
+import { t } from "@/utils/i18n";
 
 
 interface VariableInputProps {
@@ -265,7 +266,7 @@ const VariableInput: React.FC<VariableInputProps> = ({
       <div className="qp-flex qp-flex-col qp-modal">
         <div className="qp-modal-header">
           <div className="qp-w-full">
-            <h3>填写变量值</h3>
+            <h3>{t('fillVariableValues')}</h3>
           </div>
         </div>
         
@@ -273,7 +274,7 @@ const VariableInput: React.FC<VariableInputProps> = ({
           <form ref={formRef} className="qp-variable-form" onSubmit={handleSubmit}>
             <div className="qp-variable-title">{prompt.title}</div>
             <div className="qp-variable-description">
-              请为以下变量填写对应的值，填写完成后将自动替换提示词中的变量。
+              {t('pleaseEnterVariableValues')}
             </div>
             
             {variables.map((variable, index) => (
@@ -287,22 +288,22 @@ const VariableInput: React.FC<VariableInputProps> = ({
                   className="qp-form-input"
                   value={variableValues[variable]}
                   onChange={(e) => handleVariableChange(variable, e.target.value)}
-                  placeholder={`请输入${variable}的值`}
+                  placeholder={t('enterVariableValue', [variable])}
                   rows={1}
                 />
               </div>
             ))}
             
             <div className="qp-preview">
-              <div className="qp-preview-title">预览</div>
+              <div className="qp-preview-title">{t('preview')}</div>
               <div className="qp-preview-content">{renderHighlightedPreview()}</div>
             </div>
           </form>
         </div>
         
         <div className="qp-modal-footer">
-          <span>共 {variables.length} 个变量</span>
-          <span>Esc 取消 · Ctrl+Enter 确认</span>
+          <span>{t('totalVariables', [variables.length.toString()])}</span>
+          <span>{t('escToCancel')} · {t('ctrlEnterToConfirm')}</span>
         </div>
       </div>
     </div>

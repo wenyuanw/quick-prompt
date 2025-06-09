@@ -1,6 +1,7 @@
 import React from 'react'
 import type { Category } from '@/utils/types'
 import { DEFAULT_CATEGORY_ID } from '@/utils/constants'
+import { t } from '../../../utils/i18n'
 
 interface CategoryListProps {
   categories: Category[]
@@ -38,8 +39,8 @@ const CategoryList = ({
             d='M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10'
           />
         </svg>
-        <p className='mt-4 text-lg font-medium text-gray-700 dark:text-gray-300'>还没有添加任何分类</p>
-        <p className='mt-2 text-gray-500 dark:text-gray-400'>点击"新增分类"按钮来创建您的第一个分类。</p>
+        <p className='mt-4 text-lg font-medium text-gray-700 dark:text-gray-300'>{t('noCategoriesAdded')}</p>
+        <p className='mt-2 text-gray-500 dark:text-gray-400'>{t('clickAddCategory')}</p>
       </div>
     )
   }
@@ -61,8 +62,8 @@ const CategoryList = ({
             d='M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z'
           />
         </svg>
-        <p className='mt-4 text-lg font-medium text-gray-700 dark:text-gray-300'>没有找到匹配的分类</p>
-        <p className='mt-2 text-gray-500 dark:text-gray-400'>请尝试其他搜索词。</p>
+        <p className='mt-4 text-lg font-medium text-gray-700 dark:text-gray-300'>{t('noMatchingCategories')}</p>
+        <p className='mt-2 text-gray-500 dark:text-gray-400'>{t('tryOtherSearchTerms')}</p>
       </div>
     )
   }
@@ -86,7 +87,7 @@ const CategoryList = ({
               </h3>
               {category.id === DEFAULT_CATEGORY_ID && (
                 <span className='ml-2 inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 dark:bg-blue-900/50 text-blue-800 dark:text-blue-300'>
-                  默认
+                  {t('default')}
                 </span>
               )}
             </div>
@@ -99,7 +100,7 @@ const CategoryList = ({
               {category.description ? (
                 <p className='text-sm text-gray-600 dark:text-gray-300 line-clamp-2'>{category.description}</p>
               ) : (
-                <span className='text-xs text-gray-400 dark:text-gray-500 italic'>(无描述)</span>
+                <span className='text-xs text-gray-400 dark:text-gray-500 italic'>{t('noDescription')}</span>
               )}
             </div>
 
@@ -119,7 +120,7 @@ const CategoryList = ({
                     d='M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10'
                   />
                 </svg>
-                {promptCounts[category.id] || 0} 个提示词
+                {t('prompts', [`${promptCounts[category.id] || 0}`])}
               </div>
             </div>
 
@@ -135,7 +136,7 @@ const CategoryList = ({
                   />
                   <div className='relative w-9 h-5 bg-gray-200 dark:bg-gray-600 peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-blue-300 dark:peer-focus:ring-blue-600 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[""] after:absolute after:top-1/2 after:right-1/2 after:-translate-y-1/2 after:bg-white after:border-gray-300 dark:after:border-gray-600 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-blue-600'></div>
                   <span className='ml-2 text-xs text-gray-600 dark:text-gray-300'>
-                    {category.enabled ? '已启用' : '已停用'}
+                    {category.enabled ? t('enabled') : t('disabled')}
                   </span>
                 </label>
               </div>
@@ -162,7 +163,7 @@ const CategoryList = ({
                     d='M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z'
                   />
                 </svg>
-                编辑
+                {t('edit')}
               </span>
             </button>
 
@@ -186,7 +187,7 @@ const CategoryList = ({
                       d='M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16'
                     />
                   </svg>
-                  删除
+                  {t('delete')}
                 </span>
               </button>
             )}

@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { browser } from '#imports';
+import { t } from '../../../utils/i18n';
 
 interface UserInfo {
   email: string;
@@ -42,7 +43,7 @@ const GoogleAuthPage: React.FC = () => {
       // 只有状态有变化时才更新
       if ((result.google_user_info && !user) || 
           (!result.google_user_info && user)) {
-        console.log('检测到登录状态变化，更新UI');
+        console.log(t('loginStatusChanged'));
         if (result.google_user_info) {
           setUser(result.google_user_info);
           setError(null);
@@ -69,12 +70,12 @@ const GoogleAuthPage: React.FC = () => {
       if (result.google_user_info) {
         setUser(result.google_user_info);
         setError(null); // 清除任何错误状态
-        console.log('找到已登录用户:', result.google_user_info);
+        console.log(t('foundLoggedInUser'), result.google_user_info);
         return true;
       }
       return false;
     } catch (error) {
-      console.error('检查认证状态时出错:', error);
+      console.error(t('checkAuthStatusError'), error);
       return false;
     } finally {
       setIsLoading(false);
@@ -86,7 +87,7 @@ const GoogleAuthPage: React.FC = () => {
     setError(null);
 
     try {
-      console.log('尝试进行Google交互式登录');
+      console.log(t('attemptGoogleLogin'));
       
       // 背景脚本将设置 'google_auth_status' 为 'in_progress'.
       // monitorAuthStatus 将会捕捉此状态并显示相应信息.
@@ -101,9 +102,9 @@ const GoogleAuthPage: React.FC = () => {
 
     } catch (e: any) {
       // 此处主要捕获发送消息本身的错误
-      const errorMessage = e?.message || '启动登录过程中发生错误';
+      const errorMessage = e?.message || t('loginProcessError');
       setError(errorMessage);
-      console.error('Google登录请求发送错误:', e);
+      console.error(t('googleLoginRequestError'), e);
       setIsLoading(false); // 在发送错误时确保停止加载
     }
   };
@@ -113,11 +114,11 @@ const GoogleAuthPage: React.FC = () => {
     setError(null);
     
     try {
-      console.log('正在登出Google账号');
+      console.log(t('loggingOutGoogle'));
       
       // 发送登出请求
       browser.runtime.sendMessage({ action: 'logoutGoogle' }).catch(e => {
-        console.error('发送登出请求出错:', e);
+        console.error(t('logoutRequestError'), e);
       });
       
       // 创建一个登出状态检查函数，等待用户信息被清除
@@ -129,12 +130,12 @@ const GoogleAuthPage: React.FC = () => {
           // 检查用户是否已经登出
           const result = await browser.storage.local.get('google_user_info');
           if (!result.google_user_info) {
-            console.log('确认用户已成功登出');
+            console.log(t('confirmedLogout'));
             setUser(null);
             return true;
           }
           
-          console.log(`登出检查尝试 ${attempt + 1}/${maxAttempts}...`);
+          console.log(t('logoutCheckAttempt', [(attempt + 1).toString(), maxAttempts.toString()]));
         }
         
         return false;
@@ -144,17 +145,17 @@ const GoogleAuthPage: React.FC = () => {
       const loggedOut = await checkUntilLoggedOut();
       
       if (loggedOut) {
-        console.log('Google账号登出成功');
+        console.log(t('googleLogoutSuccess'));
       } else {
         // 即使检查失败，也尝试清除本地状态
         setUser(null);
-        setError('登出可能未完全完成，请刷新页面');
-        console.warn('登出过程可能未完全完成');
+        setError(t('logoutMaybeIncomplete'));
+        console.warn(t('logoutProcessIncomplete'));
       }
     } catch (e: any) {
-      const errorMessage = e?.message || '登出过程中发生错误';
+      const errorMessage = e?.message || t('logoutProcessError');
       setError(errorMessage);
-      console.error('Google登出请求错误:', e);
+      console.error(t('googleLogoutRequestError'), e);
     } finally {
       setIsLoading(false);
     }
@@ -177,11 +178,11 @@ const GoogleAuthPage: React.FC = () => {
             switch (status) {
               case 'in_progress':
                 // isLoading 应该在 handleLogin 开始时设置，此处可选择性更新error提示
-                setError('正在进行登录，请在打开的窗口中完成认证...');
+                setError(t('loginInProgress'));
                 setIsLoading(true); // 确保在轮询到in_progress时也显示loading
                 break;
               case 'checking_session':
-                setError('正在检查登录会话...');
+                setError(t('checkingLoginSession'));
                 setIsLoading(true);
                 break;
               case 'success':
@@ -191,12 +192,12 @@ const GoogleAuthPage: React.FC = () => {
                 setIsLoading(false); // 明确停止加载
                 break;
               case 'failed':
-                setError('登录失败，请重新尝试');
+                setError(t('loginFailedTryAgain'));
                 await browser.storage.local.remove('google_auth_status');
                 setIsLoading(false);
                 break;
               case 'error':
-                setError('登录过程中发生错误，请稍后再试');
+                setError(t('loginErrorTryLater'));
                 await browser.storage.local.remove('google_auth_status');
                 setIsLoading(false);
                 break;
@@ -204,7 +205,7 @@ const GoogleAuthPage: React.FC = () => {
           }
         }
       } catch (err) {
-        console.error('监控认证状态时出错:', err);
+        console.error(t('monitorAuthStatusError'), err);
         // 发生监控错误时，也应该停止加载，避免UI卡死
         // setIsLoading(false); // 考虑是否添加，可能导致错误状态下loading提前消失
       }
@@ -225,19 +226,19 @@ const GoogleAuthPage: React.FC = () => {
               </svg>
             </div>
             <h1 className="text-4xl font-bold bg-gradient-to-r from-gray-900 via-blue-900 to-indigo-900 dark:from-gray-100 dark:via-blue-100 dark:to-indigo-100 bg-clip-text text-transparent">
-              Google 认证
+              {t('googleAuth')}
             </h1>
           </div>
           <p className="text-lg text-gray-600 dark:text-gray-300 max-w-3xl">
-            连接您的 Google 账号，以便在使用 Quick Prompt 时获得更多功能，例如云同步、跨设备访问等。
+            {t('googleAuthDescription')}
           </p>
         </div>
         
         {/* 认证卡片 */}
         <div className="bg-white/90 dark:bg-gray-800/90 backdrop-blur-sm border border-white/20 dark:border-gray-700/50 shadow-xl rounded-2xl p-8 mb-8">
-          <h2 className="text-xl font-semibold text-gray-800 dark:text-white mb-4">账号认证</h2>
+          <h2 className="text-xl font-semibold text-gray-800 dark:text-white mb-4">{t('accountAuthentication')}</h2>
           <p className="text-gray-600 dark:text-gray-400 mb-6">
-            连接您的 Google 账号，以便在使用 Quick Prompt 时获得更多功能，例如云同步、跨设备访问等。
+            {t('googleAuthDescription')}
           </p>
           
           <div className="max-w-md mx-auto">
@@ -263,7 +264,7 @@ const GoogleAuthPage: React.FC = () => {
                     <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path>
                     </svg>
-                    退出 Google 账号
+                    {t('logoutGoogle')}
                   </button>
                 </div>
               </div>
@@ -280,7 +281,7 @@ const GoogleAuthPage: React.FC = () => {
                   <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335" />
                   <path d="M1 1h22v22H1z" fill="none" />
                 </svg>
-                使用 Google 账号登录
+                {t('useGoogleLogin')}
               </button>
             )}
             
@@ -299,15 +300,15 @@ const GoogleAuthPage: React.FC = () => {
         
         {/* 介绍部分 */}
         <div className="bg-white/90 dark:bg-gray-800/90 backdrop-blur-sm border border-white/20 dark:border-gray-700/50 shadow-xl rounded-2xl p-8">
-          <h2 className="text-xl font-semibold text-gray-800 dark:text-white mb-4">Google 认证说明</h2>
+          <h2 className="text-xl font-semibold text-gray-800 dark:text-white mb-4">{t('googleAuthExplanation')}</h2>
           <div className="space-y-4 text-gray-600 dark:text-gray-400">
-            <p>通过 Google 认证，您可以获得以下功能：</p>
+            <p>{t('googleAuthBenefits')}</p>
             <ul className="list-disc pl-5 space-y-2">
-              <li>安全地存储和同步您的提示词到云端</li>
-              <li>在不同设备间无缝切换和使用您的提示词库</li>
-              <li>使用 Google 服务进行额外的快捷操作</li>
+              <li>{t('secureCloudStorage')}</li>
+              <li>{t('crossDeviceAccess')}</li>
+              <li>{t('googleServiceIntegration')}</li>
             </ul>
-            <p>我们仅会请求必要的权限，并且您的数据安全将受到严格保护。您可以随时取消授权并删除相关数据。</p>
+            <p>{t('privacyAssurance')}</p>
           </div>
         </div>
       </div>

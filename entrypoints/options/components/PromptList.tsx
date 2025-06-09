@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import type { PromptItem, Category } from '@/utils/types'
 import { getCategories } from '@/utils/categoryUtils'
+import { t } from '../../../utils/i18n'
 
 interface PromptListProps {
   prompts: PromptItem[]
@@ -67,8 +68,8 @@ const PromptList = ({
             d='M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10'
           />
         </svg>
-        <p className='mt-4 text-lg font-medium text-gray-700 dark:text-gray-300'>还没有添加任何 Prompt</p>
-        <p className='mt-2 text-gray-500 dark:text-gray-400'>点击"添加新 Prompt"按钮来创建您的第一个 Prompt。</p>
+        <p className='mt-4 text-lg font-medium text-gray-700 dark:text-gray-300'>{t('noPromptsAdded')}</p>
+        <p className='mt-2 text-gray-500 dark:text-gray-400'>{t('clickAddPrompt')}</p>
       </div>
     )
   }
@@ -90,8 +91,8 @@ const PromptList = ({
             d='M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z'
           />
         </svg>
-        <p className='mt-4 text-lg font-medium text-gray-700 dark:text-gray-300'>没有找到匹配的 Prompt</p>
-        <p className='mt-2 text-gray-500 dark:text-gray-400'>请尝试其他搜索词或选择其他分类。</p>
+        <p className='mt-4 text-lg font-medium text-gray-700 dark:text-gray-300'>{t('noMatchingPrompts')}</p>
+        <p className='mt-2 text-gray-500 dark:text-gray-400'>{t('tryOtherTermsOrCategories')}</p>
       </div>
     )
   }
@@ -139,7 +140,7 @@ const PromptList = ({
                     ))}
                   </div>
                 ) : (
-                  <span className='text-xs text-gray-400 dark:text-gray-500 italic'>(无标签)</span>
+                  <span className='text-xs text-gray-400 dark:text-gray-500 italic'>{t('noTags')}</span>
                 )}
               </div>
 
@@ -160,7 +161,7 @@ const PromptList = ({
                     />
                     <div className='relative w-9 h-5 bg-gray-200 dark:bg-gray-600 peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-blue-300 dark:peer-focus:ring-blue-600 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[""] after:absolute after:top-1/2 after:right-1/2 after:-translate-y-1/2 after:bg-white after:border-gray-300 dark:after:border-gray-600 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-blue-600'></div>
                     <span className='ml-2 text-xs text-gray-600 dark:text-gray-300'>
-                      {prompt.enabled !== undefined ? (prompt.enabled ? '已启用' : '已停用') : '已启用'}
+                      {prompt.enabled !== undefined ? (prompt.enabled ? t('enabled') : t('disabled')) : t('enabled')}
                     </span>
                   </label>
                 </div>
@@ -187,7 +188,7 @@ const PromptList = ({
                       d='M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z'
                     />
                   </svg>
-                  编辑
+                  {t('edit')}
                 </span>
               </button>
 
@@ -209,7 +210,7 @@ const PromptList = ({
                       d='M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16'
                     />
                   </svg>
-                  删除
+                  {t('delete')}
                 </span>
               </button>
             </div>
