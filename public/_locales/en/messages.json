@@ -195,6 +195,57 @@
   "categoryManagementDescription": {
     "message": "Here, you can manage your categories, including adding, editing, deleting, and enabling/disabling categories."
   },
+  "globalSettings": {
+    "message": "Global Settings"
+  },
+  "globalSettingsDescription": {
+    "message": "Manage global configuration options for the extension."
+  },
+  "loadingGlobalSettings": {
+    "message": "Loading global settings..."
+  },
+  "modalBehavior": {
+    "message": "Modal Behavior"
+  },
+  "closeModalOnOutsideClick": {
+    "message": "Close modal on outside click"
+  },
+  "closeModalOnOutsideClickDescription": {
+    "message": "When enabled, clicking outside the modal area will automatically close the modal. When disabled, the modal can only be closed using the ESC key or close button."
+  },
+  "keyboardShortcuts": {
+    "message": "Keyboard Shortcuts"
+  },
+  "shortcutsDescription": {
+    "message": "View and manage extension keyboard shortcuts. Shortcuts are managed by the browser and need to be modified in the browser's extension settings page."
+  },
+  "openPromptSelectorDescription": {
+    "message": "Quickly open the prompt selector in any input field"
+  },
+  "openOptionsPage": {
+    "message": "Open Options Page"
+  },
+  "openOptionsPageDescription": {
+    "message": "Quickly open the extension's configuration and management page"
+  },
+  "notSet": {
+    "message": "Not set"
+  },
+  "manageShortcuts": {
+    "message": "Manage Shortcuts"
+  },
+  "pleaseManuallyNavigateToShortcuts": {
+    "message": "Please manually navigate to your browser's extension shortcuts settings page."
+  },
+  "helpAndTips": {
+    "message": "Help & Tips"
+  },
+  "globalSettingsHelpText1": {
+    "message": "Global settings affect the entire extension behavior and take effect immediately after modification."
+  },
+  "globalSettingsHelpText2": {
+    "message": "Keyboard shortcuts are managed by the browser and the setup method may vary between different browsers."
+  },
   "totalCategories": {
     "message": "Total: $count$ categories",
     "placeholders": {

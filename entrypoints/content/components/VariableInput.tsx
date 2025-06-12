@@ -4,6 +4,7 @@ import type { PromptItemWithVariables, EditableElement } from "@/utils/types";
 import { getPromptSelectorStyles } from "../utils/styles";
 import { extractVariables, replaceVariables } from "../utils/variableParser";
 import { isDarkMode } from "@/utils/tools";
+import { getGlobalSetting } from "@/utils/globalSettings";
 import { t } from "@/utils/i18n";
 
 
@@ -161,8 +162,9 @@ const VariableInput: React.FC<VariableInputProps> = ({
     Object.fromEntries(variables.map(v => [v, '']))
   );
   
-  // 预览状态
+  // 预览状态和全局设置
   const [previewContent, setPreviewContent] = useState(prompt.content);
+  const [closeOnOutsideClick, setCloseOnOutsideClick] = useState(true);
   const firstInputRef = useRef<HTMLTextAreaElement>(null);
   const formRef = useRef<HTMLFormElement>(null);
   
@@ -185,13 +187,26 @@ const VariableInput: React.FC<VariableInputProps> = ({
     onSubmit(processedContent);
   };
   
-  // 组件挂载时聚焦第一个输入框
+  // 组件挂载时聚焦第一个输入框和加载全局设置
   useEffect(() => {
     setTimeout(() => {
       if (firstInputRef.current) {
         firstInputRef.current.focus();
       }
     }, 100);
+
+    // 加载全局设置
+    const loadGlobalSettings = async () => {
+      try {
+        const closeModalOnOutsideClick = await getGlobalSetting('closeModalOnOutsideClick');
+        setCloseOnOutsideClick(closeModalOnOutsideClick);
+      } catch (err) {
+        console.warn('Failed to load global settings:', err);
+        setCloseOnOutsideClick(true); // 默认启用
+      }
+    };
+
+    loadGlobalSettings();
   }, []);
   
   // 如果没有变量，直接提交
@@ -225,7 +240,7 @@ const VariableInput: React.FC<VariableInputProps> = ({
   
   // 点击背景关闭弹窗
   const handleBackgroundClick = (e: React.MouseEvent) => {
-    if (e.target === e.currentTarget) {
+    if (e.target === e.currentTarget && closeOnOutsideClick) {
       onCancel();
     }
   };
@@ -357,7 +372,7 @@ export function showVariableInput(
   // 添加到documentElement（html元素），而不是body
   document.documentElement.appendChild(container);
 
-  // 创建包装组件来处理暗黑模式
+  // 创建包装组件来处理暗黑模式和全局设置
   const ThemeWrapper = () => {
     const [isDark, setIsDark] = useState(isDarkMode());
 

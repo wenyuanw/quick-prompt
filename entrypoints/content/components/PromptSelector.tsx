@@ -6,6 +6,7 @@ import { extractVariables } from "../utils/variableParser";
 import { showVariableInput } from "./VariableInput";
 import { isDarkMode } from "@/utils/tools";
 import { getCategories } from "@/utils/categoryUtils";
+import { getGlobalSetting } from "@/utils/globalSettings";
 import { t } from "@/utils/i18n";
 
 interface PromptSelectorProps {
@@ -26,14 +27,16 @@ const PromptSelector: React.FC<PromptSelectorProps> = ({
   const [categories, setCategories] = useState<Category[]>([]);
   const [selectedCategoryId, setSelectedCategoryId] = useState<string | null>(null);
   const [categoriesMap, setCategoriesMap] = useState<Record<string, Category>>({});
+  const [closeOnOutsideClick, setCloseOnOutsideClick] = useState(true);
   const searchInputRef = useRef<HTMLInputElement>(null);
   const listRef = useRef<HTMLDivElement>(null);
   const modalRef = useRef<HTMLDivElement>(null);
 
-  // 加载分类列表
+  // 加载分类列表和全局设置
   useEffect(() => {
-    const loadCategories = async () => {
+    const loadData = async () => {
       try {
+        // 加载分类列表
         const categoriesList = await getCategories();
         const enabledCategories = categoriesList.filter(cat => cat.enabled);
         setCategories(enabledCategories);
@@ -44,12 +47,21 @@ const PromptSelector: React.FC<PromptSelectorProps> = ({
           categoryMap[cat.id] = cat;
         });
         setCategoriesMap(categoryMap);
+
+        // 加载全局设置
+        try {
+          const closeModalOnOutsideClick = await getGlobalSetting('closeModalOnOutsideClick');
+          setCloseOnOutsideClick(closeModalOnOutsideClick);
+        } catch (err) {
+          console.warn('Failed to load global settings:', err);
+          setCloseOnOutsideClick(true); // 默认启用
+        }
       } catch (err) {
         console.error(t('loadCategoriesFailed'), err);
       }
     };
     
-    loadCategories();
+    loadData();
   }, []);
 
   // 过滤提示列表 - 同时考虑搜索词和分类筛选
@@ -408,7 +420,7 @@ const PromptSelector: React.FC<PromptSelectorProps> = ({
 
   // 点击背景关闭弹窗
   const handleBackgroundClick = (e: React.MouseEvent) => {
-    if (e.target === e.currentTarget) {
+    if (e.target === e.currentTarget && closeOnOutsideClick) {
       onClose();
     }
   };

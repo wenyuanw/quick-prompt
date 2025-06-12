@@ -198,6 +198,57 @@
   "categoryManagementDescription": {
     "message": "在这里，您可以管理您的分类，包括添加、编辑、删除和启用/停用分类。"
   },
+  "globalSettings": {
+    "message": "全局设置"
+  },
+  "globalSettingsDescription": {
+    "message": "管理扩展的全局配置选项"
+  },
+  "loadingGlobalSettings": {
+    "message": "正在加载全局设置..."
+  },
+  "modalBehavior": {
+    "message": "弹窗行为"
+  },
+  "closeModalOnOutsideClick": {
+    "message": "点击外部区域关闭弹窗"
+  },
+  "closeModalOnOutsideClickDescription": {
+    "message": "启用后，点击弹窗外部区域将自动关闭弹窗。禁用后，只能通过ESC键或关闭按钮关闭弹窗。"
+  },
+  "keyboardShortcuts": {
+    "message": "键盘快捷键"
+  },
+  "shortcutsDescription": {
+    "message": "查看和管理扩展的快捷键设置。快捷键由浏览器管理，需要在浏览器的扩展设置页面中进行修改。"
+  },
+  "openPromptSelectorDescription": {
+    "message": "在任意输入框中快速打开提示词选择器"
+  },
+  "openOptionsPage": {
+    "message": "打开设置页面"
+  },
+  "openOptionsPageDescription": {
+    "message": "快速打开扩展的配置和管理页面"
+  },
+  "notSet": {
+    "message": "未设置"
+  },
+  "manageShortcuts": {
+    "message": "管理快捷键"
+  },
+  "pleaseManuallyNavigateToShortcuts": {
+    "message": "请手动导航到浏览器的扩展快捷键设置页面。"
+  },
+  "helpAndTips": {
+    "message": "帮助和提示"
+  },
+  "globalSettingsHelpText1": {
+    "message": "全局设置会影响整个扩展的行为，修改后立即生效。"
+  },
+  "globalSettingsHelpText2": {
+    "message": "快捷键设置由浏览器管理，不同浏览器的设置方式可能有所不同。"
+  },
   "totalCategories": {
     "message": "总计：$count$个分类",
     "placeholders": {

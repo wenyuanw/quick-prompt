@@ -5,6 +5,7 @@ import PromptManager from "./components/PromptManager";
 import CategoryManager from "./components/CategoryManager";
 import NotionIntegrationPage from "./components/NotionIntegrationPage";
 import GoogleAuthPage from "./components/GoogleAuthPage";
+import GlobalSettings from "./components/GlobalSettings";
 import ToastContainer from "./components/ToastContainer";
 import "./App.css";
 import "~/assets/tailwind.css";
@@ -95,6 +96,7 @@ const App = () => {
               <Routes>
                 <Route path="/" element={<PromptManager />} />
                 <Route path="/categories" element={<CategoryManager />} />
+                <Route path="/settings" element={<GlobalSettings />} />
                 <Route path="/integrations/notion" element={<NotionIntegrationPage />} />
                 <Route path="/integrations/google" element={<GoogleAuthPage />} />
               </Routes>
