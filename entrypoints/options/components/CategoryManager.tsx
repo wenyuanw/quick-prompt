@@ -1,7 +1,6 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect } from "react";
 import CategoryForm from "./CategoryForm";
 import CategoryList from "./CategoryList";
-import SearchBar from "./SearchBar";
 import Modal from "./Modal";
 import ConfirmModal from "./ConfirmModal";
 import "../App.css";
@@ -9,7 +8,6 @@ import "~/assets/tailwind.css";
 import { Category } from "@/utils/types";
 import {
   getCategories,
-  saveCategories,
   addCategory,
   updateCategory,
   deleteCategory,
@@ -428,21 +426,6 @@ const CategoryManager = () => {
           onClose={closeModal}
           title={editingCategory ? t('editCategory') : t('addCategory')} // Title as string
         >
-          {/* Modal Header with Icon */}
-          <div className="flex items-center space-x-3 mb-4">
-            <div className={`w-8 h-8 rounded-lg flex items-center justify-center shadow-md ${editingCategory ? 'bg-gradient-to-br from-amber-500 to-orange-500' : 'bg-gradient-to-br from-purple-500 to-pink-600'}`}>
-              <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                {editingCategory ? (
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
-                ) : (
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
-                )}
-              </svg>
-            </div>
-            <span className="text-xl font-semibold text-gray-900 dark:text-gray-100">
-              {editingCategory ? t('editCategory') : t('addCategory')}
-            </span>
-          </div>
           <CategoryForm
             onSubmit={handleCategorySubmit}
             initialData={editingCategory}

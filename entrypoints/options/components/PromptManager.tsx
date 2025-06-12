@@ -2,7 +2,6 @@ import { useState, useEffect, useRef } from "react";
 import { storage } from "#imports";
 import PromptForm from "./PromptForm";
 import PromptList from "./PromptList";
-import SearchBar from "./SearchBar";
 import Modal from "./Modal";
 import ConfirmModal from "./ConfirmModal";
 import "../App.css";
@@ -773,20 +772,6 @@ const PromptManager = () => {
           onClose={closeModal}
           title={editingPrompt ? t('editPrompt') : t('newPrompt')}
         >
-          <div className="flex items-center space-x-3 mb-4">
-            <div className={`w-8 h-8 rounded-lg flex items-center justify-center shadow-md ${editingPrompt ? 'bg-gradient-to-br from-amber-500 to-orange-500' : 'bg-gradient-to-br from-blue-500 to-indigo-600'}`}>
-              <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                {editingPrompt ? (
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
-                ) : (
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
-                )}
-              </svg>
-            </div>
-            <span className="text-xl font-semibold text-gray-900 dark:text-gray-100">
-              {editingPrompt ? t('editPrompt') : t('newPrompt')}
-            </span>
-          </div>
           <PromptForm
             onSubmit={handlePromptSubmit}
             initialData={
@@ -816,16 +801,6 @@ const PromptManager = () => {
           onClose={closeRemoteImportModal}
           title={t('importFromUrl')}
         >
-          <div className="flex items-center space-x-3 mb-4">
-            <div className="w-8 h-8 bg-gradient-to-br from-purple-500 to-pink-500 rounded-lg flex items-center justify-center shadow-md">
-              <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1" />
-              </svg>
-            </div>
-            <span className="text-xl font-semibold text-gray-900 dark:text-gray-100">
-              {t('importFromUrl')}
-            </span>
-          </div>
           <div className="space-y-6 pt-2">
             <div className="bg-blue-50 dark:bg-blue-900/30 border border-blue-200 dark:border-blue-800/50 rounded-xl p-4">
               <div className="flex items-start space-x-3">
