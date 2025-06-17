@@ -24,6 +24,7 @@ const PromptList = ({
 }: PromptListProps) => {
   const [categories, setCategories] = useState<Category[]>([])
   const [categoriesMap, setCategoriesMap] = useState<Record<string, Category>>({})
+  const [copiedId, setCopiedId] = useState<string | null>(null)
 
   // 加载分类信息
   useEffect(() => {
@@ -45,6 +46,21 @@ const PromptList = ({
     
     loadCategories()
   }, [])
+
+  // 复制提示词内容的函数
+  const handleCopy = async (content: string, id: string) => {
+    try {
+      await navigator.clipboard.writeText(content)
+      setCopiedId(id)
+      // 2秒后清除复制状态
+      setTimeout(() => {
+        setCopiedId(null)
+      }, 2000)
+    } catch (err) {
+      console.error('复制失败:', err)
+      // 可以在这里添加错误提示
+    }
+  }
 
   // 根据选中的分类筛选提示词
   const filteredPrompts = selectedCategoryId 
@@ -145,7 +161,11 @@ const PromptList = ({
               </div>
 
               {/* Content preview */}
-              <p className='text-sm text-gray-600 dark:text-gray-300 mb-4 truncate' title={prompt.content}>
+              <p 
+                className='text-sm text-gray-600 dark:text-gray-300 mb-4 truncate cursor-pointer hover:text-gray-800 dark:hover:text-gray-100 transition-colors duration-200' 
+                title={`${prompt.content}\n\n${t('clickToCopy') || '点击复制内容'}`}
+                onClick={() => handleCopy(prompt.content, prompt.id)}
+              >
                 {prompt.content}
               </p>
 
@@ -170,6 +190,53 @@ const PromptList = ({
 
             {/* Card Footer / Actions */}
             <div className='px-5 py-3 bg-gray-50 dark:bg-gray-700 border-t border-gray-100 dark:border-gray-600 flex justify-end space-x-2'>
+              <button
+                onClick={() => handleCopy(prompt.content, prompt.id)}
+                className={`px-3 py-1.5 text-sm rounded-md border transition-colors duration-200 ${
+                  copiedId === prompt.id
+                    ? 'bg-green-100 dark:bg-green-900/50 border-green-300 dark:border-green-600 text-green-700 dark:text-green-400'
+                    : 'bg-white dark:bg-gray-800 border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700'
+                } focus:outline-none focus:ring-2 focus:ring-offset-1 focus:ring-blue-500`}
+              >
+                <span className='flex items-center'>
+                  {copiedId === prompt.id ? (
+                    <>
+                      <svg
+                        className='w-4 h-4 mr-1.5'
+                        fill='none'
+                        stroke='currentColor'
+                        viewBox='0 0 24 24'
+                      >
+                        <path
+                          strokeLinecap='round'
+                          strokeLinejoin='round'
+                          strokeWidth='2'
+                          d='M5 13l4 4L19 7'
+                        />
+                      </svg>
+                      {t('copied') || '已复制'}
+                    </>
+                  ) : (
+                    <>
+                      <svg
+                        className='w-4 h-4 mr-1.5'
+                        fill='none'
+                        stroke='currentColor'
+                        viewBox='0 0 24 24'
+                      >
+                        <path
+                          strokeLinecap='round'
+                          strokeLinejoin='round'
+                          strokeWidth='2'
+                          d='M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z'
+                        />
+                      </svg>
+                      {t('copy') || '复制'}
+                    </>
+                  )}
+                </span>
+              </button>
+
               <button
                 onClick={() => onEdit(prompt.id)}
                 className='px-3 py-1.5 text-sm rounded-md bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-1 focus:ring-blue-500 transition-colors duration-200'

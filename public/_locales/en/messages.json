@@ -165,6 +165,15 @@
   "delete": {
     "message": "Delete"
   },
+  "copy": {
+    "message": "Copy"
+  },
+  "copied": {
+    "message": "Copied"
+  },
+  "clickToCopy": {
+    "message": "Click to copy content"
+  },
   "loadCategoriesFailed": {
     "message": "Failed to load categories"
   },
