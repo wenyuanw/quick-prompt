@@ -19,18 +19,20 @@ export function getPromptSelectorStyles(): string {
       --qp-bg-secondary: #f9fafb;
       --qp-bg-hover: #f8f5ff;
       --qp-bg-selected: #f3ecff;
-      --qp-bg-tag: #eee8ff;
+      --qp-bg-tag: #f3f4f6;
       --qp-text-primary: #111827;
-      --qp-text-secondary: #6b7280;
-      --qp-text-tag: #5b46a8;
+      --qp-text-secondary: #4b5563;
+      --qp-text-tag: #6b7280;
       --qp-border-color: #e5e7eb;
       --qp-focus-ring: #9d85f2;
       --qp-shadow-color: rgba(124, 58, 237, 0.06);
       --qp-green: #10b981;
-      --qp-accent: #8674e2;
+      --qp-accent: #6366f1;
       --qp-accent-light: #a495eb;
       --qp-gradient-start: #9f87f0;
       --qp-gradient-end: #8674e2;
+      --qp-accent-hover: #4f46e5;
+      --qp-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
     }
 
     /* 暗黑模式变量 */
@@ -40,18 +42,19 @@ export function getPromptSelectorStyles(): string {
       --qp-bg-secondary: #111827;
       --qp-bg-hover: #2c2967;
       --qp-bg-selected: #3b348c;
-      --qp-bg-tag: #2f2c6e;
+      --qp-bg-tag: #374151;
       --qp-text-primary: #f9fafb;
       --qp-text-secondary: #9ca3af;
-      --qp-text-tag: #c7bdfa;
+      --qp-text-tag: #d1d5db;
       --qp-border-color: #374151;
       --qp-focus-ring: #9d85f2;
       --qp-shadow-color: rgba(124, 58, 237, 0.12);
       --qp-green: #34d399;
-      --qp-accent: #9d85f2;
-      --qp-accent-light: #bbadf7;
+      --qp-accent: #6366f1;
+      --qp-accent-hover: #818cf8;
       --qp-gradient-start: #7e63e3;
       --qp-gradient-end: #6055c5;
+      --qp-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3), 0 2px 4px -1px rgba(0, 0, 0, 0.18);
     }
     
     /* 移植原来的样式 */
@@ -80,6 +83,10 @@ export function getPromptSelectorStyles(): string {
     
     .qp-justify-center {
       justify-content: center !important;
+    }
+
+    .qp-justify-between {
+      justify-content: space-between !important;
     }
     
     .qp-z-50 {
@@ -575,6 +582,34 @@ export function getPromptSelectorStyles(): string {
       border-radius: 3px !important;
       font-weight: 500 !important;
       white-space: nowrap !important;
+    }
+
+    /* 复制按钮样式 */
+    .qp-copy-button {
+      display: flex !important;
+      align-items: center !important;
+      justify-content: center !important;
+      padding: 6px !important;
+      border-radius: 6px !important;
+      background: transparent !important;
+      border: none !important;
+      cursor: pointer !important;
+      transition: all 0.2s ease !important;
+      color: var(--qp-text-secondary) !important;
+    }
+
+    .qp-copy-button:hover {
+      background: var(--qp-bg-tag) !important;
+      color: var(--qp-text-primary) !important;
+    }
+
+    .qp-copy-button.qp-copied {
+      color: #10B981 !important;
+    }
+
+    .qp-copy-icon {
+      width: 18px !important;
+      height: 18px !important;
     }
   `;
 } 

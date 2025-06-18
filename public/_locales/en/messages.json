@@ -762,7 +762,7 @@
     }
   },
   "navigationHelp": {
-    "message": "↑↓ Navigate · Enter Select · Tab Switch Category"
+    "message": "↑↓ Navigate · Tab Switch Category · Enter Select"
   },
   "contentScriptLoaded": {
     "message": "Content script (WXT): Loaded"
@@ -1157,5 +1157,19 @@
   },
   "ctrlEnterToConfirm": {
     "message": "Ctrl+Enter to confirm"
+  },
+  "copyPrompt": {
+    "message": "Copy prompt"
+  },
+  "copyFailed": {
+    "message": "Failed to copy prompt"
+  },
+  "pressCtrlCToCopy": {
+    "message": "$shortcut$ to copy",
+    "placeholders": {
+      "shortcut": {
+        "content": "$1"
+      }
+    }
   }
 } 

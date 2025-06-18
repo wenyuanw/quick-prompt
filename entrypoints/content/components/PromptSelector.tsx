@@ -4,7 +4,7 @@ import type { PromptItemWithVariables, EditableElement, Category } from "@/utils
 import { getPromptSelectorStyles } from "../utils/styles";
 import { extractVariables } from "../utils/variableParser";
 import { showVariableInput } from "./VariableInput";
-import { isDarkMode } from "@/utils/tools";
+import { isDarkMode, getCopyShortcutText } from "@/utils/tools";
 import { getCategories } from "@/utils/categoryUtils";
 import { getGlobalSetting } from "@/utils/globalSettings";
 import { t } from "@/utils/i18n";
@@ -28,6 +28,7 @@ const PromptSelector: React.FC<PromptSelectorProps> = ({
   const [selectedCategoryId, setSelectedCategoryId] = useState<string | null>(null);
   const [categoriesMap, setCategoriesMap] = useState<Record<string, Category>>({});
   const [closeOnOutsideClick, setCloseOnOutsideClick] = useState(true);
+  const [copiedId, setCopiedId] = useState<string | null>(null);
   const searchInputRef = useRef<HTMLInputElement>(null);
   const listRef = useRef<HTMLDivElement>(null);
   const modalRef = useRef<HTMLDivElement>(null);
@@ -149,6 +150,20 @@ const PromptSelector: React.FC<PromptSelectorProps> = ({
     setSelectedCategoryId(allOptions[nextIndex]);
   };
 
+  // 复制提示词内容
+  const copyPrompt = async (e: React.MouseEvent, prompt: PromptItemWithVariables) => {
+    e.stopPropagation(); // 阻止事件冒泡，避免触发选择提示词
+    try {
+      await navigator.clipboard.writeText(prompt.content);
+      setCopiedId(prompt.id);
+      setTimeout(() => {
+        setCopiedId(null);
+      }, 2000); // 2秒后清除复制状态
+    } catch (err) {
+      console.error(t('copyFailed'), err);
+    }
+  };
+
   // 键盘导航
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -180,6 +195,18 @@ const PromptSelector: React.FC<PromptSelectorProps> = ({
           e.preventDefault();
           // Tab键循环切换分类
           cycleCategorySelection(e.shiftKey ? 'prev' : 'next');
+          break;
+        case "c":
+          // Ctrl+C (Windows) 或 Command+C (Mac) 复制当前选中的提示词
+          if ((e.ctrlKey || e.metaKey) && filteredPrompts[selectedIndex]) {
+            e.preventDefault();
+            navigator.clipboard.writeText(filteredPrompts[selectedIndex].content)
+              .then(() => {
+                setCopiedId(filteredPrompts[selectedIndex].id);
+                setTimeout(() => setCopiedId(null), 2000);
+              })
+              .catch(err => console.error(t('copyFailed'), err));
+          }
           break;
       }
     };
@@ -482,7 +509,25 @@ const PromptSelector: React.FC<PromptSelectorProps> = ({
                     onClick={() => applyPrompt(prompt)}
                     onMouseEnter={() => !isKeyboardNav && setSelectedIndex(index)}
                   >
-                    <div className="qp-prompt-title">{prompt.title}</div>
+                    <div className="qp-flex qp-justify-between qp-items-center">
+                      <div className="qp-prompt-title">{prompt.title}</div>
+                      <button
+                        className={`qp-copy-button ${copiedId === prompt.id ? 'qp-copied' : ''}`}
+                        onClick={(e) => copyPrompt(e, prompt)}
+                        title={t('copyPrompt')}
+                      >
+                        {copiedId === prompt.id ? (
+                          <svg className="qp-copy-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M20 6L9 17L4 12" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                          </svg>
+                        ) : (
+                          <svg className="qp-copy-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M8 4v12a2 2 0 002 2h8a2 2 0 002-2V7.242a2 2 0 00-.602-1.43L16.083 2.57A2 2 0 0014.685 2H10a2 2 0 00-2 2z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                            <path d="M16 2v3a2 2 0 002 2h3M4 8v12a2 2 0 002 2h8" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                          </svg>
+                        )}
+                      </button>
+                    </div>
                     <div className="qp-prompt-preview">{prompt.content}</div>
                     <div className="qp-prompt-meta">
                       {category && (
@@ -543,7 +588,7 @@ const PromptSelector: React.FC<PromptSelectorProps> = ({
 
         <div className="qp-modal-footer">
           <span>{t('totalPrompts2', [filteredPrompts.length.toString()])}</span>
-          <span>{t('navigationHelp')}</span>
+          <span>{t('pressCtrlCToCopy', [getCopyShortcutText()])} • {t('navigationHelp')}</span>
         </div>
       </div>
     </div>

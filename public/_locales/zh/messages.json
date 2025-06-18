@@ -765,7 +765,7 @@
     }
   },
   "navigationHelp": {
-    "message": "↑↓ 导航 · Enter 选择 · Tab 切换分类"
+    "message": "↑↓ 导航 · Tab 切换分类 · Enter 选择"
   },
   "contentScriptLoaded": {
     "message": "内容脚本 (WXT): 已加载"
@@ -1157,5 +1157,19 @@
   },
   "ctrlEnterToConfirm": {
     "message": "Ctrl+Enter 确认"
+  },
+  "copyPrompt": {
+    "message": "复制提示词"
+  },
+  "copyFailed": {
+    "message": "复制提示词失败"
+  },
+  "pressCtrlCToCopy": {
+    "message": "$shortcut$ 复制",
+    "placeholders": {
+      "shortcut": {
+        "content": "$1"
+      }
+    }
   }
 } 
