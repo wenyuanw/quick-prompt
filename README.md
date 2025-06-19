@@ -146,6 +146,15 @@ MIT
 4. 推送到分支 (`git push origin feature/amazing-feature`)
 5. 打开一个 Pull Request
 
+## 👏 贡献者名单
+
+感谢所有为项目做出贡献的开发者！
+
+<a href="https://github.com/wenyuanw/quick-prompt/graphs/contributors">
+  <img src="https://contrib.rocks/image?repo=wenyuanw/quick-prompt" />
+</a>
+
+
 ## Star History
 
 [![Star History Chart](https://api.star-history.com/svg?repos=wenyuanw/quick-prompt&type=Date)](https://www.star-history.com/#wenyuanw/quick-prompt&Date)
