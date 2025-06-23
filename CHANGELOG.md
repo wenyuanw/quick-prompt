@@ -1,3 +1,11 @@
+## [0.0.15] - 2025-06-23
+
+### 新增
+- 提示词支持备注字段，[issue#30](https://github.com/wenyuanw/quick-prompt/issues/30)
+
+### 修复
+- 修复Notion集成功能
+
 ## [0.0.14] - 2025-06-18
 
 ### 新增
