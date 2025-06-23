@@ -16,6 +16,7 @@ const PromptForm = ({ onSubmit, initialData, onCancel, isEditing }: PromptFormPr
   const [title, setTitle] = useState('')
   const [content, setContent] = useState('')
   const [tags, setTags] = useState('')
+  const [notes, setNotes] = useState('')
   const [enabled, setEnabled] = useState(true)
   const [categoryId, setCategoryId] = useState(DEFAULT_CATEGORY_ID)
   const [isSubmitting, setIsSubmitting] = useState(false)
@@ -46,6 +47,7 @@ const PromptForm = ({ onSubmit, initialData, onCancel, isEditing }: PromptFormPr
       setTitle(initialData.title)
       setContent(initialData.content)
       setTags(initialData.tags.join(', '))
+      setNotes(initialData.notes || '')
       setEnabled(initialData.enabled !== undefined ? initialData.enabled : true)
       setCategoryId(initialData.categoryId || DEFAULT_CATEGORY_ID)
     } else {
@@ -53,6 +55,7 @@ const PromptForm = ({ onSubmit, initialData, onCancel, isEditing }: PromptFormPr
       setTitle('')
       setContent('')
       setTags('')
+      setNotes('')
       setEnabled(true)
       setCategoryId(DEFAULT_CATEGORY_ID)
     }
@@ -94,8 +97,10 @@ const PromptForm = ({ onSubmit, initialData, onCancel, isEditing }: PromptFormPr
         title: title.trim(),
         content: content.trim(),
         tags: tagList,
+        notes: notes.trim(),
         enabled,
         categoryId,
+        lastModified: new Date().toISOString(),
       }
 
       await onSubmit(promptData as any) // Type assertion to handle both new and edited prompts
@@ -105,6 +110,7 @@ const PromptForm = ({ onSubmit, initialData, onCancel, isEditing }: PromptFormPr
         setTitle('')
         setContent('')
         setTags('')
+        setNotes('')
         setCategoryId(DEFAULT_CATEGORY_ID)
       }
     } catch (err) {
@@ -216,6 +222,23 @@ const PromptForm = ({ onSubmit, initialData, onCancel, isEditing }: PromptFormPr
             className='w-full px-3 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors duration-200'
             placeholder={t('tagsPlaceholder')}
           />
+        </div>
+
+        <div>
+          <label htmlFor='notes' className='block text-sm font-medium text-gray-700 mb-1'>
+            {t('notesLabel')} <span className='text-gray-400 font-normal'>({t('notesOptional')})</span>
+          </label>
+          <textarea
+            id='notes'
+            value={notes}
+            onChange={(e) => setNotes(e.target.value)}
+            rows={3}
+            className='w-full px-3 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors duration-200'
+            placeholder={t('notesPlaceholder')}
+          />
+          <div className='mt-1 text-xs text-gray-500'>
+            {t('notesHelp')}
+          </div>
         </div>
 
         <div className='flex items-center mt-4'>

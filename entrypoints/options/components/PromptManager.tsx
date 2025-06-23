@@ -123,6 +123,7 @@ const PromptManager = () => {
       ...prompt,
       id: crypto.randomUUID(),
       enabled: prompt.enabled !== undefined ? prompt.enabled : true, // 确保新建的提示词默认启用
+      lastModified: prompt.lastModified || new Date().toISOString(), // 确保有lastModified字段
     };
 
     const newPrompts = [newPrompt, ...prompts];
@@ -279,6 +280,9 @@ const PromptManager = () => {
         categoryId: prompt.categoryId || DEFAULT_CATEGORY_ID,
         // 确保有enabled字段
         enabled: prompt.enabled !== undefined ? prompt.enabled : true,
+        // 为导入的提示词添加默认的lastModified和notes字段
+        lastModified: prompt.lastModified || new Date().toISOString(),
+        notes: prompt.notes || "",
       }));
 
       if (validPrompts.length === 0) {
@@ -321,6 +325,8 @@ const PromptManager = () => {
             ...uniquePrompts.map((prompt) => ({
               ...prompt,
               id: crypto.randomUUID(), // 为导入的提示词生成新ID，避免ID冲突
+              lastModified: prompt.lastModified || new Date().toISOString(),
+              notes: prompt.notes || "",
             })),
           ];
 
@@ -415,6 +421,9 @@ const PromptManager = () => {
         categoryId: prompt.categoryId || DEFAULT_CATEGORY_ID,
         // 确保有enabled字段
         enabled: prompt.enabled !== undefined ? prompt.enabled : true,
+        // 为导入的提示词添加默认的lastModified和notes字段
+        lastModified: prompt.lastModified || new Date().toISOString(),
+        notes: prompt.notes || "",
       }));
 
       if (validPrompts.length === 0) {
@@ -458,6 +467,8 @@ const PromptManager = () => {
             ...uniquePrompts.map((prompt) => ({
               ...prompt,
               id: crypto.randomUUID(), // 为导入的提示词生成新ID，避免ID冲突
+              lastModified: prompt.lastModified || new Date().toISOString(),
+              notes: prompt.notes || "",
             })),
           ];
 

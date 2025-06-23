@@ -1171,5 +1171,62 @@
         "content": "$1"
       }
     }
+  },
+  "notes": {
+    "message": "备注"
+  },
+  "lastModified": {
+    "message": "最后修改时间"
+  },
+  "notesLabel": {
+    "message": "备注"
+  },
+  "notesOptional": {
+    "message": "可选"
+  },
+  "notesPlaceholder": {
+    "message": "记录使用场景、适配模型、输入/输出示例、注意事项等..."
+  },
+  "notesHelp": {
+    "message": "只在列表中展示，不会在选择器中展示的信息，可用于记录该提示词的使用场景、适配的模型、输入输出示例、注意事项等。"
+  },
+  "noModificationTime": {
+    "message": "无修改时间"
+  },
+  "justNow": {
+    "message": "刚刚"
+  },
+  "minutesAgo": {
+    "message": "$count$分钟前",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
+  },
+  "oneHourAgo": {
+    "message": "1小时前"
+  },
+  "hoursAgo": {
+    "message": "$count$小时前",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
+  },
+  "oneDayAgo": {
+    "message": "1天前"
+  },
+  "daysAgo": {
+    "message": "$count$天前",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
+  },
+  "invalidTime": {
+    "message": "无效时间"
   }
 } 

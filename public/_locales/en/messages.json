@@ -1171,5 +1171,62 @@
         "content": "$1"
       }
     }
+  },
+  "notes": {
+    "message": "Notes"
+  },
+  "lastModified": {
+    "message": "Last Modified"
+  },
+  "notesLabel": {
+    "message": "Notes"
+  },
+  "notesOptional": {
+    "message": "optional"
+  },
+  "notesPlaceholder": {
+    "message": "Record usage scenarios, compatible models, input/output examples, notes, etc..."
+  },
+  "notesHelp": {
+    "message": "Information that only shows in the list view, not in the selector. You can use it to record usage scenarios, compatible models, input/output examples, notes and other details about this prompt."
+  },
+  "noModificationTime": {
+    "message": "No modification time"
+  },
+  "justNow": {
+    "message": "Just now"
+  },
+  "minutesAgo": {
+    "message": "$count$ minutes ago",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
+  },
+  "oneHourAgo": {
+    "message": "1 hour ago"
+  },
+  "hoursAgo": {
+    "message": "$count$ hours ago",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
+  },
+  "oneDayAgo": {
+    "message": "1 day ago"
+  },
+  "daysAgo": {
+    "message": "$count$ days ago",
+    "placeholders": {
+      "count": {
+        "content": "$1"
+      }
+    }
+  },
+  "invalidTime": {
+    "message": "Invalid time"
   }
 } 

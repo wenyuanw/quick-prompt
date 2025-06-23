@@ -22,6 +22,8 @@ export interface PromptItem {
   enabled: boolean;
   categoryId: string;
   notionPageId?: string;
+  notes?: string; // 备注字段
+  lastModified?: string; // 最后修改时间（ISO 字符串）
 }
 
 export interface PromptItemWithVariables extends PromptItem {

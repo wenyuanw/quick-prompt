@@ -62,6 +62,47 @@ const PromptList = ({
     }
   }
 
+  // 格式化最后修改时间
+  const formatLastModified = (lastModified?: string) => {
+    if (!lastModified) return t('noModificationTime')
+    
+    try {
+      const date = new Date(lastModified)
+      // 检查日期是否有效
+      if (isNaN(date.getTime())) {
+        return t('invalidTime')
+      }
+      
+      const now = new Date()
+      const diffInMs = now.getTime() - date.getTime()
+      
+      // 如果时间差为负数（未来时间），显示具体日期
+      if (diffInMs < 0) {
+        return date.toLocaleDateString()
+      }
+      
+      const diffInDays = Math.floor(diffInMs / (1000 * 60 * 60 * 24))
+      
+      if (diffInDays === 0) {
+        const diffInHours = Math.floor(diffInMs / (1000 * 60 * 60))
+        if (diffInHours === 0) {
+          const diffInMinutes = Math.floor(diffInMs / (1000 * 60))
+          return diffInMinutes <= 1 ? t('justNow') : t('minutesAgo', [diffInMinutes.toString()])
+        }
+        return diffInHours === 1 ? t('oneHourAgo') : t('hoursAgo', [diffInHours.toString()])
+      } else if (diffInDays === 1) {
+        return t('oneDayAgo')
+      } else if (diffInDays < 7) {
+        return t('daysAgo', [diffInDays.toString()])
+      } else {
+        return date.toLocaleDateString()
+      }
+    } catch (err) {
+      console.error('格式化时间出错:', err, 'lastModified:', lastModified)
+      return t('invalidTime')
+    }
+  }
+
   // 根据选中的分类筛选提示词
   const filteredPrompts = selectedCategoryId 
     ? prompts.filter(prompt => prompt.categoryId === selectedCategoryId)
@@ -168,6 +209,29 @@ const PromptList = ({
               >
                 {prompt.content}
               </p>
+
+              {/* 备注 */}
+              {prompt.notes && prompt.notes.trim() && (
+                <div className='mb-3 p-2 bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800/50 rounded-md'>
+                  <div className='flex items-start space-x-2'>
+                    <svg className='w-4 h-4 text-amber-600 dark:text-amber-400 mt-0.5 flex-shrink-0' fill='none' stroke='currentColor' viewBox='0 0 24 24'>
+                      <path strokeLinecap='round' strokeLinejoin='round' strokeWidth='2' d='M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z' />
+                    </svg>
+                    <div className='flex-1'>
+                      <h4 className='text-xs font-medium text-amber-800 dark:text-amber-300 mb-1'>{t('notes')}</h4>
+                      <p className='text-xs text-amber-700 dark:text-amber-200 whitespace-pre-wrap'>{prompt.notes}</p>
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {/* 最后修改时间 */}
+              <div className='mb-3 flex items-center space-x-2 text-xs text-gray-500 dark:text-gray-400'>
+                <svg className='w-4 h-4' fill='none' stroke='currentColor' viewBox='0 0 24 24'>
+                  <path strokeLinecap='round' strokeLinejoin='round' strokeWidth='2' d='M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z' />
+                </svg>
+                <span>{t('lastModified')}: {formatLastModified(prompt.lastModified)}</span>
+              </div>
 
               {/* 启用状态 */}
               {onToggleEnabled && (

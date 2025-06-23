@@ -148,7 +148,9 @@ export const ensureDatabaseStructure = async (apiKey: string, databaseId: string
       'Tags': { type: 'multi_select' },
       'Enabled': { type: 'checkbox' },
       'PromptID': { type: 'rich_text' },
-      'CategoryID': { type: 'rich_text' }
+      'CategoryID': { type: 'rich_text' },
+      'Notes': { type: 'rich_text' },
+      'LastModified': { type: 'rich_text' }
     };
 
     // 确定哪些字段需要添加
@@ -248,6 +250,8 @@ export const fetchNotionPrompts = async (apiKey: string, databaseId: string): Pr
       const tags = props.Tags?.multi_select?.map((tag: {name: string}) => tag.name) || [];
       const promptId = props.PromptID?.rich_text?.[0]?.plain_text?.trim() || generatePromptId(title, content, tags);
       const enabled = props.Enabled?.checkbox === undefined ? true : props.Enabled.checkbox;
+      const notes = props.Notes?.rich_text?.[0]?.plain_text?.trim() || '';
+      const lastModified = props.LastModified?.rich_text?.[0]?.plain_text?.trim() || new Date().toISOString();
 
       return {
         id: promptId,
@@ -257,6 +261,8 @@ export const fetchNotionPrompts = async (apiKey: string, databaseId: string): Pr
         tags,
         enabled,
         categoryId: props.CategoryID?.rich_text?.[0]?.plain_text?.trim() || DEFAULT_CATEGORY_ID, // 分配 categoryId
+        notes: notes || undefined, // 只在有内容时设置
+        lastModified,
       } as PromptItem;
     });
   } catch (error) {
@@ -335,7 +341,9 @@ async function createNotionPage(prompt: PromptItem, apiKey: string, databaseId: 
       'Tags': { multi_select: prompt.tags?.map(tag => ({ name: tag })) || [] },
       'PromptID': { rich_text: [{ text: { content: prompt.id || generatePromptId(prompt.title, prompt.content, prompt.tags) } }] },
       'CategoryID': { rich_text: [{ text: { content: prompt.categoryId || DEFAULT_CATEGORY_ID } }] },
-      'Enabled': { checkbox: prompt.enabled === undefined ? true : !!prompt.enabled } // 确保是布尔值
+      'Enabled': { checkbox: prompt.enabled === undefined ? true : !!prompt.enabled }, // 确保是布尔值
+      'Notes': { rich_text: [{ text: { content: prompt.notes || "" } }] },
+      'LastModified': { rich_text: [{ text: { content: prompt.lastModified || new Date().toISOString() } }] }
     };
 
     const response = await fetch('https://api.notion.com/v1/pages', {
@@ -375,7 +383,9 @@ async function updateNotionPage(notionPageId: string, prompt: PromptItem, apiKey
       // PromptID 通常不应更改，因此我们不在此处更新它。
       // 如果 CategoryID 可以更改，则应在此处更新。
       'CategoryID': { rich_text: [{ text: { content: prompt.categoryId || DEFAULT_CATEGORY_ID } }] },
-      'Enabled': { checkbox: prompt.enabled === undefined ? true : !!prompt.enabled } // 确保是布尔值
+      'Enabled': { checkbox: prompt.enabled === undefined ? true : !!prompt.enabled }, // 确保是布尔值
+      'Notes': { rich_text: [{ text: { content: prompt.notes || "" } }] },
+      'LastModified': { rich_text: [{ text: { content: prompt.lastModified || new Date().toISOString() } }] }
     };
 
     const response = await fetch(`https://api.notion.com/v1/pages/${notionPageId}`, {
@@ -485,9 +495,11 @@ export const syncPromptsToNotion = async (localPrompts: PromptItem[]): Promise<{
         const tagsChanged = JSON.stringify(localPrompt.tags?.sort()) !== JSON.stringify(notionPage.tags?.sort());
         const categoryChanged = (localPrompt.categoryId || DEFAULT_CATEGORY_ID) !== (notionPage.categoryId || DEFAULT_CATEGORY_ID);
         const enabledChanged = localEnabled !== notionEnabled;
+        const notesChanged = (localPrompt.notes || '') !== (notionPage.notes || '');
+        const lastModifiedChanged = (localPrompt.lastModified || '') !== (notionPage.lastModified || '');
 
-        if (titleChanged || contentChanged || tagsChanged || categoryChanged || enabledChanged) {
-          console.log(`Local prompt "${localPrompt.title}" (ID: ${localPrompt.id}) has changes. Updating Notion page ${notionPage.notionPageId}. Changes: title=${titleChanged}, content=${contentChanged}, tags=${tagsChanged}, category=${categoryChanged}, enabled=${enabledChanged}`);
+        if (titleChanged || contentChanged || tagsChanged || categoryChanged || enabledChanged || notesChanged || lastModifiedChanged) {
+          console.log(`Local prompt "${localPrompt.title}" (ID: ${localPrompt.id}) has changes. Updating Notion page ${notionPage.notionPageId}. Changes: title=${titleChanged}, content=${contentChanged}, tags=${tagsChanged}, category=${categoryChanged}, enabled=${enabledChanged}, notes=${notesChanged}, lastModified=${lastModifiedChanged}`);
           const updateResult = await updateNotionPage(notionPage.notionPageId, localPrompt, apiKey, databaseId, titlePropName);
           if (!updateResult.success && updateResult.error) {
             errors.push(`更新提示词"${localPrompt.title}"失败: ${updateResult.error}`);
