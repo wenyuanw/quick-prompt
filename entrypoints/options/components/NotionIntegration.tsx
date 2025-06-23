@@ -1,7 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
 import { Switch } from "@headlessui/react";
 import { browser } from "#imports";
-import NotionLogo from "./NotionLogo";
 import { t } from "../../../utils/i18n";
 
 interface NotionIntegrationProps {
@@ -37,6 +36,7 @@ const NotionIntegration: React.FC<NotionIntegrationProps> = () => {
 
   useEffect(() => {
     loadSettings();
+    clearTemporaryMessages();
     return () => {
       if (messageTimeoutRef.current) {
         clearTimeout(messageTimeoutRef.current);
@@ -63,6 +63,31 @@ const NotionIntegration: React.FC<NotionIntegrationProps> = () => {
       console.error(t("loadSettingsError"), error);
     } finally {
       setIsLoading(false);
+    }
+  };
+
+  const clearTemporaryMessages = async () => {
+    try {
+      // 获取所有本地存储的数据
+      const allData = await browser.storage.local.get(null);
+      const keysToRemove: string[] = [];
+
+      // 查找所有临时消息键和同步状态键
+      Object.keys(allData).forEach(key => {
+        if (key.startsWith('temp_notion_message_') || 
+            key === 'notion_sync_status' || 
+            key === 'notion_from_sync_status') {
+          keysToRemove.push(key);
+        }
+      });
+
+      // 删除所有临时消息和同步状态
+      if (keysToRemove.length > 0) {
+        await browser.storage.local.remove(keysToRemove);
+        console.log(`清理了 ${keysToRemove.length} 个临时消息和同步状态`);
+      }
+    } catch (error) {
+      console.error('清理临时消息和同步状态时出错:', error);
     }
   };
 
@@ -137,22 +162,26 @@ const NotionIntegration: React.FC<NotionIntegrationProps> = () => {
     dbId: string
   ): Promise<{ success: boolean; error?: string }> => {
     try {
-      const response = await browser.runtime.sendMessage({
-        action: "testNotionConnection",
-        apiKey: key,
-        databaseId: dbId,
-      });
-
-      if (response.success) {
-        console.log(t("notionConnectionSuccessful"));
-        return { success: true };
-      } else {
-        console.error(t("notionConnectionFailed"), response.error);
+      const response = await fetch(
+        `https://api.notion.com/v1/databases/${dbId}`,
+        {
+          method: "GET",
+          headers: {
+            Authorization: `Bearer ${key}`,
+            "Notion-Version": "2022-06-28",
+          },
+        }
+      );
+      if (!response.ok) {
+        const errorData = await response.json();
+        console.error(t("notionConnectionFailed"), errorData.message);
         return {
           success: false,
-          error: response.error || t("invalidNotionAPIKeyOrDatabase"),
+          error: errorData.message || t("notionConnectionFailed")
         };
       }
+      console.log(t("notionConnectionSuccessful"));
+      return { success: true };
     } catch (error) {
       console.error(t("testConnectionError"), error);
       return {
@@ -406,7 +435,7 @@ const NotionIntegration: React.FC<NotionIntegrationProps> = () => {
 
       <div className="grid grid-cols-1 gap-6 mb-8 md:grid-cols-3">
         <div className="md:col-span-2 p-6 space-y-5 bg-gray-50/80 dark:bg-gray-700/80 backdrop-blur-sm rounded-xl border border-gray-200/50 dark:border-gray-600/50 shadow-lg">
-          <form onSubmit={handleSubmit} className="">
+          <form onSubmit={handleSubmit}>
             <div className="pb-4 mb-4">
               <div className="flex justify-between items-center">
                 <h3 className="mb-4 text-lg font-semibold text-gray-800 dark:text-gray-200">
