@@ -8,7 +8,7 @@ export const setupStorageChangeListeners = (): void => {
     if (areaName === 'local' && changes[BROWSER_STORAGE_KEY]) {
       console.log('Local prompts data changed, checking if Notion sync (Local -> Notion) is needed...');
       const syncSettings = await browser.storage.sync.get('notionSyncToNotionEnabled');
-      if (syncSettings.notionSyncToNotionEnabled) {
+      if (!!syncSettings.notionSyncToNotionEnabled) {
         console.log('Local data changed, Notion sync (Local -> Notion) is enabled. Triggering sync...');
 
         // 创建唯一的同步ID用于自动同步

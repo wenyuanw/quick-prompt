@@ -4,8 +4,11 @@ import { syncFromNotionToLocal, syncLocalDataToNotion } from "@/utils/sync/notio
 import type { PromptItem } from "@/utils/types"
 import { t } from "@/utils/i18n"
 
-// Handle basic prompt and options messages
-const handleBasicMessages = async (message: any): Promise<any> => {
+// Main message handler
+export const handleRuntimeMessage = async (message: any, sender: Browser.runtime.MessageSender, sendResponse: (response?: any) => void) => {
+  console.log('[MSG_RECEIVED V3] Background received message:', message, 'from sender:', sender);
+
+  // Existing message handlers
   if (message.action === 'getPrompts') {
     try {
       const result = await browser.storage.local.get(BROWSER_STORAGE_KEY);
@@ -43,12 +46,8 @@ const handleBasicMessages = async (message: any): Promise<any> => {
     }
   }
 
-  return null;
-};
-
-// Handle Google authentication messages
-const handleAuthMessages = async (message: any, sendResponse: (response?: any) => void): Promise<boolean> => {
-  if (message.action === 'authenticateWithGoogle' || message.action === 'googleLogin') {
+  // +++ Consolidated Google Auth Message Handlers +++
+  if (message.action === 'authenticateWithGoogle' || message.action === 'googleLogin') { // Handles both old and new action name for login
     console.log(`[MSG_AUTH V3] Processing '${message.action}' for interactive: ${message.interactive}`);
 
     // 定义认证状态键，用于存储认证进度
@@ -67,6 +66,7 @@ const handleAuthMessages = async (message: any, sendResponse: (response?: any) =
     // 标记认证开始
     await updateAuthStatus('in_progress');
 
+    // 为了解决异步操作和UI更新之间的时序问题
     // 定义响应类型
     interface AuthResponse {
       success: boolean;
@@ -108,6 +108,7 @@ const handleAuthMessages = async (message: any, sendResponse: (response?: any) =
 
         if (authResult && authResult.userInfo) {
           console.log('[MSG_AUTH V3] Authentication successful. User:', authResult.userInfo.email);
+          // Core authenticateWithGoogle now handles storing to USER_INFO_STORAGE_KEY
           await updateAuthStatus('success');
           resolve({
             success: true,
@@ -137,7 +138,7 @@ const handleAuthMessages = async (message: any, sendResponse: (response?: any) =
     return true; // Indicate asynchronous response
   }
 
-  if (message.action === 'logoutGoogle' || message.action === 'googleLogout') {
+  if (message.action === 'logoutGoogle' || message.action === 'googleLogout') { // Handles both old and new action name for logout
     console.log(`[MSG_LOGOUT V3] Processing '${message.action}'`);
 
     // 定义响应类型
@@ -150,7 +151,7 @@ const handleAuthMessages = async (message: any, sendResponse: (response?: any) =
     // 使用Promise确保异步处理完成后再响应
     const logoutPromise = new Promise<LogoutResponse>(async (resolve) => {
       try {
-        await logoutGoogle();
+        await logoutGoogle(); // Core logoutGoogle handles token removal and USER_INFO_STORAGE_KEY
         console.log('[MSG_LOGOUT V3] Logout process completed by core function.');
         resolve({ success: true, message: 'Logout successful.' });
       } catch (e: any) {
@@ -185,11 +186,7 @@ const handleAuthMessages = async (message: any, sendResponse: (response?: any) =
     return true; // Indicate asynchronous response
   }
 
-  return false;
-};
-
-// Handle Notion sync messages
-const handleNotionSyncMessages = async (message: any, sendResponse: (response?: any) => void): Promise<boolean> => {
+  // Handle Notion sync messages if they are still relevant and managed here
   if (message.action === 'syncFromNotion' || message.action === 'syncFromNotionToLocal') {
     console.log(`Received ${message.action} message in background`);
 
@@ -332,33 +329,4 @@ const handleNotionSyncMessages = async (message: any, sendResponse: (response?: 
 
     return true;
   }
-
-  return false;
-};
-
-// Main message handler
-export const handleRuntimeMessage = async (message: any, sender: Browser.runtime.MessageSender, sendResponse: (response?: any) => void): Promise<boolean> => {
-  console.log('[MSG_RECEIVED V3] Background received message:', message, 'from sender:', sender);
-
-  // Handle basic messages first
-  const basicResult = await handleBasicMessages(message);
-  if (basicResult !== null) {
-    sendResponse(basicResult);
-    return false; // Synchronous response
-  }
-
-  // Handle authentication messages
-  const authHandled = await handleAuthMessages(message, sendResponse);
-  if (authHandled) {
-    return true; // Asynchronous response
-  }
-
-  // Handle Notion sync messages
-  const syncHandled = await handleNotionSyncMessages(message, sendResponse);
-  if (syncHandled) {
-    return true; // Asynchronous response
-  }
-
-  // If no handler matched, return false
-  return false;
 };

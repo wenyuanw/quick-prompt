@@ -54,11 +54,11 @@ const NotionIntegration: React.FC<NotionIntegrationProps> = () => {
       const result = await browser.storage.sync.get([
         "notionApiKey",
         "notionDatabaseId",
-        "syncToNotionEnabled",
+        "notionSyncToNotionEnabled",
       ]);
       setApiKey(result.notionApiKey || "");
       setDatabaseId(result.notionDatabaseId || "");
-      setIsSyncToNotionEnabled(result.syncToNotionEnabled || false);
+      setIsSyncToNotionEnabled(result.notionSyncToNotionEnabled ?? false);
     } catch (error) {
       console.error(t("loadSettingsError"), error);
     } finally {
@@ -68,6 +68,7 @@ const NotionIntegration: React.FC<NotionIntegrationProps> = () => {
 
   const clearTemporaryMessages = async () => {
     try {
+      console.log('Clearing temporary messages...');
       // 获取所有本地存储的数据
       const allData = await browser.storage.local.get(null);
       const keysToRemove: string[] = [];
@@ -125,7 +126,7 @@ const NotionIntegration: React.FC<NotionIntegrationProps> = () => {
 
   const saveSyncToNotionEnabled = async (enabled: boolean) => {
     try {
-      await browser.storage.sync.set({ syncToNotionEnabled: enabled });
+      await browser.storage.sync.set({ notionSyncToNotionEnabled: enabled });
     } catch (error) {
       console.error("Error saving Notion sync setting:", error);
     }
@@ -224,6 +225,11 @@ const NotionIntegration: React.FC<NotionIntegrationProps> = () => {
             // 仍在进行中，继续轮询，但不显示消息
             console.log(`Sync ID ${syncId} is still in progress...`);
           }
+        } else {
+          // 当前 syncStatus 已经被清除，说明同步已经完成
+          clearInterval(syncCheckIntervalRef.current!);
+          syncCheckIntervalRef.current = null;
+          setCurrentSyncId(null);
         }
       } catch (error) {
         console.error("Error polling sync status:", error);
@@ -257,6 +263,7 @@ const NotionIntegration: React.FC<NotionIntegrationProps> = () => {
         action: "syncToNotion",
         forceSync: true,
       });
+
       console.log(t('receivedSyncStartResponse'), response);
 
       if (response && response.syncInProgress && response.syncId) {
@@ -751,32 +758,6 @@ const NotionIntegration: React.FC<NotionIntegrationProps> = () => {
           </div>
         </div>
       </div>
-
-      {currentSyncId && (
-        <div className="flex fixed right-4 bottom-4 items-center px-4 py-2 text-white bg-blue-600 rounded-md shadow-lg">
-          <svg
-            className="mr-2 -ml-1 w-4 h-4 text-white animate-spin"
-            xmlns="http://www.w3.org/2000/svg"
-            fill="none"
-            viewBox="0 0 24 24"
-          >
-            <circle
-              className="opacity-25"
-              cx="12"
-              cy="12"
-              r="10"
-              stroke="currentColor"
-              strokeWidth="4"
-            ></circle>
-            <path
-              className="opacity-75"
-              fill="currentColor"
-              d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-            ></path>
-          </svg>
-          {t("syncInProgress")}
-        </div>
-      )}
     </div>
   );
 };
