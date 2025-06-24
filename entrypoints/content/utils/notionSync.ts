@@ -1,13 +1,10 @@
 import type { PromptItem } from '@/utils/types';
-import { browser, storage } from '#imports';
+import { browser } from '#imports';
 import { DEFAULT_CATEGORY_ID, BROWSER_STORAGE_KEY } from '@/utils/constants'; // Import DEFAULT_CATEGORY_ID and BROWSER_STORAGE_KEY
 import { generatePromptId } from '@/utils/promptUtils'; // Import generatePromptId
 
 // 存储 Notion Database 中真实的标题属性名称
 let notionDatabaseTitlePropertyName: string = 'Title'; // 默认为 "Title"
-
-// 定义 browser.storage.local 的键名，与背景脚本保持一致 (Now imported)
-// const BROWSER_STORAGE_KEY = 'userPrompts'; 
 
 // 添加获取数据库标题属性名称的函数
 export const getNotionDatabaseTitlePropertyName = async (): Promise<string> => {
@@ -15,33 +12,6 @@ export const getNotionDatabaseTitlePropertyName = async (): Promise<string> => {
   // 如果将来需要持久化，可以考虑存入 storage
   return notionDatabaseTitlePropertyName;
 };
-
-// ---- START: ID Generation Functions (Now imported from promptUtils) ----
-/*
-function hashString(str: string): number {
-  let hash = 0;
-  if (str.length === 0) return hash;
-
-  for (let i = 0; i < str.length; i++) {
-    const char = str.charCodeAt(i);
-    hash = ((hash << 5) - hash) + char;
-    hash = hash & hash; // 转换为32位整数
-  }
-  return Math.abs(hash); // 确保是正数
-}
-
-export function generatePromptId(title: string, content: string, tags?: string[]): string {
-  let uniqueString = `${title.trim()}::${content.trim()}`;
-  if (tags && tags.length > 0) {
-    const sortedTags = [...tags].sort();
-    uniqueString += `::${sortedTags.join(',')}`;
-  }
-  const hash = hashString(uniqueString);
-  const hashStr = hash.toString(36);
-  return `p${hashStr}`;
-}
-*/
-// ---- END: ID Generation Functions ----
 
 // 获取已保存的 Notion API 密钥
 export const getNotionApiKey = async (): Promise<string | null> => {
@@ -65,12 +35,11 @@ export const getDatabaseId = async (): Promise<string | null> => {
   }
 };
 
-// 检查 Notion 同步是否启用 (检查两个子开关中是否至少有一个开启)
+// 检查 Notion 同步是否启用
 export const isSyncEnabled = async (): Promise<boolean> => {
   try {
-    const result = await browser.storage.sync.get(['notionTimedSyncEnabled', 'notionSyncToNotionEnabled']);
-    // 注意：notionTimedSyncEnabled 在新逻辑中可能已被移除或处理方式不同
-    return !!result.notionTimedSyncEnabled || !!result.notionSyncToNotionEnabled;
+    const result = await browser.storage.sync.get(['notionSyncToNotionEnabled']);
+    return !!result.notionSyncToNotionEnabled;
   } catch (error) {
     console.error('Error checking Notion sync status:', error);
     return false;
@@ -537,7 +506,7 @@ export const syncPromptsToNotion = async (localPrompts: PromptItem[]): Promise<{
     // 但是，让我们确保本地提示在新生成 PromptID 的项目没有 ID 时更新。
     const currentLocalPromptsResult = await browser.storage.local.get(BROWSER_STORAGE_KEY);
     let currentLocalPrompts: PromptItem[] = (currentLocalPromptsResult[BROWSER_STORAGE_KEY as keyof typeof currentLocalPromptsResult] as PromptItem[]) || [];
-    let updated = false;
+
     currentLocalPrompts = currentLocalPrompts.map(p => {
         if (!p.id) { // 如果 ID 预先生成，则理想情况下不应发生这种情况
             const newId = generatePromptId(p.title, p.content, p.tags);
