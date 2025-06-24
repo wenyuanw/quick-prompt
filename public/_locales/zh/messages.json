@@ -30,7 +30,7 @@
     "message": "快捷保存：选中文本后按下"
   },
   "savePrompt": {
-    "message": "即可保存提示词"
+    "message": "保存选中的文本作为提示词"
   },
   "savePromptButton": {
     "message": "保存 Prompt"

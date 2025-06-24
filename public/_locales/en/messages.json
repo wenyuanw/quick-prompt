@@ -30,7 +30,7 @@
     "message": "Quick save: Select text and press"
   },
   "savePrompt": {
-    "message": "to save prompt"
+    "message": "Save selected text as a prompt"
   },
   "rightClickSave": {
     "message": "Right-click save: Select text and right-click to choose \"Save this prompt\""
