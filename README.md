@@ -1,3 +1,4 @@
+# Quick Prompt
 
 <div align="right">
   <details>
@@ -28,10 +29,6 @@
     </div>
   </details>
 </div>
-
-# Quick Prompt
-
-[English](./README_en.md) | 中文
 
 <p align="center">
   <img src="./assets/icon.png" alt="Quick Prompt Logo" width="128" style="background: transparent;">
