@@ -296,42 +296,45 @@ const PromptManager = () => {
         );
 
         if (shouldImport) {
-          // 只导入本地没有的提示词（通过ID和标题内容判断）
-          const existingIds = new Set(prompts.map((p) => p.id));
-          const existingTitles = new Set(
-            prompts.map((p) => p.title.toLowerCase())
-          );
-          const existingContents = new Set(prompts.map((p) => p.content));
+          // 创建现有提示词的Map，便于查找和更新
+          const promptsMap = new Map(prompts.map(p => [p.id, p]));
+          let addedCount = 0;
+          let updatedCount = 0;
 
-          // 筛选出不重复的提示词
-          const uniquePrompts = validPrompts.filter((prompt) => {
-            // 通过ID、标题和内容综合判断是否重复
-            const idExists = existingIds.has(prompt.id);
-            const titleExists = existingTitles.has(prompt.title.toLowerCase());
-            const contentExists = existingContents.has(prompt.content);
-
-            // 如果ID和标题内容都不重复，则认为是新的提示词
-            return !idExists && !titleExists && !contentExists;
+          validPrompts.forEach(prompt => {
+            if (promptsMap.has(prompt.id)) {
+              // 获取现有提示词
+              const existing = promptsMap.get(prompt.id);
+              // 待导入提示词，合并现有提示词属性
+              const updatedPrompt = { ...existing, ...prompt };
+              // 排除 lastModified 字段进行比较
+              if (JSON.stringify((({ lastModified, ...rest }) => rest)(existing)) !== JSON.stringify((({ lastModified, ...rest }) => rest)(updatedPrompt))) {
+                promptsMap.set(prompt.id, updatedPrompt);
+                updatedCount++;
+              }
+            } else {
+              // 添加新提示词
+              promptsMap.set(prompt.id, {
+                ...prompt,
+                lastModified: prompt.lastModified || new Date().toISOString(),
+                notes: prompt.notes || "",
+              });
+              addedCount++;
+            }
           });
 
-          if (uniquePrompts.length === 0) {
+          // 如果没有新增也没有更新，显示提示
+          if (addedCount === 0 && updatedCount === 0) {
             alert(t('noNewPromptsFound'));
             return;
           }
 
-          // 将不重复的提示词添加到现有列表中
-          const newPrompts = [
-            ...prompts,
-            ...uniquePrompts.map((prompt) => ({
-              ...prompt,
-              id: crypto.randomUUID(), // 为导入的提示词生成新ID，避免ID冲突
-              lastModified: prompt.lastModified || new Date().toISOString(),
-              notes: prompt.notes || "",
-            })),
-          ];
-
+          const newPrompts = Array.from(promptsMap.values());
           await savePrompts(newPrompts);
-          alert(t('importSuccessful', [uniquePrompts.length.toString()]));
+
+          // 显示成功消息，包含新增和更新的数量
+          alert(t('importSuccessful', [(addedCount + updatedCount).toString()]));
+
         }
         // 如果用户点击取消，不做任何操作
       } else {
@@ -437,43 +440,43 @@ const PromptManager = () => {
         );
 
         if (shouldImport) {
-          // 只导入本地没有的提示词（通过ID、标题和内容判断）
-          const existingIds = new Set(prompts.map((p) => p.id));
-          const existingTitles = new Set(
-            prompts.map((p) => p.title.toLowerCase())
-          );
-          const existingContents = new Set(prompts.map((p) => p.content));
+          // 创建现有提示词的Map，便于查找和更新
+          const promptsMap = new Map(prompts.map(p => [p.id, p]));
+          let addedCount = 0;
+          let updatedCount = 0;
 
-          // 筛选出不重复的提示词
-          const uniquePrompts = validPrompts.filter((prompt) => {
-            // 通过ID、标题和内容综合判断是否重复
-            const idExists = existingIds.has(prompt.id);
-            const titleExists = existingTitles.has(prompt.title.toLowerCase());
-            const contentExists = existingContents.has(prompt.content);
-
-            // 如果ID和标题内容都不重复，则认为是新的提示词
-            return !idExists && !titleExists && !contentExists;
+          validPrompts.forEach(prompt => {
+            if (promptsMap.has(prompt.id)) {
+              // 获取现有提示词
+              const existing = promptsMap.get(prompt.id);
+              // 待导入提示词，合并现有提示词属性
+              const updatedPrompt = { ...existing, ...prompt };
+              // 排除 lastModified 字段进行比较
+              if (JSON.stringify((({ lastModified, ...rest }) => rest)(existing)) !== JSON.stringify((({ lastModified, ...rest }) => rest)(updatedPrompt))) {
+                promptsMap.set(prompt.id, updatedPrompt);
+                updatedCount++;
+              }
+            } else {
+              // 添加新提示词
+              promptsMap.set(prompt.id, {
+                ...prompt,
+                lastModified: prompt.lastModified || new Date().toISOString(),
+                notes: prompt.notes || "",
+              });
+              addedCount++;
+            }
           });
 
-          if (uniquePrompts.length === 0) {
+          if (addedCount === 0 && updatedCount === 0) {
             alert(t('noNewPromptsFound'));
             closeRemoteImportModal();
             return;
           }
 
-          // 将不重复的提示词添加到现有列表中
-          const newPrompts = [
-            ...prompts,
-            ...uniquePrompts.map((prompt) => ({
-              ...prompt,
-              id: crypto.randomUUID(), // 为导入的提示词生成新ID，避免ID冲突
-              lastModified: prompt.lastModified || new Date().toISOString(),
-              notes: prompt.notes || "",
-            })),
-          ];
-
+          const newPrompts = Array.from(promptsMap.values());
           await savePrompts(newPrompts);
-          alert(t('importSuccessful', [uniquePrompts.length.toString()]));
+
+          alert(t('importSuccessful', [(addedCount + updatedCount).toString()]));
           closeRemoteImportModal();
         } else {
           // 用户取消导入
@@ -923,4 +926,4 @@ const PromptManager = () => {
   );
 };
 
-export default PromptManager; 
+export default PromptManager;
