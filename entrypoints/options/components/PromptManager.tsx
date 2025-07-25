@@ -308,7 +308,7 @@ const PromptManager = () => {
               // 待导入提示词，合并现有提示词属性
               const updatedPrompt = { ...existing, ...prompt };
               // 排除 lastModified 字段进行比较
-              if (JSON.stringify((({ lastModified, ...rest }) => rest)(existing)) !== JSON.stringify((({ lastModified, ...rest }) => rest)(updatedPrompt))) {
+              if (existing && JSON.stringify((({ lastModified, ...rest }) => rest)(existing)) !== JSON.stringify((({ lastModified, ...rest }) => rest)(updatedPrompt))) {
                 promptsMap.set(prompt.id, updatedPrompt);
                 updatedCount++;
               }
@@ -452,7 +452,7 @@ const PromptManager = () => {
               // 待导入提示词，合并现有提示词属性
               const updatedPrompt = { ...existing, ...prompt };
               // 排除 lastModified 字段进行比较
-              if (JSON.stringify((({ lastModified, ...rest }) => rest)(existing)) !== JSON.stringify((({ lastModified, ...rest }) => rest)(updatedPrompt))) {
+              if (existing && JSON.stringify((({ lastModified, ...rest }) => rest)(existing)) !== JSON.stringify((({ lastModified, ...rest }) => rest)(updatedPrompt))) {
                 promptsMap.set(prompt.id, updatedPrompt);
                 updatedCount++;
               }
