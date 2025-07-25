@@ -492,7 +492,7 @@
     "message": "导入失败"
   },
   "importSuccessful": {
-    "message": "成功导入了 $count$ 个提示词！",
+    "message": "成功导入了 $count$ 条数据！",
     "placeholders": {
       "count": {
         "content": "$1"
@@ -1228,5 +1228,94 @@
   },
   "invalidTime": {
     "message": "无效时间"
+  },
+  "noCategoriesToExport": {
+    "message": "没有分类可导出"
+  },
+  "exportAllCategories": {
+    "message": "导出所有分类"
+  },
+  "exportCategoriesSuccess": {
+    "message": "导出分类成功"
+  },
+  "exportCategoriesError": {
+    "message": "导出分类出错"
+  },
+  "exportCategoriesFailed": {
+    "message": "导出分类失败，请稍后再试"
+  },
+  "importCategoriesError": {
+    "message": "导入分类出错"
+  },
+  "importCategoriesFailed": {
+    "message": "导入分类失败: $error$",
+    "placeholders": {
+      "error": {
+        "content": "$1"
+      }
+    }
+  },
+  "invalidCategoryFileFormat": {
+    "message": "导入的分类文件格式不正确"
+  },
+  "noValidCategoriesInFile": {
+    "message": "导入的文件中没有有效的分类"
+  },
+  "importCategoriesConfirm": {
+    "message": "您已有$existingCount$个分类，发现$newCount$个待导入分类。\n点击\"确定\"导入新分类，点击\"取消\"不进行任何操作。",
+    "placeholders": {
+      "existingCount": {
+        "content": "$1"
+      },
+      "newCount": {
+        "content": "$2"
+      }
+    }
+  },
+  "noNewCategoriesFound": {
+    "message": "没有发现新的分类，导入已取消。"
+  },
+  "remoteImportCategoriesConfirm": {
+    "message": "您已有$existingCount$个分类，从远程发现$newCount$个待导入分类。\n点击\"确定\"导入新分类，点击\"取消\"不进行任何操作。",
+    "placeholders": {
+      "existingCount": {
+        "content": "$1"
+      },
+      "newCount": {
+        "content": "$2"
+      }
+    }
+  },
+  "remoteImportCategoriesFailed": {
+    "message": "远程导入分类失败: $error$",
+    "placeholders": {
+      "error": {
+        "content": "$1"
+      }
+    }
+  },
+  "remoteImportCategoriesError": {
+    "message": "远程导入分类出错"
+  },
+  "invalidRemoteCategoryDataFormat": {
+    "message": "导入的分类数据格式不正确"
+  },
+  "noValidCategoriesInRemoteData": {
+    "message": "远程数据中没有有效的分类"
+  },
+  "importCategoriesFromUrl": {
+    "message": "从URL导入分类"
+  },
+  "localImportCategories": {
+    "message": "本地导入"
+  },
+  "remoteImportCategories": {
+    "message": "远程导入"
+  },
+  "exportCategories": {
+    "message": "导出"
+  },
+  "importCategoriesInstructionsDetail": {
+    "message": "输入包含有效分类 JSON 数据的 URL 链接，系统将自动获取并导入数据。"
   }
-} 
+}

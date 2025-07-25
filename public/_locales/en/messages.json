@@ -489,7 +489,7 @@
     "message": "Import failed"
   },
   "importSuccessful": {
-    "message": "Successfully imported $count$ prompts!",
+    "message": "Successfully imported $count$ items!",
     "placeholders": {
       "count": {
         "content": "$1"
@@ -1228,5 +1228,94 @@
   },
   "invalidTime": {
     "message": "Invalid time"
+  },
+  "noCategoriesToExport": {
+    "message": "No categories to export"
+  },
+  "exportAllCategories": {
+    "message": "Export all categories"
+  },
+  "exportCategoriesSuccess": {
+    "message": "Categories exported successfully"
+  },
+  "exportCategoriesError": {
+    "message": "Error exporting categories"
+  },
+  "exportCategoriesFailed": {
+    "message": "Failed to export categories, please try again later"
+  },
+  "importCategoriesError": {
+    "message": "Error importing categories"
+  },
+  "importCategoriesFailed": {
+    "message": "Failed to import categories: $error$",
+    "placeholders": {
+      "error": {
+        "content": "$1"
+      }
+    }
+  },
+  "invalidCategoryFileFormat": {
+    "message": "Invalid category file format"
+  },
+  "noValidCategoriesInFile": {
+    "message": "No valid categories found in the file"
+  },
+  "importCategoriesConfirm": {
+    "message": "You have $existingCount$ categories, found $newCount$ categories to import.\nClick \"OK\" to import new categories, click \"Cancel\" to do nothing.",
+    "placeholders": {
+      "existingCount": {
+        "content": "$1"
+      },
+      "newCount": {
+        "content": "$2"
+      }
+    }
+  },
+  "noNewCategoriesFound": {
+    "message": "No new categories found, import cancelled."
+  },
+  "remoteImportCategoriesConfirm": {
+    "message": "You have $existingCount$ categories, found $newCount$ categories to import from remote.\nClick \"OK\" to import new categories, click \"Cancel\" to do nothing.",
+    "placeholders": {
+      "existingCount": {
+        "content": "$1"
+      },
+      "newCount": {
+        "content": "$2"
+      }
+    }
+  },
+  "remoteImportCategoriesFailed": {
+    "message": "Remote category import failed: $error$",
+    "placeholders": {
+      "error": {
+        "content": "$1"
+      }
+    }
+  },
+  "remoteImportCategoriesError": {
+    "message": "Error importing categories from remote"
+  },
+  "invalidRemoteCategoryDataFormat": {
+    "message": "Invalid remote category data format"
+  },
+  "noValidCategoriesInRemoteData": {
+    "message": "No valid categories found in remote data"
+  },
+  "importCategoriesFromUrl": {
+    "message": "Import categories from URL"
+  },
+  "localImportCategories": {
+    "message": "Local Import"
+  },
+  "remoteImportCategories": {
+    "message": "Remote Import"
+  },
+  "exportCategories": {
+    "message": "Export"
+  },
+  "importCategoriesInstructionsDetail": {
+    "message": "Enter the URL link containing valid category JSON data, and the system will automatically fetch and import the data."
   }
-} 
+}
