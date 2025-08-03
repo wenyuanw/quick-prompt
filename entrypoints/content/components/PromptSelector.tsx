@@ -83,6 +83,16 @@ const PromptSelector: React.FC<PromptSelectorProps> = ({
     }
     
     return true;
+  }).sort((a, b) => {
+    // 按置顶状态和最后修改时间排序：置顶的在前面，同级别内按最后修改时间降序
+    // 首先按置顶状态排序，置顶的在前面
+    if (a.pinned && !b.pinned) return -1;
+    if (!a.pinned && b.pinned) return 1;
+    
+    // 如果置顶状态相同，按最后修改时间降序排序（新的在前面）
+    const aTime = a.lastModified ? new Date(a.lastModified).getTime() : 0;
+    const bTime = b.lastModified ? new Date(b.lastModified).getTime() : 0;
+    return bTime - aTime;
   });
 
   // 当组件挂载时聚焦搜索框

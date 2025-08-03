@@ -102,6 +102,18 @@ const PromptManager = () => {
       });
     }
 
+    // 按置顶状态和最后修改时间排序：置顶的在前面，同级别内按最后修改时间降序
+    filtered.sort((a, b) => {
+      // 首先按置顶状态排序，置顶的在前面
+      if (a.pinned && !b.pinned) return -1;
+      if (!a.pinned && b.pinned) return 1;
+      
+      // 如果置顶状态相同，按最后修改时间降序排序（新的在前面）
+      const aTime = a.lastModified ? new Date(a.lastModified).getTime() : 0;
+      const bTime = b.lastModified ? new Date(b.lastModified).getTime() : 0;
+      return bTime - aTime;
+    });
+
     setFilteredPrompts(filtered);
   }, [searchTerm, prompts, selectedCategoryId]);
 
@@ -215,6 +227,14 @@ const PromptManager = () => {
   const togglePromptEnabled = async (id: string, enabled: boolean) => {
     const newPrompts = prompts.map((p) =>
       p.id === id ? { ...p, enabled } : p
+    );
+    await savePrompts(newPrompts);
+  };
+
+  // 添加切换置顶状态的函数
+  const togglePromptPinned = async (id: string, pinned: boolean) => {
+    const newPrompts = prompts.map((p) =>
+      p.id === id ? { ...p, pinned } : p
     );
     await savePrompts(newPrompts);
   };
@@ -712,6 +732,7 @@ const PromptManager = () => {
           searchTerm={searchTerm}
           allPromptsCount={prompts.length}
           onToggleEnabled={togglePromptEnabled}
+          onTogglePinned={togglePromptPinned}
           selectedCategoryId={selectedCategoryId}
         />
 
