@@ -277,7 +277,7 @@ const PromptList = ({
                       ? 'bg-amber-100 dark:bg-amber-900/50 border-amber-300 dark:border-amber-600 text-amber-700 dark:text-amber-400 hover:bg-amber-200 dark:hover:bg-amber-900/70'
                       : 'bg-white dark:bg-gray-800 border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700'
                   } focus:outline-none focus:ring-2 focus:ring-offset-1 focus:ring-amber-500`}
-                  title={prompt.pinned ? t('unpinPrompt') || '取消置顶' : t('pinPrompt') || '置顶'}
+                  title={prompt.pinned ? t('unpinPrompt') : t('pinPrompt')}
                 >
                   <span className='flex items-center'>
                     {prompt.pinned ? (
@@ -291,7 +291,7 @@ const PromptList = ({
                         <path strokeLinecap='round' strokeLinejoin='round' strokeWidth='2' d='M5 15l7-7 7 7'/>
                       </svg>
                     )}
-                    {prompt.pinned ? (t('unpin') || '取消置顶') : (t('pin') || '置顶')}
+                    {prompt.pinned ? t('unpin') : t('pin')}
                   </span>
                 </button>
               )}

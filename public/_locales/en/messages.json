@@ -1317,5 +1317,17 @@
   },
   "importCategoriesInstructionsDetail": {
     "message": "Enter the URL link containing valid category JSON data, and the system will automatically fetch and import the data."
+  },
+  "pin": {
+    "message": "Pin"
+  },
+  "unpin": {
+    "message": "Unpin"
+  },
+  "pinPrompt": {
+    "message": "Pin prompt"
+  },
+  "unpinPrompt": {
+    "message": "Unpin prompt"
   }
 }

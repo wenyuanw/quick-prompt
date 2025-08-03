@@ -1317,5 +1317,17 @@
   },
   "importCategoriesInstructionsDetail": {
     "message": "输入包含有效分类 JSON 数据的 URL 链接，系统将自动获取并导入数据。"
+  },
+  "pin": {
+    "message": "置顶"
+  },
+  "unpin": {
+    "message": "取消置顶"
+  },
+  "pinPrompt": {
+    "message": "置顶提示词"
+  },
+  "unpinPrompt": {
+    "message": "取消置顶提示词"
   }
 }
