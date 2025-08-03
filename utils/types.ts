@@ -21,6 +21,7 @@ export interface PromptItem {
   tags: string[];
   enabled: boolean;
   categoryId: string;
+  pinned?: boolean; // 置顶字段
   notionPageId?: string;
   notes?: string; // 备注字段
   lastModified?: string; // 最后修改时间（ISO 字符串）

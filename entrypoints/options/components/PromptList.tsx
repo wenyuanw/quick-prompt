@@ -10,6 +10,7 @@ interface PromptListProps {
   searchTerm: string
   allPromptsCount: number
   onToggleEnabled?: (id: string, enabled: boolean) => void
+  onTogglePinned?: (id: string, pinned: boolean) => void
   selectedCategoryId?: string | null
 }
 
@@ -20,6 +21,7 @@ const PromptList = ({
   searchTerm,
   allPromptsCount,
   onToggleEnabled,
+  onTogglePinned,
   selectedCategoryId,
 }: PromptListProps) => {
   const [categories, setCategories] = useState<Category[]>([])
@@ -165,9 +167,21 @@ const PromptList = ({
             className='bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-600 rounded-xl overflow-hidden shadow-sm hover:shadow-md transition-all duration-200 flex flex-col'
           >
             {/* Card Header */}
-            <div className='px-5 py-4 border-b border-gray-100 dark:border-gray-700 bg-gradient-to-r from-gray-50 to-white dark:from-gray-800 dark:to-gray-700'>
+            <div className={`px-5 py-4 border-b border-gray-100 dark:border-gray-700 ${
+              prompt.pinned 
+                ? 'bg-gradient-to-r from-amber-50 to-orange-50 dark:from-amber-900/20 dark:to-orange-900/20' 
+                : 'bg-gradient-to-r from-gray-50 to-white dark:from-gray-800 dark:to-gray-700'
+            }`}>
               <div className='flex items-center justify-between'>
-                <h3 className='text-lg font-semibold text-gray-800 dark:text-gray-200 truncate flex-1'>{prompt.title}</h3>
+                <div className='flex items-center flex-1 min-w-0'>
+                  {/* 置顶图标 */}
+                  {prompt.pinned && (
+                    <svg className='w-4 h-4 text-amber-600 dark:text-amber-400 mr-2 flex-shrink-0' fill='none' stroke='currentColor' viewBox='0 0 24 24'>
+                      <path strokeLinecap='round' strokeLinejoin='round' strokeWidth='2' d='M5 15l7-7 7 7'/>
+                    </svg>
+                  )}
+                  <h3 className='text-lg font-semibold text-gray-800 dark:text-gray-200 truncate'>{prompt.title}</h3>
+                </div>
                 {/* 分类标识 */}
                 {category && (
                   <div className='ml-2 flex items-center'>
@@ -254,6 +268,34 @@ const PromptList = ({
 
             {/* Card Footer / Actions */}
             <div className='px-5 py-3 bg-gray-50 dark:bg-gray-700 border-t border-gray-100 dark:border-gray-600 flex justify-end space-x-2'>
+              {/* 置顶按钮 */}
+              {onTogglePinned && (
+                <button
+                  onClick={() => onTogglePinned(prompt.id, !prompt.pinned)}
+                  className={`px-3 py-1.5 text-sm rounded-md border transition-colors duration-200 ${
+                    prompt.pinned
+                      ? 'bg-amber-100 dark:bg-amber-900/50 border-amber-300 dark:border-amber-600 text-amber-700 dark:text-amber-400 hover:bg-amber-200 dark:hover:bg-amber-900/70'
+                      : 'bg-white dark:bg-gray-800 border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700'
+                  } focus:outline-none focus:ring-2 focus:ring-offset-1 focus:ring-amber-500`}
+                  title={prompt.pinned ? t('unpinPrompt') || '取消置顶' : t('pinPrompt') || '置顶'}
+                >
+                  <span className='flex items-center'>
+                    {prompt.pinned ? (
+                      // 已置顶状态：显示向下箭头，表示可以取消置顶
+                      <svg className='w-4 h-4 mr-1.5' fill='none' stroke='currentColor' viewBox='0 0 24 24'>
+                        <path strokeLinecap='round' strokeLinejoin='round' strokeWidth='2' d='M19 9l-7 7-7-7'/>
+                      </svg>
+                    ) : (
+                      // 未置顶状态：显示向上箭头，表示可以置顶
+                      <svg className='w-4 h-4 mr-1.5' fill='none' stroke='currentColor' viewBox='0 0 24 24'>
+                        <path strokeLinecap='round' strokeLinejoin='round' strokeWidth='2' d='M5 15l7-7 7 7'/>
+                      </svg>
+                    )}
+                    {prompt.pinned ? (t('unpin') || '取消置顶') : (t('pin') || '置顶')}
+                  </span>
+                </button>
+              )}
+              
               <button
                 onClick={() => handleCopy(prompt.content, prompt.id)}
                 className={`px-3 py-1.5 text-sm rounded-md border transition-colors duration-200 ${
