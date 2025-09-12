@@ -382,6 +382,9 @@
   "tryOtherTermsOrCategories": {
     "message": "请尝试其他搜索词或选择其他分类。"
   },
+  "dragToReorder": {
+    "message": "拖拽重新排序"
+  },
   "noTags": {
     "message": "(无标签)"
   },

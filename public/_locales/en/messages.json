@@ -379,6 +379,9 @@
   "tryOtherTermsOrCategories": {
     "message": "Please try other search terms or select other categories."
   },
+  "dragToReorder": {
+    "message": "Drag to reorder"
+  },
   "noTags": {
     "message": "(No tags)"
   },

@@ -61,7 +61,20 @@ const PromptManager = () => {
         const storedPrompts = await storage.getItem<PromptItem[]>(
           `local:${BROWSER_STORAGE_KEY}`
         );
-        setPrompts(storedPrompts || []);
+        
+        // 按照 sortOrder 排序，置顶项目优先
+        const sortedPrompts = (storedPrompts || []).sort((a, b) => {
+          // 置顶项目始终在前面
+          if (a.pinned && !b.pinned) return -1;
+          if (!a.pinned && b.pinned) return 1;
+          
+          // 在同一置顶状态下，按照 sortOrder 排序
+          const aOrder = a.sortOrder !== undefined ? a.sortOrder : 999999;
+          const bOrder = b.sortOrder !== undefined ? b.sortOrder : 999999;
+          return aOrder - bOrder;
+        });
+        
+        setPrompts(sortedPrompts);
         
         // 加载分类
         const storedCategories = await getCategories();
@@ -102,16 +115,16 @@ const PromptManager = () => {
       });
     }
 
-    // 按置顶状态和最后修改时间排序：置顶的在前面，同级别内按最后修改时间降序
+    // 按置顶状态和排序号排序：置顶的在前面，同级别内按 sortOrder 升序
     filtered.sort((a, b) => {
       // 首先按置顶状态排序，置顶的在前面
       if (a.pinned && !b.pinned) return -1;
       if (!a.pinned && b.pinned) return 1;
       
-      // 如果置顶状态相同，按最后修改时间降序排序（新的在前面）
-      const aTime = a.lastModified ? new Date(a.lastModified).getTime() : 0;
-      const bTime = b.lastModified ? new Date(b.lastModified).getTime() : 0;
-      return bTime - aTime;
+      // 如果置顶状态相同，按 sortOrder 升序排序
+      const aOrder = a.sortOrder !== undefined ? a.sortOrder : 999999;
+      const bOrder = b.sortOrder !== undefined ? b.sortOrder : 999999;
+      return aOrder - bOrder;
     });
 
     setFilteredPrompts(filtered);
@@ -237,6 +250,28 @@ const PromptManager = () => {
       p.id === id ? { ...p, pinned } : p
     );
     await savePrompts(newPrompts);
+  };
+
+  // 添加拖拽排序处理函数
+  const handleReorder = async (activeId: string, overId: string) => {
+    const oldIndex = prompts.findIndex(p => p.id === activeId);
+    const newIndex = prompts.findIndex(p => p.id === overId);
+    
+    if (oldIndex === -1 || newIndex === -1) return;
+    
+    // 重新排列数组
+    const newPrompts = [...prompts];
+    const [removed] = newPrompts.splice(oldIndex, 1);
+    newPrompts.splice(newIndex, 0, removed);
+    
+    // 更新 sortOrder 字段
+    const updatedPrompts = newPrompts.map((prompt, index) => ({
+      ...prompt,
+      sortOrder: index,
+      lastModified: new Date().toISOString()
+    }));
+    
+    await savePrompts(updatedPrompts);
   };
 
   // 导出提示词
@@ -729,6 +764,7 @@ const PromptManager = () => {
           prompts={filteredPrompts}
           onEdit={startEdit}
           onDelete={deletePrompt}
+          onReorder={handleReorder}
           searchTerm={searchTerm}
           allPromptsCount={prompts.length}
           onToggleEnabled={togglePromptEnabled}

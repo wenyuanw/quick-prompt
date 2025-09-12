@@ -152,16 +152,17 @@ export async function migratePromptsWithCategory(): Promise<void> {
     const prompts = await storage.getItem<PromptItem[]>(`local:${BROWSER_STORAGE_KEY}`) || [];
     
     // 检查是否有需要迁移的数据
-    const needMigration = prompts.some(prompt => !prompt.categoryId);
+    const needMigration = prompts.some(prompt => !prompt.categoryId || prompt.sortOrder === undefined);
     
     if (needMigration) {
-      const migratedPrompts = prompts.map(prompt => ({
+      const migratedPrompts = prompts.map((prompt, index) => ({
         ...prompt,
         categoryId: prompt.categoryId || DEFAULT_CATEGORY_ID,
+        sortOrder: prompt.sortOrder !== undefined ? prompt.sortOrder : index,
       }));
       
       await storage.setItem<PromptItem[]>(`local:${BROWSER_STORAGE_KEY}`, migratedPrompts);
-      console.log('已完成提示词分类迁移');
+      console.log('已完成提示词分类和排序迁移');
     }
   } catch (error) {
     console.error('迁移提示词分类失败:', error);

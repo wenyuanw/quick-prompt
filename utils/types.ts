@@ -25,6 +25,7 @@ export interface PromptItem {
   notionPageId?: string;
   notes?: string; // 备注字段
   lastModified?: string; // 最后修改时间（ISO 字符串）
+  sortOrder?: number; // 排序字段，用于拖拽排序
 }
 
 export interface PromptItemWithVariables extends PromptItem {
