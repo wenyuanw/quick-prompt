@@ -1,3 +1,8 @@
+## [1.0.3] - 2025-09-12
+
+### 修复
+- ChatGPT 页面换行符丢失问题，[issue#42](https://github.com/wenyuanw/quick-prompt/issues/42)
+
 ## [1.0.2] - 2025-09-12
 
 ### 新增
