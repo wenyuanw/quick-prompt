@@ -8,6 +8,7 @@ import { isDarkMode, getCopyShortcutText } from "@/utils/tools";
 import { getCategories } from "@/utils/categoryUtils";
 import { getGlobalSetting } from "@/utils/globalSettings";
 import { t } from "@/utils/i18n";
+import { getNewlineStrategy, setElementContentByStrategy } from "@/utils/newlineRules";
 
 interface PromptSelectorProps {
   prompts: PromptItemWithVariables[];
@@ -298,6 +299,7 @@ const PromptSelector: React.FC<PromptSelectorProps> = ({
       try {
         // contenteditable 元素的特殊处理
         const editableElement = (targetElement as any)._element as HTMLElement;
+        const newlineStrategy = getNewlineStrategy(window.location.href);
 
         // 获取当前内容和光标位置
         const fullText = editableElement.textContent || "";
@@ -325,8 +327,7 @@ const PromptSelector: React.FC<PromptSelectorProps> = ({
 
           // 如果 beforeinput 事件没有被阻止，则继续处理
           if (editableElement.dispatchEvent(beforeInputEvent)) {
-            // 设置新内容
-            editableElement.textContent = newContent;
+            setElementContentByStrategy(editableElement, newContent, newlineStrategy);
 
             // 创建并分发 input 事件
             const inputEvent = new InputEvent("input", {
@@ -360,7 +361,6 @@ const PromptSelector: React.FC<PromptSelectorProps> = ({
 
             // 如果 beforeinput 事件没有被阻止，则继续处理
             if (editableElement.dispatchEvent(beforeInputEvent)) {
-              // 获取当前内容
               const currentContent = editableElement.textContent || "";
               const position = range.startOffset;
 
@@ -370,8 +370,7 @@ const PromptSelector: React.FC<PromptSelectorProps> = ({
                 content +
                 currentContent.slice(position);
 
-              // 设置新内容
-              editableElement.textContent = newContent;
+              setElementContentByStrategy(editableElement, newContent, newlineStrategy);
 
               // 创建并分发 input 事件
               const inputEvent = new InputEvent("input", {
@@ -401,9 +400,7 @@ const PromptSelector: React.FC<PromptSelectorProps> = ({
             if (editableElement.dispatchEvent(beforeInputEvent)) {
               const currentContent = editableElement.textContent || "";
               const newContent = currentContent + content;
-
-              // 设置新内容
-              editableElement.textContent = newContent;
+              setElementContentByStrategy(editableElement, newContent, newlineStrategy);
 
               // 创建并分发 input 事件
               const inputEvent = new InputEvent("input", {
