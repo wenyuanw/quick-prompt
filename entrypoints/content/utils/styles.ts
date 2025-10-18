@@ -10,6 +10,7 @@ export function getPromptSelectorStyles(): string {
       margin: 0 !important;
       padding: 0 !important;
       font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif !important;
+      text-autospace: normal !important;
     }
     
     /* 主题相关变量 - 亮色模式默认值 */

@@ -1,3 +1,7 @@
+:root {
+  text-autospace: normal;
+}
+
 /* 暗黑模式样式 */
 html.dark {
   color-scheme: dark;
