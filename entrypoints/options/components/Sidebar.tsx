@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { NavLink } from "react-router-dom";
 import Logo from "~/assets/icon.png";
-import NotionLogo from "./NotionLogo";
 import { t } from '../../../utils/i18n';
 
 interface SidebarProps {
@@ -11,6 +10,7 @@ interface SidebarProps {
 const Sidebar: React.FC<SidebarProps> = ({ className = "" }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
+  const [isCollapsed, setIsCollapsed] = useState(false);
 
   // 检测屏幕尺寸
   useEffect(() => {
@@ -108,13 +108,23 @@ const Sidebar: React.FC<SidebarProps> = ({ className = "" }) => {
     }
   };
 
+  const toggleCollapse = () => {
+    setIsCollapsed(!isCollapsed);
+  };
+
+  // 计算侧边栏宽度
+  const getSidebarWidth = () => {
+    if (isMobile) return "240px";
+    return isCollapsed ? "56px" : "200px";
+  };
+
   return (
     <>
       {/* 简化的汉堡菜单按钮 - 保持固定位置 */}
       {isMobile && !isOpen && (
         <button
           onClick={toggleSidebar}
-          className="flex fixed top-2 left-4 z-50 justify-center items-center w-12 h-12 bg-white rounded-xl border border-gray-200 shadow-lg transition-all duration-200 ease-in-out  dark:bg-gray-800 dark:border-gray-600 hover:shadow-xl hover:bg-gray-50 dark:hover:bg-gray-700 active:scale-95 md:hidden"
+          className="flex fixed top-2 left-4 z-50 justify-center items-center w-12 h-12 bg-white rounded-xl border border-gray-200 shadow-lg transition-all duration-200 ease-in-out  dark:bg-gray-800 dark:border-gray-600 hover:shadow-xl hover:bg-gray-50 dark:hover:bg-gray-700 active:scale-95 md:hidden cursor-pointer"
           aria-label={t('openMenu')}
         >
           <svg
@@ -144,9 +154,9 @@ const Sidebar: React.FC<SidebarProps> = ({ className = "" }) => {
       {/* 侧边栏 */}
       <aside
         className={`
-          bg-white dark:bg-gray-800 border-r border-gray-200 dark:border-gray-700 
+          bg-white dark:bg-gray-800 border-r border-gray-200 dark:border-gray-700
           transition-all duration-300 ease-in-out
-          ${isMobile ? "fixed" : "relative"} 
+          ${isMobile ? "fixed" : "relative"}
           ${isMobile ? "z-40" : "z-0"}
           ${isMobile ? "h-full" : "h-auto"}
           ${isMobile && !isOpen ? "-translate-x-full" : "translate-x-0"}
@@ -155,22 +165,22 @@ const Sidebar: React.FC<SidebarProps> = ({ className = "" }) => {
           ${className}
         `}
         style={{
-          width: isMobile ? "280px" : "256px",
+          width: getSidebarWidth(),
         }}
       >
         <div className="flex flex-col h-full">
           {/* 头部区域 */}
-          <div className="flex-shrink-0 p-6">
+          <div className="flex-shrink-0 p-3">
             {/* 移动端关闭按钮 */}
             {isMobile && isOpen && (
-              <div className="flex justify-end mb-4">
+              <div className="flex justify-end mb-3">
                 <button
                   onClick={closeSidebar}
-                  className="flex justify-center items-center w-10 h-10 text-gray-500 rounded-lg transition-all duration-200  dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700"
+                  className="flex justify-center items-center w-8 h-8 text-gray-500 rounded-lg transition-all duration-200  dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700 cursor-pointer"
                   aria-label={t('closeMenu')}
                 >
                   <svg
-                    className="w-6 h-6"
+                    className="w-5 h-5"
                     fill="none"
                     stroke="currentColor"
                     viewBox="0 0 24 24"
@@ -187,105 +197,120 @@ const Sidebar: React.FC<SidebarProps> = ({ className = "" }) => {
             )}
 
             {/* Logo/Title */}
-            <div className="mb-6">
-              <NavLink 
-                to="/" 
-                onClick={closeSidebar}
-                className="block overflow-hidden relative p-4 bg-gradient-to-br from-gray-50 to-gray-100 rounded-xl border border-gray-200 shadow-sm transition-all duration-200 dark:from-gray-800 dark:to-gray-700 dark:border-gray-600 hover:from-gray-100 hover:to-gray-150 dark:hover:from-gray-700 dark:hover:to-gray-600 group hover:shadow-md"
-              >
-                {/* 背景装饰渐变 */}
-                <div className="absolute inset-0 bg-gradient-to-br opacity-0 transition-opacity duration-300 from-purple-500/5 to-violet-500/5 dark:from-purple-400/10 dark:to-violet-400/10 group-hover:opacity-100"></div>
-                
-                {/* 装饰性光点群 */}
-                <div className="absolute top-2 right-2 w-2 h-2 bg-purple-400 rounded-full opacity-60 transition-all duration-300 group-hover:opacity-80 group-hover:scale-110"></div>
-                <div className="absolute top-4 right-4 w-1.5 h-1.5 bg-violet-400 rounded-full opacity-50 group-hover:opacity-70 transition-all duration-300 group-hover:scale-125"></div>
-                <div className="absolute top-6 right-6 w-1 h-1 bg-purple-300 rounded-full opacity-40 transition-all duration-300 group-hover:opacity-60"></div>
-                <div className="absolute bottom-3 left-3 w-1.5 h-1.5 bg-blue-400 rounded-full opacity-30 group-hover:opacity-50 transition-all duration-300 group-hover:scale-110"></div>
-                <div className="absolute bottom-5 left-5 w-1 h-1 bg-indigo-400 rounded-full opacity-25 transition-all duration-300 group-hover:opacity-40"></div>
-                
-                {/* 微妙的几何装饰 */}
-                <div className="absolute top-1 left-1 w-3 h-3 rounded-full border border-purple-200 opacity-20 transition-opacity duration-300 dark:border-purple-600 group-hover:opacity-40"></div>
-                <div className="absolute right-1 bottom-1 w-2 h-2 rounded-sm border border-violet-200 transition-opacity duration-300 rotate-45 dark:border-violet-600 opacity-15 group-hover:opacity-30"></div>
-                
-                <div className="flex relative z-10 flex-col items-center space-y-3">
-                  {/* Logo */}
-                  <div className="relative transition-all duration-200 ease-out transform group-hover:scale-105">
-                    {/* Logo光晕效果 */}
-                    <div className="absolute inset-0 rounded-xl opacity-0 blur-md transition-opacity duration-300 scale-110 bg-purple-400/20 group-hover:opacity-100"></div>
+            <div className="mb-3">
+              {isCollapsed && !isMobile ? (
+                <NavLink
+                  to="/"
+                  onClick={closeSidebar}
+                  className="flex justify-center"
+                  title="Quick Prompt"
+                >
+                  <img
+                    src={Logo}
+                    alt="Quick Prompt Logo"
+                    className="w-8 h-8 rounded-lg"
+                  />
+                </NavLink>
+              ) : (
+                <NavLink
+                  to="/"
+                  onClick={closeSidebar}
+                  className="block overflow-hidden relative bg-gradient-to-br from-gray-50 to-gray-100 rounded-lg border border-gray-200 shadow-sm transition-all duration-200 dark:from-gray-800 dark:to-gray-700 dark:border-gray-600 hover:from-gray-100 hover:to-gray-150 dark:hover:from-gray-700 dark:hover:to-gray-600 group hover:shadow-md p-2"
+                  title="Quick Prompt"
+                >
+                  <div className="flex items-center gap-2">
                     <img
                       src={Logo}
                       alt="Quick Prompt Logo"
-                      className="relative z-10 w-14 h-14 rounded-xl"
+                      className="w-8 h-8 rounded-lg flex-shrink-0"
                     />
-                  </div>
-
-                  {/* 品牌名称 */}
-                  <div className="relative text-center">
-                    <h1 className="text-lg font-bold text-transparent bg-clip-text bg-gradient-to-r from-gray-800 to-gray-600 transition-all duration-300 dark:from-gray-100 dark:to-gray-300 group-hover:from-purple-700 group-hover:to-violet-600 dark:group-hover:from-purple-300 dark:group-hover:to-violet-200">
+                    <h1 className="text-sm font-bold text-gray-800 dark:text-gray-100 truncate">
                       Quick Prompt
                     </h1>
                   </div>
-                </div>
-              </NavLink>
+                </NavLink>
+              )}
             </div>
 
             {/* Navigation */}
-            <nav className="space-y-2">
+            <nav className="space-y-1">
               {menuItems.map((item) => (
                 <NavLink
                   key={item.path}
                   to={item.path}
                   onClick={closeSidebar}
                   className={({ isActive }) =>
-                    `group flex items-center px-3 py-3 text-sm font-medium rounded-lg transition-all duration-200 ${
+                    `group flex items-center ${isCollapsed && !isMobile ? 'justify-center px-2' : 'px-2.5'} py-2 text-sm font-medium rounded-lg transition-all duration-200 ${
                       isActive
-                        ? "bg-blue-50 dark:bg-blue-900/50 text-blue-700 dark:text-blue-300 border-r-2 border-blue-700 dark:border-blue-400 shadow-sm"
-                        : "text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-700 hover:text-gray-900 dark:hover:text-gray-100 hover:shadow-sm"
+                        ? "bg-blue-50 dark:bg-blue-900/50 text-blue-700 dark:text-blue-300"
+                        : "text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-700 hover:text-gray-900 dark:hover:text-gray-100"
                     }`
                   }
+                  title={isCollapsed && !isMobile ? item.name : item.description}
                 >
-                  <span className="flex-shrink-0 mr-3">{item.icon}</span>
-                  <div className="flex-1 min-w-0">
-                    <div className="font-medium">{item.name}</div>
-                    <div className="text-xs text-gray-500 dark:text-gray-400 group-hover:text-gray-600 dark:group-hover:text-gray-300 mt-0.5">
-                      {item.description}
-                    </div>
-                  </div>
+                  <span className={`flex-shrink-0 ${isCollapsed && !isMobile ? '' : 'mr-2'}`}>{item.icon}</span>
+                  {(!isCollapsed || isMobile) && (
+                    <span className="truncate">{item.name}</span>
+                  )}
                 </NavLink>
               ))}
             </nav>
           </div>
 
+          {/* 折叠按钮 - 仅桌面端显示 */}
+          {!isMobile && (
+            <div className="px-3 py-2">
+              <button
+                onClick={toggleCollapse}
+                className="w-full flex items-center justify-center p-1.5 text-gray-400 hover:text-gray-600 dark:text-gray-500 dark:hover:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-all duration-200 cursor-pointer"
+                title={isCollapsed ? t('expandSidebar') || '展开侧边栏' : t('collapseSidebar') || '收起侧边栏'}
+              >
+                <svg
+                  className={`w-4 h-4 transition-transform duration-300 ${isCollapsed ? 'rotate-180' : ''}`}
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M11 19l-7-7 7-7m8 14l-7-7 7-7" />
+                </svg>
+              </button>
+            </div>
+          )}
+
           {/* 底部区域 */}
-          <div className="flex-shrink-0 p-4 mt-auto border-t border-gray-200 dark:border-gray-700">
-            <div className="mb-3 space-y-2">
+          <div className="flex-shrink-0 p-3 mt-auto border-t border-gray-200 dark:border-gray-700">
+            <div className="mb-2 space-y-1">
               <NavLink
                 to="/integrations/notion"
                 onClick={closeSidebar}
                 className={({ isActive }) =>
-                  `group flex items-center px-3 py-2 text-sm rounded-lg transition-all duration-200 ${
+                  `group flex items-center ${isCollapsed && !isMobile ? 'justify-center px-2' : 'px-2.5'} py-1.5 text-xs rounded-lg transition-all duration-200 ${
                     isActive
                       ? "bg-blue-50 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300"
                       : "text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-700 hover:text-gray-800 dark:hover:text-gray-200"
                   }`
                 }
+                title={isCollapsed && !isMobile ? t('notionSync') : undefined}
               >
-                <NotionLogo/>
-                {t('notionSync')}
+                <span className={`flex-shrink-0 ${isCollapsed && !isMobile ? '' : 'mr-2'}`}>
+                  <svg width="16" height="16" viewBox="0 0 26 29" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M12.733 2.08691L23.647 8.22601V20.5042L12.733 26.6433L1.81909 20.5042V8.22601L12.733 2.08691Z" fill="white"></path><path fillRule="evenodd" clipRule="evenodd" d="M10.2816 1.37886C11.8037 0.522697 13.6622 0.522697 15.1842 1.37886L22.9172 5.72864C24.4916 6.61423 25.4659 8.28015 25.4659 10.0865V18.6439C25.4659 20.4503 24.4916 22.1162 22.9172 23.0018L15.1842 27.3516C13.6622 28.2077 11.8037 28.2077 10.2816 27.3516L2.54869 23.0018C0.974309 22.1162 0 20.4503 0 18.6439V10.0865C0 8.28015 0.97431 6.61423 2.54869 5.72864L10.2816 1.37886ZM6.18668 7.8563C4.61229 8.74189 3.63798 10.4078 3.63798 12.2142V16.5162C3.63798 18.3226 4.61229 19.9885 6.18667 20.8741L10.2816 23.1775C11.8037 24.0337 13.6622 24.0337 15.1842 23.1775L19.2792 20.8741C20.8536 19.9885 21.8279 18.3226 21.8279 16.5162V12.2142C21.8279 10.4078 20.8536 8.7419 19.2792 7.85631L15.1842 5.55289C13.6622 4.69673 11.8037 4.69673 10.2816 5.55289L6.18668 7.8563Z" fill="white"></path><path d="M12.733 2.08691L23.647 8.22601V20.5042L12.733 26.6433L1.81909 20.5042V8.22601L12.733 2.08691Z" fill="white"></path><path fillRule="evenodd" clipRule="evenodd" d="M10.2816 2.42232C11.8036 1.56615 13.6621 1.56616 15.1842 2.42232L22.0076 6.2605C23.582 7.1461 24.5563 8.81201 24.5563 10.6184V18.1119C24.5563 19.9183 23.582 21.5842 22.0076 22.4698L15.1842 26.308C13.6621 27.1642 11.8036 27.1642 10.2816 26.308L3.45812 22.4698C1.88373 21.5842 0.909424 19.9183 0.909424 18.1119V10.6184C0.909424 8.81202 1.88374 7.14609 3.45812 6.2605L10.2816 2.42232ZM5.27711 7.32434C3.70272 8.20993 2.72841 9.87585 2.72841 11.6822V17.0481C2.72841 18.8545 3.70273 20.5204 5.27711 21.406L10.2816 24.221C11.8036 25.0771 13.6621 25.0771 15.1842 24.221L20.1886 21.406C21.763 20.5204 22.7373 18.8545 22.7373 17.0481V11.6822C22.7373 9.87585 21.763 8.20993 20.1886 7.32434L15.1842 4.50933C13.6621 3.65317 11.8036 3.65317 10.2816 4.50933L5.27711 7.32434Z" fill="#111111"></path><path fillRule="evenodd" clipRule="evenodd" d="M19.0973 5.68939L9.13084 11.2955L12.7327 13.3216L23.4001 7.3212L24.2918 8.90659L13.6422 14.897V26.9923H11.8232V14.897L7.27571 12.339L7.25977 12.348L7.24501 12.3218L1.17358 8.90659L2.06536 7.3212L7.27571 10.252L18.2055 4.104L19.0973 5.68939Z" fill="#111111"></path><path d="M20.5823 12.9775L19.4163 13.6305V17.624L19.3676 17.6513L16.9762 14.997L15.9482 15.5727V21.9227L17.1196 21.2667V17.2701L17.1602 17.2473L19.5705 19.8941L20.5823 19.3275V12.9775Z" fill="#111111"></path></svg>
+                </span>
+                {(!isCollapsed || isMobile) && t('notionSync')}
               </NavLink>
               <NavLink
                 to="/integrations/google"
                 onClick={closeSidebar}
                 className={({ isActive }) =>
-                  `group flex items-center px-3 py-2 text-sm rounded-lg transition-all duration-200 ${
+                  `group flex items-center ${isCollapsed && !isMobile ? 'justify-center px-2' : 'px-2.5'} py-1.5 text-xs rounded-lg transition-all duration-200 ${
                     isActive
                       ? "bg-blue-50 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300"
                       : "text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-700 hover:text-gray-800 dark:hover:text-gray-200"
                   }`
                 }
+                title={isCollapsed && !isMobile ? t('googleAuth') : undefined}
               >
                 <svg
-                  className="flex-shrink-0 mr-2 w-5 h-5"
+                  className={`flex-shrink-0 w-4 h-4 ${isCollapsed && !isMobile ? '' : 'mr-2'}`}
                   viewBox="0 0 24 24"
                   xmlns="http://www.w3.org/2000/svg"
                 >
@@ -295,12 +320,14 @@ const Sidebar: React.FC<SidebarProps> = ({ className = "" }) => {
                   <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335" />
                   <path d="M1 1h22v22H1z" fill="none" />
                 </svg>
-                {t('googleAuth')}
+                {(!isCollapsed || isMobile) && t('googleAuth')}
               </NavLink>
             </div>
-            <div className="space-y-1 text-xs text-center text-gray-500 dark:text-gray-400">
-              <p>© {new Date().getFullYear()} Quick Prompt</p>
-            </div>
+            {(!isCollapsed || isMobile) && (
+              <div className="text-[10px] text-center text-gray-400 dark:text-gray-500">
+                <p>© {new Date().getFullYear()} Quick Prompt</p>
+              </div>
+            )}
           </div>
         </div>
       </aside>
@@ -309,5 +336,3 @@ const Sidebar: React.FC<SidebarProps> = ({ className = "" }) => {
 };
 
 export default Sidebar;
-
-
