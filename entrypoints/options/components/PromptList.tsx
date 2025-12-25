@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useMemo } from 'react'
 import {
   DndContext,
   DragEndEvent,
@@ -16,12 +16,12 @@ import {
   rectSortingStrategy,
 } from '@dnd-kit/sortable'
 import type { PromptItem, Category } from '@/utils/types'
-import { getCategories } from '@/utils/categoryUtils'
 import { t } from '../../../utils/i18n'
 import SortablePromptCard from './SortablePromptCard'
 
 interface PromptListProps {
   prompts: PromptItem[]
+  categories: Category[]
   onEdit: (id: string) => void
   onDelete: (id: string) => void
   onReorder: (activeId: string, overId: string) => void
@@ -34,6 +34,7 @@ interface PromptListProps {
 
 const PromptList = ({
   prompts,
+  categories,
   onEdit,
   onDelete,
   onReorder,
@@ -43,10 +44,17 @@ const PromptList = ({
   onTogglePinned,
   selectedCategoryId,
 }: PromptListProps) => {
-  const [categories, setCategories] = useState<Category[]>([])
-  const [categoriesMap, setCategoriesMap] = useState<Record<string, Category>>({})
   const [copiedId, setCopiedId] = useState<string | null>(null)
   const [activeId, setActiveId] = useState<string | null>(null)
+
+  // 创建分类映射表
+  const categoriesMap = useMemo(() => {
+    const map: Record<string, Category> = {}
+    categories.forEach(category => {
+      map[category.id] = category
+    })
+    return map
+  }, [categories])
 
   // 拖拽传感器配置
   const sensors = useSensors(
@@ -59,27 +67,6 @@ const PromptList = ({
       coordinateGetter: sortableKeyboardCoordinates,
     })
   )
-
-  // 加载分类信息
-  useEffect(() => {
-    const loadCategories = async () => {
-      try {
-        const categoriesList = await getCategories()
-        setCategories(categoriesList)
-        
-        // 创建分类映射表
-        const map: Record<string, Category> = {}
-        categoriesList.forEach(category => {
-          map[category.id] = category
-        })
-        setCategoriesMap(map)
-      } catch (err) {
-        console.error('加载分类失败:', err)
-      }
-    }
-    
-    loadCategories()
-  }, [])
 
   // 拖拽开始处理
   const handleDragStart = (event: DragStartEvent) => {

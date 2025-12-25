@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom'
 import type { PromptItem, Category } from '@/utils/types'
 import { getCategories } from '@/utils/categoryUtils'
 import { DEFAULT_CATEGORY_ID } from '@/utils/constants'
+import { getValidCategoryId } from '@/utils/promptUtils'
 import { t } from '../../../utils/i18n'
 
 interface PromptFormProps {
@@ -24,42 +25,39 @@ const PromptForm = ({ onSubmit, initialData, onCancel, isEditing }: PromptFormPr
   const [categories, setCategories] = useState<Category[]>([])
   const [loadingCategories, setLoadingCategories] = useState(true)
 
-  // 加载分类列表
+  // 加载分类列表并初始化表单
   useEffect(() => {
-    const loadCategories = async () => {
+    const initForm = async () => {
       try {
         setLoadingCategories(true)
         const categoriesList = await getCategories()
-        setCategories(categoriesList.filter(cat => cat.enabled)) // 只显示启用的分类
+        const enabledCategories = categoriesList.filter(cat => cat.enabled)
+        setCategories(enabledCategories)
+
+        if (initialData) {
+          setTitle(initialData.title)
+          setContent(initialData.content)
+          setTags(initialData.tags.join(', '))
+          setNotes(initialData.notes || '')
+          setEnabled(initialData.enabled !== undefined ? initialData.enabled : true)
+          setCategoryId(getValidCategoryId(initialData.categoryId, enabledCategories))
+        } else {
+          setTitle('')
+          setContent('')
+          setTags('')
+          setNotes('')
+          setEnabled(true)
+          setCategoryId(getValidCategoryId(DEFAULT_CATEGORY_ID, enabledCategories))
+        }
+        setError(null)
       } catch (err) {
         console.error(t('loadCategoriesError'), err)
       } finally {
         setLoadingCategories(false)
       }
     }
-    
-    loadCategories()
-  }, [])
 
-  // Reset form when initialData changes (editing mode toggle)
-  useEffect(() => {
-    if (initialData) {
-      setTitle(initialData.title)
-      setContent(initialData.content)
-      setTags(initialData.tags.join(', '))
-      setNotes(initialData.notes || '')
-      setEnabled(initialData.enabled !== undefined ? initialData.enabled : true)
-      setCategoryId(initialData.categoryId || DEFAULT_CATEGORY_ID)
-    } else {
-      // Clear form when not in edit mode
-      setTitle('')
-      setContent('')
-      setTags('')
-      setNotes('')
-      setEnabled(true)
-      setCategoryId(DEFAULT_CATEGORY_ID)
-    }
-    setError(null)
+    initForm()
   }, [initialData])
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -111,7 +109,7 @@ const PromptForm = ({ onSubmit, initialData, onCancel, isEditing }: PromptFormPr
         setContent('')
         setTags('')
         setNotes('')
-        setCategoryId(DEFAULT_CATEGORY_ID)
+        // 保持当前分类选中，而不是重置为可能无效的默认分类
       }
     } catch (err) {
       console.error(t('formSubmitError'), err)

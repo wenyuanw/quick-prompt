@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useMemo } from "react";
 import { storage } from "#imports";
 import PromptForm from "./PromptForm";
 import PromptList from "./PromptList";
@@ -9,11 +9,18 @@ import "~/assets/tailwind.css";
 import { PromptItem, Category } from "@/utils/types";
 import { BROWSER_STORAGE_KEY, DEFAULT_CATEGORY_ID } from "@/utils/constants";
 import { getCategories, migratePromptsWithCategory } from "@/utils/categoryUtils";
+import {
+  sortPrompts,
+  filterPrompts,
+  validateAndNormalizePrompts,
+  mergePrompts,
+  PromptValidationException,
+  PROMPT_VALIDATION_ERRORS,
+} from "@/utils/promptUtils";
 import { t } from "../../../utils/i18n";
 
 const PromptManager = () => {
   const [prompts, setPrompts] = useState<PromptItem[]>([]);
-  const [filteredPrompts, setFilteredPrompts] = useState<PromptItem[]>([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [editingPrompt, setEditingPrompt] = useState<PromptItem | null>(null);
   const [isLoading, setIsLoading] = useState(true);
@@ -27,7 +34,7 @@ const PromptManager = () => {
   const [isRemoteImporting, setIsRemoteImporting] = useState(false);
   const [isConfirmModalOpen, setIsConfirmModalOpen] = useState(false);
   const [promptToDelete, setPromptToDelete] = useState<string | null>(null);
-  
+
   // 添加分类相关状态
   const [categories, setCategories] = useState<Category[]>([]);
   const [selectedCategoryId, setSelectedCategoryId] = useState<string | null>(null);
@@ -53,33 +60,21 @@ const PromptManager = () => {
     const loadData = async () => {
       try {
         setIsLoading(true);
-        
+
         // 先迁移旧数据
         await migratePromptsWithCategory();
-        
+
         // 加载提示词
         const storedPrompts = await storage.getItem<PromptItem[]>(
           `local:${BROWSER_STORAGE_KEY}`
         );
-        
-        // 按照 sortOrder 排序，置顶项目优先
-        const sortedPrompts = (storedPrompts || []).sort((a, b) => {
-          // 置顶项目始终在前面
-          if (a.pinned && !b.pinned) return -1;
-          if (!a.pinned && b.pinned) return 1;
-          
-          // 在同一置顶状态下，按照 sortOrder 排序
-          const aOrder = a.sortOrder !== undefined ? a.sortOrder : 999999;
-          const bOrder = b.sortOrder !== undefined ? b.sortOrder : 999999;
-          return aOrder - bOrder;
-        });
-        
-        setPrompts(sortedPrompts);
-        
+
+        setPrompts(storedPrompts || []);
+
         // 加载分类
         const storedCategories = await getCategories();
         setCategories(storedCategories);
-        
+
         console.log(t('optionsPageLoadPrompts'), storedPrompts?.length || 0);
         console.log(t('optionsPageLoadCategories'), storedCategories.length);
       } catch (err) {
@@ -93,42 +88,11 @@ const PromptManager = () => {
     loadData();
   }, []);
 
-  // Filter prompts based on search term and selected category
-  useEffect(() => {
-    let filtered = prompts;
-
-    // 先按分类筛选
-    if (selectedCategoryId) {
-      filtered = filtered.filter(prompt => prompt.categoryId === selectedCategoryId);
-    }
-
-    // 再按搜索词筛选
-    if (searchTerm.trim()) {
-      const term = searchTerm.toLowerCase().trim();
-      filtered = filtered.filter((prompt) => {
-        const titleMatch = prompt.title.toLowerCase().includes(term);
-        const contentMatch = prompt.content.toLowerCase().includes(term);
-        const tagMatch = prompt.tags.some((tag) =>
-          tag.toLowerCase().includes(term)
-        );
-        return titleMatch || contentMatch || tagMatch;
-      });
-    }
-
-    // 按置顶状态和排序号排序：置顶的在前面，同级别内按 sortOrder 升序
-    filtered.sort((a, b) => {
-      // 首先按置顶状态排序，置顶的在前面
-      if (a.pinned && !b.pinned) return -1;
-      if (!a.pinned && b.pinned) return 1;
-      
-      // 如果置顶状态相同，按 sortOrder 升序排序
-      const aOrder = a.sortOrder !== undefined ? a.sortOrder : 999999;
-      const bOrder = b.sortOrder !== undefined ? b.sortOrder : 999999;
-      return aOrder - bOrder;
-    });
-
-    setFilteredPrompts(filtered);
-  }, [searchTerm, prompts, selectedCategoryId]);
+  // 使用 useMemo 计算筛选和排序后的提示词
+  const filteredPrompts = useMemo(() => {
+    const filtered = filterPrompts(prompts, { searchTerm, categoryId: selectedCategoryId });
+    return sortPrompts(filtered);
+  }, [prompts, searchTerm, selectedCategoryId]);
 
   // Save prompts to storage
   const savePrompts = async (newPrompts: PromptItem[]) => {
@@ -140,6 +104,41 @@ const PromptManager = () => {
       console.error(t('optionsPageSavePromptsError'), err);
       setError(t('savePromptsFailed'));
     }
+  };
+
+  // 处理导入结果
+  const handleImportResult = async (
+    validPrompts: PromptItem[],
+    confirmMessageKey: string,
+    onSuccess?: () => void
+  ): Promise<boolean> => {
+    if (prompts.length > 0) {
+      const shouldImport = window.confirm(
+        t(confirmMessageKey, [prompts.length.toString(), validPrompts.length.toString()])
+      );
+
+      if (!shouldImport) {
+        onSuccess?.();
+        return false;
+      }
+
+      const { merged, addedCount, updatedCount } = mergePrompts(prompts, validPrompts);
+
+      if (addedCount === 0 && updatedCount === 0) {
+        alert(t('noNewPromptsFound'));
+        onSuccess?.();
+        return false;
+      }
+
+      await savePrompts(merged);
+      alert(t('importSuccessful', [(addedCount + updatedCount).toString()]));
+    } else {
+      await savePrompts(validPrompts);
+      alert(t('importSuccessful', [validPrompts.length.toString()]));
+    }
+
+    onSuccess?.();
+    return true;
   };
 
   // Add a new prompt
@@ -306,112 +305,43 @@ const PromptManager = () => {
     }
   };
 
+  // 获取验证错误的国际化消息
+  const getValidationErrorMessage = (err: unknown): string => {
+    if (err instanceof PromptValidationException) {
+      switch (err.code) {
+        case PROMPT_VALIDATION_ERRORS.INVALID_FORMAT:
+          return t('invalidFileFormat');
+        case PROMPT_VALIDATION_ERRORS.NO_VALID_PROMPTS:
+          return t('noValidPromptsInFile');
+        default:
+          return t('unknownError');
+      }
+    }
+    return err instanceof Error ? err.message : t('unknownError');
+  };
+
   // 导入提示词
   const importPrompts = async (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (!file) return;
 
+    const clearFileInput = () => {
+      if (fileInputRef.current) {
+        fileInputRef.current.value = "";
+      }
+    };
+
     try {
       const fileContent = await file.text();
-      const importedPrompts = JSON.parse(fileContent) as PromptItem[];
+      const importedData = JSON.parse(fileContent);
+      const validPrompts = validateAndNormalizePrompts(importedData);
 
-      // 验证导入的数据格式
-      if (!Array.isArray(importedPrompts)) {
-        throw new Error(t('invalidFileFormat'));
-      }
-
-      // 验证每个提示词的结构并添加默认分类
-      const validPrompts = importedPrompts.filter((prompt) => {
-        return (
-          typeof prompt === "object" &&
-          typeof prompt.id === "string" &&
-          typeof prompt.title === "string" &&
-          typeof prompt.content === "string" &&
-          Array.isArray(prompt.tags)
-        );
-      }).map((prompt) => ({
-        ...prompt,
-        // 如果没有分类字段或分类字段为空，设置为默认分类
-        categoryId: prompt.categoryId || DEFAULT_CATEGORY_ID,
-        // 确保有enabled字段
-        enabled: prompt.enabled !== undefined ? prompt.enabled : true,
-        // 为导入的提示词添加默认的lastModified和notes字段
-        lastModified: prompt.lastModified || new Date().toISOString(),
-        notes: prompt.notes || "",
-      }));
-
-      if (validPrompts.length === 0) {
-        throw new Error(t('noValidPromptsInFile'));
-      }
-
-      // 确认是否需要合并或覆盖现有提示词
-      if (prompts.length > 0) {
-        const shouldImport = window.confirm(
-          t('importPromptsConfirm', [prompts.length.toString(), validPrompts.length.toString()])
-        );
-
-        if (shouldImport) {
-          // 创建现有提示词的Map，便于查找和更新
-          const promptsMap = new Map(prompts.map(p => [p.id, p]));
-          let addedCount = 0;
-          let updatedCount = 0;
-
-          validPrompts.forEach(prompt => {
-            if (promptsMap.has(prompt.id)) {
-              // 获取现有提示词
-              const existing = promptsMap.get(prompt.id);
-              // 待导入提示词，合并现有提示词属性
-              const updatedPrompt = { ...existing, ...prompt };
-              // 排除 lastModified 字段进行比较
-              if (existing && JSON.stringify((({ lastModified, ...rest }) => rest)(existing)) !== JSON.stringify((({ lastModified, ...rest }) => rest)(updatedPrompt))) {
-                promptsMap.set(prompt.id, updatedPrompt);
-                updatedCount++;
-              }
-            } else {
-              // 添加新提示词
-              promptsMap.set(prompt.id, {
-                ...prompt,
-                lastModified: prompt.lastModified || new Date().toISOString(),
-                notes: prompt.notes || "",
-              });
-              addedCount++;
-            }
-          });
-
-          // 如果没有新增也没有更新，显示提示
-          if (addedCount === 0 && updatedCount === 0) {
-            alert(t('noNewPromptsFound'));
-            return;
-          }
-
-          const newPrompts = Array.from(promptsMap.values());
-          await savePrompts(newPrompts);
-
-          // 显示成功消息，包含新增和更新的数量
-          alert(t('importSuccessful', [(addedCount + updatedCount).toString()]));
-
-        }
-        // 如果用户点击取消，不做任何操作
-      } else {
-        // 没有现有提示词，直接保存导入的提示词
-        await savePrompts(validPrompts);
-        alert(t('importSuccessful', [validPrompts.length.toString()]));
-      }
-
-      // 清除文件输入
-      if (fileInputRef.current) {
-        fileInputRef.current.value = "";
-      }
+      await handleImportResult(validPrompts, 'importPromptsConfirm');
+      clearFileInput();
     } catch (err) {
       console.error(t('importPromptsError'), err);
-      setError(
-        t('importPromptsFailed', [err instanceof Error ? err.message : t('unknownError')])
-      );
-
-      // 清除文件输入
-      if (fileInputRef.current) {
-        fileInputRef.current.value = "";
-      }
+      setError(t('importPromptsFailed', [getValidationErrorMessage(err)]));
+      clearFileInput();
     }
   };
 
@@ -444,12 +374,12 @@ const PromptManager = () => {
     try {
       setIsRemoteImporting(true);
       setError(null);
-      
+
       const url = remoteUrl.trim();
-      
+
       // 获取远程数据
       const response = await fetch(url);
-      
+
       if (!response.ok) {
         throw new Error(
           `远程请求失败: ${response.status} ${response.statusText}`
@@ -457,97 +387,13 @@ const PromptManager = () => {
       }
 
       const fileContent = await response.text();
-      const importedPrompts = JSON.parse(fileContent) as PromptItem[];
+      const importedData = JSON.parse(fileContent);
+      const validPrompts = validateAndNormalizePrompts(importedData);
 
-      // 验证导入的数据格式
-      if (!Array.isArray(importedPrompts)) {
-        throw new Error(t('invalidRemoteDataFormat'));
-      }
-
-      // 验证每个提示词的结构并添加默认分类
-      const validPrompts = importedPrompts.filter((prompt) => {
-        return (
-          typeof prompt === "object" &&
-          typeof prompt.id === "string" &&
-          typeof prompt.title === "string" &&
-          typeof prompt.content === "string" &&
-          Array.isArray(prompt.tags)
-        );
-      }).map((prompt) => ({
-        ...prompt,
-        // 如果没有分类字段或分类字段为空，设置为默认分类
-        categoryId: prompt.categoryId || DEFAULT_CATEGORY_ID,
-        // 确保有enabled字段
-        enabled: prompt.enabled !== undefined ? prompt.enabled : true,
-        // 为导入的提示词添加默认的lastModified和notes字段
-        lastModified: prompt.lastModified || new Date().toISOString(),
-        notes: prompt.notes || "",
-      }));
-
-      if (validPrompts.length === 0) {
-        throw new Error(t('noValidPromptsInRemoteData'));
-      }
-
-      // 确认是否需要导入
-      if (prompts.length > 0) {
-        const shouldImport = window.confirm(
-          t('remoteImportPromptsConfirm', [prompts.length.toString(), validPrompts.length.toString()])
-        );
-
-        if (shouldImport) {
-          // 创建现有提示词的Map，便于查找和更新
-          const promptsMap = new Map(prompts.map(p => [p.id, p]));
-          let addedCount = 0;
-          let updatedCount = 0;
-
-          validPrompts.forEach(prompt => {
-            if (promptsMap.has(prompt.id)) {
-              // 获取现有提示词
-              const existing = promptsMap.get(prompt.id);
-              // 待导入提示词，合并现有提示词属性
-              const updatedPrompt = { ...existing, ...prompt };
-              // 排除 lastModified 字段进行比较
-              if (existing && JSON.stringify((({ lastModified, ...rest }) => rest)(existing)) !== JSON.stringify((({ lastModified, ...rest }) => rest)(updatedPrompt))) {
-                promptsMap.set(prompt.id, updatedPrompt);
-                updatedCount++;
-              }
-            } else {
-              // 添加新提示词
-              promptsMap.set(prompt.id, {
-                ...prompt,
-                lastModified: prompt.lastModified || new Date().toISOString(),
-                notes: prompt.notes || "",
-              });
-              addedCount++;
-            }
-          });
-
-          if (addedCount === 0 && updatedCount === 0) {
-            alert(t('noNewPromptsFound'));
-            closeRemoteImportModal();
-            return;
-          }
-
-          const newPrompts = Array.from(promptsMap.values());
-          await savePrompts(newPrompts);
-
-          alert(t('importSuccessful', [(addedCount + updatedCount).toString()]));
-          closeRemoteImportModal();
-        } else {
-          // 用户取消导入
-          closeRemoteImportModal();
-        }
-      } else {
-        // 没有现有提示词，直接保存导入的提示词
-        await savePrompts(validPrompts);
-        alert(t('importSuccessful', [validPrompts.length.toString()]));
-        closeRemoteImportModal();
-      }
+      await handleImportResult(validPrompts, 'remoteImportPromptsConfirm', closeRemoteImportModal);
     } catch (err) {
       console.error(t('remoteImportPromptsError'), err);
-      setError(
-        t('remoteImportFailed', [err instanceof Error ? err.message : t('unknownError')])
-      );
+      setError(t('remoteImportFailed', [getValidationErrorMessage(err)]));
     } finally {
       setIsRemoteImporting(false);
     }
@@ -762,6 +608,7 @@ const PromptManager = () => {
         {/* Prompts列表 */}
         <PromptList
           prompts={filteredPrompts}
+          categories={categories}
           onEdit={startEdit}
           onDelete={deletePrompt}
           onReorder={handleReorder}

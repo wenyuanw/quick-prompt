@@ -8,6 +8,7 @@ import "~/assets/tailwind.css";
 import { Category } from "@/utils/types";
 import {
   getCategories,
+  saveCategories,
   addCategory,
   updateCategory,
   deleteCategory,
@@ -314,6 +315,7 @@ const CategoryManager = () => {
 
           const newCategories = Array.from(categoriesMap.values());
           setCategories(newCategories);
+          await saveCategories(newCategories);
 
           // 重新加载提示词数量
           const counts: Record<string, number> = {};
@@ -329,6 +331,7 @@ const CategoryManager = () => {
       } else {
         // 没有现有分类，直接保存导入的分类
         setCategories(validCategories);
+        await saveCategories(validCategories);
 
         // 重新加载提示词数量
         const counts: Record<string, number> = {};
@@ -472,6 +475,7 @@ const CategoryManager = () => {
 
           const newCategories = Array.from(categoriesMap.values());
           setCategories(newCategories);
+          await saveCategories(newCategories);
 
           // 重新加载提示词数量
           const counts: Record<string, number> = {};
@@ -489,6 +493,7 @@ const CategoryManager = () => {
       } else {
         // 没有现有分类，直接保存导入的分类
         setCategories(validCategories);
+        await saveCategories(validCategories);
 
         // 重新加载提示词数量
         const counts: Record<string, number> = {};
