@@ -106,49 +106,11 @@ const PromptList = ({
     : prompts
 
   if (allPromptsCount === 0) {
-    return (
-      <div className='text-center py-12 bg-gray-50 dark:bg-gray-800 rounded-lg border-2 border-dashed border-gray-300 dark:border-gray-600'>
-        <svg
-          className='mx-auto h-12 w-12 text-gray-400 dark:text-gray-500'
-          fill='none'
-          viewBox='0 0 24 24'
-          stroke='currentColor'
-          aria-hidden='true'
-        >
-          <path
-            strokeLinecap='round'
-            strokeLinejoin='round'
-            strokeWidth={1.5}
-            d='M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10'
-          />
-        </svg>
-        <p className='mt-4 text-lg font-medium text-gray-700 dark:text-gray-300'>{t('noPromptsAdded')}</p>
-        <p className='mt-2 text-gray-500 dark:text-gray-400'>{t('clickAddPrompt')}</p>
-      </div>
-    )
+    return null;
   }
 
   if (filteredPrompts.length === 0 && (searchTerm || selectedCategoryId)) {
-    return (
-      <div className='text-center py-12 bg-gray-50 dark:bg-gray-800 rounded-lg'>
-        <svg
-          className='mx-auto h-12 w-12 text-gray-400 dark:text-gray-500'
-          fill='none'
-          viewBox='0 0 24 24'
-          stroke='currentColor'
-          aria-hidden='true'
-        >
-          <path
-            strokeLinecap='round'
-            strokeLinejoin='round'
-            strokeWidth={1.5}
-            d='M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z'
-          />
-        </svg>
-        <p className='mt-4 text-lg font-medium text-gray-700 dark:text-gray-300'>{t('noMatchingPrompts')}</p>
-        <p className='mt-2 text-gray-500 dark:text-gray-400'>{t('tryOtherTermsOrCategories')}</p>
-      </div>
-    )
+    return null;
   }
 
   // 获取当前被拖拽的提示词
