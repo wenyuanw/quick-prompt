@@ -535,25 +535,39 @@ const PromptSelector: React.FC<PromptSelectorProps> = ({
                         )}
                       </button>
                     </div>
-                    <div className="qp-prompt-preview">{prompt.content}</div>
-                    <div className="qp-prompt-meta">
-                      {category && (
-                        <div className="qp-prompt-category">
-                          <div 
-                            className="qp-category-dot" 
-                            style={{ backgroundColor: category.color || '#6366f1' }}
-                          />
-                          <span className="qp-category-name">{category.name}</span>
+                    <div className={`qp-prompt-body ${prompt.thumbnailUrl ? 'qp-has-thumbnail' : ''}`}>
+                      <div className="qp-prompt-content">
+                        <div className="qp-prompt-preview">{prompt.content}</div>
+                        <div className="qp-prompt-meta">
+                          {category && (
+                            <div className="qp-prompt-category">
+                              <div
+                                className="qp-category-dot"
+                                style={{ backgroundColor: category.color || '#6366f1' }}
+                              />
+                              <span className="qp-category-name">{category.name}</span>
+                            </div>
+                          )}
+                          {prompt.tags.length > 0 && (
+                            <div className="qp-tags-container">
+                              {prompt.tags.map((tag) => (
+                                <span key={tag} className="qp-tag">
+                                  {tag}
+                                </span>
+                              ))}
+                            </div>
+                          )}
                         </div>
-                      )}
-                      {prompt.tags.length > 0 && (
-                        <div className="qp-tags-container">
-                          {prompt.tags.map((tag) => (
-                            <span key={tag} className="qp-tag">
-                              {tag}
-                            </span>
-                          ))}
-                        </div>
+                      </div>
+                      {prompt.thumbnailUrl && (
+                        <img
+                          src={prompt.thumbnailUrl}
+                          alt={prompt.title}
+                          className="qp-thumbnail-img"
+                          onError={(e) => {
+                            (e.target as HTMLImageElement).style.display = 'none'
+                          }}
+                        />
                       )}
                     </div>
                   </div>

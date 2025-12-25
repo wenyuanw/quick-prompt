@@ -26,6 +26,7 @@ export interface PromptItem {
   notes?: string; // 备注字段
   lastModified?: string; // 最后修改时间（ISO 字符串）
   sortOrder?: number; // 排序字段，用于拖拽排序
+  thumbnailUrl?: string; // 缩略图 URL
 }
 
 export interface PromptItemWithVariables extends PromptItem {

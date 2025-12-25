@@ -50,6 +50,7 @@ export const DEFAULT_PROMPTS: PromptItem[] = [
     tags: ["画图", "吉卜力"],
     enabled: true,
     categoryId: "painting",
+    thumbnailUrl: "https://placehold.co/80x80/f59e0b/white?text=Ghibli",
   },
   {
     id: "default-code-explain",
@@ -58,6 +59,7 @@ export const DEFAULT_PROMPTS: PromptItem[] = [
     tags: ["编程"],
     enabled: true,
     categoryId: "programming",
+    thumbnailUrl: "https://placehold.co/80x80/10b981/white?text=Code",
   },
   {
     id: "default-role-template",
@@ -66,5 +68,6 @@ export const DEFAULT_PROMPTS: PromptItem[] = [
     tags: ["编程", "变量"],
     enabled: true,
     categoryId: "programming",
+    thumbnailUrl: "https://placehold.co/80x80/6366f1/white?text=Role",
   },
 ];

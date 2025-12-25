@@ -612,5 +612,30 @@ export function getPromptSelectorStyles(): string {
       width: 18px !important;
       height: 18px !important;
     }
+
+    /* 缩略图样式 */
+    .qp-prompt-body {
+      display: flex !important;
+      gap: 12px !important;
+      align-items: flex-start !important;
+    }
+
+    .qp-prompt-body.qp-has-thumbnail {
+      justify-content: space-between !important;
+    }
+
+    .qp-prompt-content {
+      flex: 1 !important;
+      min-width: 0 !important;
+    }
+
+    .qp-thumbnail-img {
+      width: 36px !important;
+      height: 36px !important;
+      object-fit: cover !important;
+      border-radius: 4px !important;
+      border: 1px solid var(--qp-border-color) !important;
+      flex-shrink: 0 !important;
+    }
   `;
 } 

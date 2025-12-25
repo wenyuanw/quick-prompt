@@ -1332,5 +1332,14 @@
   },
   "unpinPrompt": {
     "message": "Unpin prompt"
+  },
+  "thumbnailUrlLabel": {
+    "message": "Thumbnail URL"
+  },
+  "thumbnailUrlOptional": {
+    "message": "optional"
+  },
+  "thumbnailUrlPlaceholder": {
+    "message": "https://example.com/image.png"
   }
 }

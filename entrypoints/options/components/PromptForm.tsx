@@ -18,6 +18,7 @@ const PromptForm = ({ onSubmit, initialData, onCancel, isEditing }: PromptFormPr
   const [content, setContent] = useState('')
   const [tags, setTags] = useState('')
   const [notes, setNotes] = useState('')
+  const [thumbnailUrl, setThumbnailUrl] = useState('')
   const [enabled, setEnabled] = useState(true)
   const [categoryId, setCategoryId] = useState(DEFAULT_CATEGORY_ID)
   const [isSubmitting, setIsSubmitting] = useState(false)
@@ -39,6 +40,7 @@ const PromptForm = ({ onSubmit, initialData, onCancel, isEditing }: PromptFormPr
           setContent(initialData.content)
           setTags(initialData.tags.join(', '))
           setNotes(initialData.notes || '')
+          setThumbnailUrl(initialData.thumbnailUrl || '')
           setEnabled(initialData.enabled !== undefined ? initialData.enabled : true)
           setCategoryId(getValidCategoryId(initialData.categoryId, enabledCategories))
         } else {
@@ -46,6 +48,7 @@ const PromptForm = ({ onSubmit, initialData, onCancel, isEditing }: PromptFormPr
           setContent('')
           setTags('')
           setNotes('')
+          setThumbnailUrl('')
           setEnabled(true)
           setCategoryId(getValidCategoryId(DEFAULT_CATEGORY_ID, enabledCategories))
         }
@@ -96,6 +99,7 @@ const PromptForm = ({ onSubmit, initialData, onCancel, isEditing }: PromptFormPr
         content: content.trim(),
         tags: tagList,
         notes: notes.trim(),
+        thumbnailUrl: thumbnailUrl.trim() || undefined,
         enabled,
         categoryId,
         lastModified: new Date().toISOString(),
@@ -109,6 +113,7 @@ const PromptForm = ({ onSubmit, initialData, onCancel, isEditing }: PromptFormPr
         setContent('')
         setTags('')
         setNotes('')
+        setThumbnailUrl('')
         // 保持当前分类选中，而不是重置为可能无效的默认分类
       }
     } catch (err) {
@@ -237,6 +242,35 @@ const PromptForm = ({ onSubmit, initialData, onCancel, isEditing }: PromptFormPr
           <div className='mt-1 text-xs text-gray-500'>
             {t('notesHelp')}
           </div>
+        </div>
+
+        <div>
+          <label htmlFor='thumbnailUrl' className='block text-sm font-medium text-gray-700 mb-1'>
+            {t('thumbnailUrlLabel')} <span className='text-gray-400 font-normal'>({t('thumbnailUrlOptional')})</span>
+          </label>
+          <input
+            type='url'
+            id='thumbnailUrl'
+            value={thumbnailUrl}
+            onChange={(e) => setThumbnailUrl(e.target.value)}
+            className='w-full px-3 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors duration-200'
+            placeholder={t('thumbnailUrlPlaceholder')}
+          />
+          {thumbnailUrl && (
+            <div className='mt-2'>
+              <img
+                src={thumbnailUrl}
+                alt='Thumbnail preview'
+                className='max-w-32 max-h-32 rounded-lg border border-gray-200 object-cover'
+                onError={(e) => {
+                  (e.target as HTMLImageElement).style.display = 'none'
+                }}
+                onLoad={(e) => {
+                  (e.target as HTMLImageElement).style.display = 'block'
+                }}
+              />
+            </div>
+          )}
         </div>
 
         <div className='flex items-center mt-4'>

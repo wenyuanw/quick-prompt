@@ -141,73 +141,92 @@ const SortablePromptCard: React.FC<SortablePromptCardProps> = ({
 
       {/* Card Content */}
       <div className='p-5 flex-grow'>
-        {/* Tags */}
-        <div className='mb-3'>
-          {prompt.tags && prompt.tags.length > 0 ? (
-            <div className='flex flex-wrap gap-1.5'>
-              {prompt.tags.map((tag) => (
-                <span
-                  key={tag}
-                  className='inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 dark:bg-blue-900/50 text-blue-800 dark:text-blue-300'
-                >
-                  #{tag}
-                </span>
-              ))}
+        <div className={`flex ${prompt.thumbnailUrl ? 'gap-4' : ''}`}>
+          {/* 左侧内容区域 */}
+          <div className='flex-1 min-w-0'>
+            {/* Tags */}
+            <div className='mb-3'>
+              {prompt.tags && prompt.tags.length > 0 ? (
+                <div className='flex flex-wrap gap-1.5'>
+                  {prompt.tags.map((tag) => (
+                    <span
+                      key={tag}
+                      className='inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 dark:bg-blue-900/50 text-blue-800 dark:text-blue-300'
+                    >
+                      #{tag}
+                    </span>
+                  ))}
+                </div>
+              ) : (
+                <span className='text-xs text-gray-400 dark:text-gray-500 italic'>{t('noTags')}</span>
+              )}
             </div>
-          ) : (
-            <span className='text-xs text-gray-400 dark:text-gray-500 italic'>{t('noTags')}</span>
+
+            {/* Content preview */}
+            <p
+              className='text-sm text-gray-600 dark:text-gray-300 mb-4 truncate cursor-pointer hover:text-gray-800 dark:hover:text-gray-100 transition-colors duration-200'
+              title={`${prompt.content}\n\n${t('clickToCopy') || '点击复制内容'}`}
+              onClick={() => onCopy(prompt.content, prompt.id)}
+            >
+              {prompt.content}
+            </p>
+
+            {/* 备注 */}
+            {prompt.notes && prompt.notes.trim() && (
+              <div className='mb-3 p-2 bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800/50 rounded-md'>
+                <div className='flex items-start space-x-2'>
+                  <svg className='w-4 h-4 text-amber-600 dark:text-amber-400 mt-0.5 flex-shrink-0' fill='none' stroke='currentColor' viewBox='0 0 24 24'>
+                    <path strokeLinecap='round' strokeLinejoin='round' strokeWidth='2' d='M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z' />
+                  </svg>
+                  <div className='flex-1'>
+                    <h4 className='text-xs font-medium text-amber-800 dark:text-amber-300 mb-1'>{t('notes')}</h4>
+                    <p className='text-xs text-amber-700 dark:text-amber-200 whitespace-pre-wrap'>{prompt.notes}</p>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* 最后修改时间 */}
+            <div className='mb-3 flex items-center space-x-2 text-xs text-gray-500 dark:text-gray-400'>
+              <svg className='w-4 h-4' fill='none' stroke='currentColor' viewBox='0 0 24 24'>
+                <path strokeLinecap='round' strokeLinejoin='round' strokeWidth='2' d='M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z' />
+              </svg>
+              <span>{t('lastModified')}: {formatLastModified(prompt.lastModified)}</span>
+            </div>
+
+            {/* 启用状态 */}
+            {onToggleEnabled && (
+              <div className='mt-2 flex items-center'>
+                <label className='relative inline-flex items-center cursor-pointer'>
+                  <input
+                    type='checkbox'
+                    checked={prompt.enabled !== undefined ? prompt.enabled : true}
+                    onChange={(e) => onToggleEnabled(prompt.id, e.target.checked)}
+                    className='sr-only peer'
+                  />
+                  <div className='relative w-9 h-5 bg-gray-200 dark:bg-gray-600 peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-blue-300 dark:peer-focus:ring-blue-600 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[""] after:absolute after:top-1/2 after:right-1/2 after:-translate-y-1/2 after:bg-white after:border-gray-300 dark:after:border-gray-600 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-blue-600'></div>
+                  <span className='ml-2 text-xs text-gray-600 dark:text-gray-300'>
+                    {prompt.enabled !== undefined ? (prompt.enabled ? t('enabled') : t('disabled')) : t('enabled')}
+                  </span>
+                </label>
+              </div>
+            )}
+          </div>
+
+          {/* 右侧缩略图 */}
+          {prompt.thumbnailUrl && (
+            <div className='flex-shrink-0'>
+              <img
+                src={prompt.thumbnailUrl}
+                alt={prompt.title}
+                className='w-20 h-20 object-cover rounded-lg border border-gray-200 dark:border-gray-600'
+                onError={(e) => {
+                  (e.target as HTMLImageElement).style.display = 'none'
+                }}
+              />
+            </div>
           )}
         </div>
-
-        {/* Content preview */}
-        <p 
-          className='text-sm text-gray-600 dark:text-gray-300 mb-4 truncate cursor-pointer hover:text-gray-800 dark:hover:text-gray-100 transition-colors duration-200' 
-          title={`${prompt.content}\n\n${t('clickToCopy') || '点击复制内容'}`}
-          onClick={() => onCopy(prompt.content, prompt.id)}
-        >
-          {prompt.content}
-        </p>
-
-        {/* 备注 */}
-        {prompt.notes && prompt.notes.trim() && (
-          <div className='mb-3 p-2 bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800/50 rounded-md'>
-            <div className='flex items-start space-x-2'>
-              <svg className='w-4 h-4 text-amber-600 dark:text-amber-400 mt-0.5 flex-shrink-0' fill='none' stroke='currentColor' viewBox='0 0 24 24'>
-                <path strokeLinecap='round' strokeLinejoin='round' strokeWidth='2' d='M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z' />
-              </svg>
-              <div className='flex-1'>
-                <h4 className='text-xs font-medium text-amber-800 dark:text-amber-300 mb-1'>{t('notes')}</h4>
-                <p className='text-xs text-amber-700 dark:text-amber-200 whitespace-pre-wrap'>{prompt.notes}</p>
-              </div>
-            </div>
-          </div>
-        )}
-
-        {/* 最后修改时间 */}
-        <div className='mb-3 flex items-center space-x-2 text-xs text-gray-500 dark:text-gray-400'>
-          <svg className='w-4 h-4' fill='none' stroke='currentColor' viewBox='0 0 24 24'>
-            <path strokeLinecap='round' strokeLinejoin='round' strokeWidth='2' d='M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z' />
-          </svg>
-          <span>{t('lastModified')}: {formatLastModified(prompt.lastModified)}</span>
-        </div>
-
-        {/* 启用状态 */}
-        {onToggleEnabled && (
-          <div className='mt-2 flex items-center'>
-            <label className='relative inline-flex items-center cursor-pointer'>
-              <input 
-                type='checkbox' 
-                checked={prompt.enabled !== undefined ? prompt.enabled : true} 
-                onChange={(e) => onToggleEnabled(prompt.id, e.target.checked)}
-                className='sr-only peer'
-              />
-              <div className='relative w-9 h-5 bg-gray-200 dark:bg-gray-600 peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-blue-300 dark:peer-focus:ring-blue-600 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[""] after:absolute after:top-1/2 after:right-1/2 after:-translate-y-1/2 after:bg-white after:border-gray-300 dark:after:border-gray-600 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-blue-600'></div>
-              <span className='ml-2 text-xs text-gray-600 dark:text-gray-300'>
-                {prompt.enabled !== undefined ? (prompt.enabled ? t('enabled') : t('disabled')) : t('enabled')}
-              </span>
-            </label>
-          </div>
-        )}
       </div>
 
       {/* Card Footer / Actions */}

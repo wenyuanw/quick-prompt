@@ -1332,5 +1332,14 @@
   },
   "unpinPrompt": {
     "message": "取消置顶提示词"
+  },
+  "thumbnailUrlLabel": {
+    "message": "缩略图 URL"
+  },
+  "thumbnailUrlOptional": {
+    "message": "可选"
+  },
+  "thumbnailUrlPlaceholder": {
+    "message": "https://example.com/image.png"
   }
 }
