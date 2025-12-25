@@ -1,5 +1,4 @@
-import React from "react";
-import Modal from "./Modal";
+import React, { useEffect } from "react";
 import { t } from '../../../utils/i18n';
 
 interface ConfirmModalProps {
@@ -26,13 +25,37 @@ const ConfirmModal: React.FC<ConfirmModalProps> = ({
     onClose();
   };
 
+  // ESC 键关闭
+  useEffect(() => {
+    const handleEscape = (e: KeyboardEvent) => {
+      if (e.key === 'Escape' && isOpen) {
+        onClose();
+      }
+    };
+    window.addEventListener('keydown', handleEscape);
+    return () => window.removeEventListener('keydown', handleEscape);
+  }, [isOpen, onClose]);
+
+  if (!isOpen) return null;
+
   return (
-    <Modal isOpen={isOpen} onClose={onClose} title={title}>
-      <div className="space-y-4">
-        <div className="text-center py-4">
-          <div className="w-16 h-16 bg-gradient-to-br from-red-400 to-rose-500 rounded-full flex items-center justify-center shadow-lg mx-auto mb-5">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+      {/* 背景遮罩 */}
+      <div
+        className="fixed inset-0 bg-black/40 backdrop-blur-[2px] animate-fadeIn"
+        onClick={onClose}
+      />
+
+      {/* 弹窗内容 */}
+      <div
+        className="relative bg-white dark:bg-gray-800 rounded-xl shadow-xl w-full max-w-sm p-5 animate-slideIn"
+        onClick={(e) => e.stopPropagation()}
+      >
+        {/* 图标和标题 */}
+        <div className="flex items-start gap-4 mb-5">
+          <div className="w-11 h-11 bg-red-50 dark:bg-red-900/30 rounded-full flex items-center justify-center flex-shrink-0">
             <svg
-              className="w-8 h-8 text-white"
+              className="w-5 h-5 text-red-500 dark:text-red-400"
               fill="none"
               stroke="currentColor"
               viewBox="0 0 24 24"
@@ -45,30 +68,33 @@ const ConfirmModal: React.FC<ConfirmModalProps> = ({
               />
             </svg>
           </div>
-          <h3 className="text-xl font-semibold text-gray-900 mb-2">
-            {t('confirmDeletePrompt')}
-          </h3>
-          <p className="text-gray-600 text-sm">
-            {t('confirmDeletePromptMessage')}
-          </p>
+          <div className="flex-1 min-w-0 pt-0.5">
+            <h3 className="text-base font-semibold text-gray-900 dark:text-gray-100">
+              {title}
+            </h3>
+            <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
+              {message || t('confirmDeletePromptMessage')}
+            </p>
+          </div>
         </div>
 
-        <div className="flex justify-end space-x-3 pt-2">
+        {/* 按钮组 */}
+        <div className="flex gap-3 justify-end">
           <button
             onClick={onClose}
-            className="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+            className="px-4 py-2 text-sm font-medium text-gray-600 dark:text-gray-300 bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 rounded-lg transition-colors cursor-pointer"
           >
             {cancelText}
           </button>
           <button
             onClick={handleConfirm}
-            className="px-4 py-2 text-sm font-medium text-white bg-red-600 border border-transparent rounded-md hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500"
+            className="px-4 py-2 text-sm font-medium text-white bg-red-500 hover:bg-red-600 rounded-lg transition-colors cursor-pointer"
           >
             {confirmText}
           </button>
         </div>
       </div>
-    </Modal>
+    </div>
   );
 };
 
