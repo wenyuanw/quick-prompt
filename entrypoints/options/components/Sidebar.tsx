@@ -3,6 +3,8 @@ import { NavLink } from "react-router-dom";
 import Logo from "~/assets/icon.png";
 import { t } from '../../../utils/i18n';
 
+const SIDEBAR_COLLAPSED_KEY = 'sidebar_collapsed';
+
 interface SidebarProps {
   className?: string;
 }
@@ -10,7 +12,11 @@ interface SidebarProps {
 const Sidebar: React.FC<SidebarProps> = ({ className = "" }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
-  const [isCollapsed, setIsCollapsed] = useState(false);
+  const [isCollapsed, setIsCollapsed] = useState(() => {
+    // 从 localStorage 读取初始状态
+    const saved = localStorage.getItem(SIDEBAR_COLLAPSED_KEY);
+    return saved === 'true';
+  });
 
   // 检测屏幕尺寸
   useEffect(() => {
@@ -109,7 +115,10 @@ const Sidebar: React.FC<SidebarProps> = ({ className = "" }) => {
   };
 
   const toggleCollapse = () => {
-    setIsCollapsed(!isCollapsed);
+    const newState = !isCollapsed;
+    setIsCollapsed(newState);
+    // 保存到 localStorage
+    localStorage.setItem(SIDEBAR_COLLAPSED_KEY, String(newState));
   };
 
   // 计算侧边栏宽度

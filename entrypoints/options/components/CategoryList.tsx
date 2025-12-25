@@ -115,7 +115,7 @@ const CategoryList = ({
             {category.id !== DEFAULT_CATEGORY_ID && (
               <button
                 onClick={() => onDelete(category.id)}
-                className="p-1.5 text-gray-500 dark:text-gray-400 hover:text-red-600 dark:hover:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/30 rounded transition-colors cursor-pointer"
+                className="p-1.5 text-red-600 dark:text-red-400 hover:text-red-700 dark:hover:text-red-300 hover:bg-red-50 dark:hover:bg-red-900/30 rounded transition-colors cursor-pointer"
                 title={t("delete")}
               >
                 <svg
