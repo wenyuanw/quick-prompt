@@ -24,6 +24,7 @@ interface PromptListProps {
   categories: Category[]
   onEdit: (id: string) => void
   onDelete: (id: string) => void
+  onDuplicate: (id: string) => void
   onReorder: (activeId: string, overId: string) => void
   searchTerm: string
   allPromptsCount: number
@@ -37,6 +38,7 @@ const PromptList = ({
   categories,
   onEdit,
   onDelete,
+  onDuplicate,
   onReorder,
   searchTerm,
   allPromptsCount,
@@ -138,6 +140,7 @@ const PromptList = ({
                 category={category}
                 onEdit={onEdit}
                 onDelete={onDelete}
+                onDuplicate={onDuplicate}
                 onToggleEnabled={onToggleEnabled}
                 onTogglePinned={onTogglePinned}
                 onCopy={handleCopy}

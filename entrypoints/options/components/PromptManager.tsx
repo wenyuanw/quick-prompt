@@ -251,6 +251,23 @@ const PromptManager = () => {
     await savePrompts(newPrompts);
   };
 
+  // 复制提示词
+  const duplicatePrompt = async (id: string) => {
+    const prompt = prompts.find((p) => p.id === id);
+    if (!prompt) return;
+
+    const newPrompt: PromptItem = {
+      ...prompt,
+      id: crypto.randomUUID(),
+      title: `${prompt.title} (${t('copyLabel')})`,
+      lastModified: new Date().toISOString(),
+      pinned: false, // 副本默认不置顶
+    };
+
+    const newPrompts = [newPrompt, ...prompts];
+    await savePrompts(newPrompts);
+  };
+
   // 添加拖拽排序处理函数
   const handleReorder = async (activeId: string, overId: string) => {
     const oldIndex = prompts.findIndex(p => p.id === activeId);
@@ -589,6 +606,7 @@ const PromptManager = () => {
           categories={categories}
           onEdit={startEdit}
           onDelete={deletePrompt}
+          onDuplicate={duplicatePrompt}
           onReorder={handleReorder}
           searchTerm={searchTerm}
           allPromptsCount={prompts.length}

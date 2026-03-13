@@ -1341,5 +1341,11 @@
   },
   "thumbnailUrlPlaceholder": {
     "message": "https://example.com/image.png"
+  },
+  "duplicate": {
+    "message": "Duplicate"
+  },
+  "copyLabel": {
+    "message": "Copy"
   }
 }

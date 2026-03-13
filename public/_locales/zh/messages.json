@@ -1341,5 +1341,11 @@
   },
   "thumbnailUrlPlaceholder": {
     "message": "https://example.com/image.png"
+  },
+  "duplicate": {
+    "message": "创建副本"
+  },
+  "copyLabel": {
+    "message": "副本"
   }
 }

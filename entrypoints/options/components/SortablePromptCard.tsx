@@ -9,6 +9,7 @@ interface SortablePromptCardProps {
   category?: Category
   onEdit: (id: string) => void
   onDelete: (id: string) => void
+  onDuplicate: (id: string) => void
   onToggleEnabled?: (id: string, enabled: boolean) => void
   onTogglePinned?: (id: string, pinned: boolean) => void
   onCopy: (content: string, id: string) => void
@@ -20,6 +21,7 @@ const SortablePromptCard: React.FC<SortablePromptCardProps> = ({
   category,
   onEdit,
   onDelete,
+  onDuplicate,
   onToggleEnabled,
   onTogglePinned,
   onCopy,
@@ -272,6 +274,16 @@ const SortablePromptCard: React.FC<SortablePromptCardProps> = ({
               <path strokeLinecap='round' strokeLinejoin='round' strokeWidth='2' d='M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z' />
             </svg>
           )}
+        </button>
+
+        <button
+          onClick={() => onDuplicate(prompt.id)}
+          className='p-1.5 text-sm rounded-md bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-1 focus:ring-blue-500 transition-colors duration-200 cursor-pointer'
+          title={t('duplicate')}
+        >
+          <svg className='w-4 h-4' fill='none' stroke='currentColor' viewBox='0 0 24 24'>
+            <path strokeLinecap='round' strokeLinejoin='round' strokeWidth='2' d='M9 13h6m-3-3v6m5 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z' />
+          </svg>
         </button>
 
         <button
