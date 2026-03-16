@@ -1347,5 +1347,14 @@
   },
   "copyLabel": {
     "message": "Copy"
+  },
+  "compactLayout": {
+    "message": "Compact"
+  },
+  "normalLayout": {
+    "message": "Normal layout"
+  },
+  "cardLayout": {
+    "message": "Card"
   }
 }

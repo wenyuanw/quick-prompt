@@ -31,6 +31,7 @@ interface PromptListProps {
   onToggleEnabled?: (id: string, enabled: boolean) => void
   onTogglePinned?: (id: string, pinned: boolean) => void
   selectedCategoryId?: string | null
+  compact?: boolean
 }
 
 const PromptList = ({
@@ -45,6 +46,7 @@ const PromptList = ({
   onToggleEnabled,
   onTogglePinned,
   selectedCategoryId,
+  compact = false,
 }: PromptListProps) => {
   const [copiedId, setCopiedId] = useState<string | null>(null)
   const [activeId, setActiveId] = useState<string | null>(null)
@@ -129,7 +131,7 @@ const PromptList = ({
         items={filteredPrompts.map(p => p.id)} 
         strategy={rectSortingStrategy}
       >
-        <div className='grid grid-cols-1 md:grid-cols-2 gap-4'>
+        <div className={compact ? 'flex flex-col gap-1.5' : 'grid grid-cols-1 md:grid-cols-2 gap-4'}>
           {filteredPrompts.map((prompt) => {
             const category = categoriesMap[prompt.categoryId]
             
@@ -145,6 +147,7 @@ const PromptList = ({
                 onTogglePinned={onTogglePinned}
                 onCopy={handleCopy}
                 copiedId={copiedId}
+                compact={compact}
               />
             )
           })}
@@ -164,6 +167,8 @@ const PromptList = ({
               onTogglePinned={() => {}}
               onCopy={() => {}}
               copiedId={null}
+              onDuplicate={() => {}}
+              compact={compact}
             />
           </div>
         ) : null}

@@ -1347,5 +1347,14 @@
   },
   "copyLabel": {
     "message": "副本"
+  },
+  "compactLayout": {
+    "message": "紧凑"
+  },
+  "normalLayout": {
+    "message": "标准布局"
+  },
+  "cardLayout": {
+    "message": "卡片"
   }
 }

@@ -35,6 +35,15 @@ const PromptManager = () => {
   const [isConfirmModalOpen, setIsConfirmModalOpen] = useState(false);
   const [promptToDelete, setPromptToDelete] = useState<string | null>(null);
 
+  // 布局模式
+  const [compactLayout, setCompactLayout] = useState<boolean>(() => {
+    try {
+      return localStorage.getItem('promptLayoutCompact') === 'true'
+    } catch {
+      return false
+    }
+  });
+
   // 添加分类相关状态
   const [categories, setCategories] = useState<Category[]>([]);
   const [selectedCategoryId, setSelectedCategoryId] = useState<string | null>(null);
@@ -233,6 +242,14 @@ const PromptManager = () => {
   const closeModal = () => {
     setIsModalOpen(false);
     setInitialContent(null);
+  };
+
+  const toggleCompactLayout = () => {
+    setCompactLayout(prev => {
+      const next = !prev
+      try { localStorage.setItem('promptLayoutCompact', String(next)) } catch {}
+      return next
+    })
   };
 
   // 添加切换启用状态的函数
@@ -534,6 +551,38 @@ const PromptManager = () => {
                 </div>
               </div>
 
+              {/* 布局切换 Tab */}
+              <div className="flex items-center bg-gray-100 dark:bg-gray-700 rounded-lg p-0.5">
+                <button
+                  onClick={() => { if (compactLayout) toggleCompactLayout() }}
+                  className={`inline-flex items-center px-2 py-1 text-xs font-medium rounded-md transition-all cursor-pointer ${
+                    !compactLayout
+                      ? 'bg-white dark:bg-gray-600 text-gray-900 dark:text-gray-100 shadow-sm'
+                      : 'text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300'
+                  }`}
+                  title={t('normalLayout')}
+                >
+                  <svg className="w-3.5 h-3.5 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 5a1 1 0 011-1h4a1 1 0 011 1v4a1 1 0 01-1 1H5a1 1 0 01-1-1V5zm10 0a1 1 0 011-1h4a1 1 0 011 1v4a1 1 0 01-1 1h-4a1 1 0 01-1-1V5zM4 15a1 1 0 011-1h4a1 1 0 011 1v4a1 1 0 01-1 1H5a1 1 0 01-1-1v-4zm10 0a1 1 0 011-1h4a1 1 0 011 1v4a1 1 0 01-1 1h-4a1 1 0 01-1-1v-4z" />
+                  </svg>
+                  {t('cardLayout')}
+                </button>
+                <button
+                  onClick={() => { if (!compactLayout) toggleCompactLayout() }}
+                  className={`inline-flex items-center px-2 py-1 text-xs font-medium rounded-md transition-all cursor-pointer ${
+                    compactLayout
+                      ? 'bg-white dark:bg-gray-600 text-gray-900 dark:text-gray-100 shadow-sm'
+                      : 'text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300'
+                  }`}
+                  title={t('compactLayout')}
+                >
+                  <svg className="w-3.5 h-3.5 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 6h16M4 12h16M4 18h16" />
+                  </svg>
+                  {t('compactLayout')}
+                </button>
+              </div>
+
               <div className="w-px h-6 bg-gray-200 dark:bg-gray-700 hidden sm:block"></div>
 
               {/* 操作按钮组 */}
@@ -613,6 +662,7 @@ const PromptManager = () => {
           onToggleEnabled={togglePromptEnabled}
           onTogglePinned={togglePromptPinned}
           selectedCategoryId={selectedCategoryId}
+          compact={compactLayout}
         />
 
         {/* 无结果提示 */}

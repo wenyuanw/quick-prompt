@@ -14,6 +14,7 @@ interface SortablePromptCardProps {
   onTogglePinned?: (id: string, pinned: boolean) => void
   onCopy: (content: string, id: string) => void
   copiedId: string | null
+  compact?: boolean
 }
 
 const SortablePromptCard: React.FC<SortablePromptCardProps> = ({
@@ -26,6 +27,7 @@ const SortablePromptCard: React.FC<SortablePromptCardProps> = ({
   onTogglePinned,
   onCopy,
   copiedId,
+  compact = false,
 }) => {
   const {
     attributes,
@@ -86,6 +88,155 @@ const SortablePromptCard: React.FC<SortablePromptCardProps> = ({
       console.error('格式化时间出错:', err, 'lastModified:', lastModified)
       return t('invalidTime')
     }
+  }
+
+  if (compact) {
+    return (
+      <div
+        ref={setNodeRef}
+        style={style}
+        className={`bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-600 rounded-lg overflow-hidden shadow-sm hover:shadow-md transition-all duration-200 ${
+          isDragging ? 'shadow-lg scale-105 ring-2 ring-blue-500 ring-opacity-50' : ''
+        }`}
+      >
+        <div className={`px-3 py-2 flex items-center gap-2 ${
+          prompt.pinned
+            ? 'bg-gradient-to-r from-amber-50 to-orange-50 dark:from-amber-900/20 dark:to-orange-900/20'
+            : ''
+        }`}>
+          {/* 拖拽手柄 */}
+          <div
+            {...attributes}
+            {...listeners}
+            className="w-6 h-6 cursor-grab active:cursor-grabbing flex items-center justify-center rounded bg-white dark:bg-gray-800 hover:bg-emerald-50 dark:hover:bg-emerald-900/30 border border-gray-300 dark:border-gray-600 hover:border-emerald-400 dark:hover:border-emerald-500 shadow-sm transition-all duration-200 group flex-shrink-0"
+            title={t('dragToReorder') || '拖拽重新排序'}
+          >
+            <svg className="w-3 h-3 text-gray-500 dark:text-gray-400 group-hover:text-emerald-600 dark:group-hover:text-emerald-400 transition-colors duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M7 16V4m0 0L3 8m4-4l4 4m6 0v12m0 0l4-4m-4 4l-4-4"/>
+            </svg>
+          </div>
+
+          {prompt.pinned && (
+            <svg className='w-3.5 h-3.5 text-amber-600 dark:text-amber-400 flex-shrink-0' fill='none' stroke='currentColor' viewBox='0 0 24 24'>
+              <path strokeLinecap='round' strokeLinejoin='round' strokeWidth='2' d='M5 15l7-7 7 7'/>
+            </svg>
+          )}
+
+          {/* 启用状态 */}
+          {onToggleEnabled && (
+            <label className='relative inline-flex items-center cursor-pointer flex-shrink-0'>
+              <input
+                type='checkbox'
+                checked={prompt.enabled !== undefined ? prompt.enabled : true}
+                onChange={(e) => onToggleEnabled(prompt.id, e.target.checked)}
+                className='sr-only peer'
+              />
+              <div className='relative w-7 h-4 bg-gray-200 dark:bg-gray-600 peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-blue-300 dark:peer-focus:ring-blue-600 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[""] after:absolute after:top-1/2 after:right-1/2 after:-translate-y-1/2 after:bg-white after:border-gray-300 dark:after:border-gray-600 after:border after:rounded-full after:h-3 after:w-3 after:transition-all peer-checked:bg-blue-600'></div>
+            </label>
+          )}
+
+          {/* 标题 + 内容预览 */}
+          <div
+            className='flex-1 min-w-0 flex items-center gap-2 cursor-pointer'
+            title={`${prompt.content}\n\n${t('clickToCopy') || '点击复制内容'}`}
+            onClick={() => onCopy(prompt.content, prompt.id)}
+          >
+            <span className='text-sm font-medium text-gray-800 dark:text-gray-200 truncate flex-shrink-0 max-w-[40%] hover:text-blue-600 dark:hover:text-blue-400 transition-colors'>
+              {prompt.title}
+            </span>
+            <span className='text-xs text-gray-400 dark:text-gray-500 truncate'>
+              {prompt.content}
+            </span>
+          </div>
+
+          {/* 分类 */}
+          {category && (
+            <div className='flex items-center flex-shrink-0'>
+              <div
+                className='w-2.5 h-2.5 rounded-full mr-1'
+                style={{ backgroundColor: category.color || '#6366f1' }}
+              />
+              <span className='text-xs text-gray-500 dark:text-gray-400'>{category.name}</span>
+            </div>
+          )}
+
+          {/* 操作按钮 */}
+          <div className='flex items-center gap-1 flex-shrink-0'>
+            {onTogglePinned && (
+              <button
+                onClick={() => onTogglePinned(prompt.id, !prompt.pinned)}
+                className={`p-1 text-sm rounded border transition-colors duration-200 cursor-pointer ${
+                  prompt.pinned
+                    ? 'bg-amber-100 dark:bg-amber-900/50 border-amber-300 dark:border-amber-600 text-amber-700 dark:text-amber-400 hover:bg-amber-200 dark:hover:bg-amber-900/70'
+                    : 'bg-white dark:bg-gray-800 border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700'
+                } focus:outline-none`}
+                title={prompt.pinned ? t('unpinPrompt') : t('pinPrompt')}
+              >
+                {prompt.pinned ? (
+                  <svg className='w-3.5 h-3.5' fill='none' stroke='currentColor' viewBox='0 0 24 24'>
+                    <path strokeLinecap='round' strokeLinejoin='round' strokeWidth='2' d='M19 9l-7 7-7-7'/>
+                  </svg>
+                ) : (
+                  <svg className='w-3.5 h-3.5' fill='none' stroke='currentColor' viewBox='0 0 24 24'>
+                    <path strokeLinecap='round' strokeLinejoin='round' strokeWidth='2' d='M5 15l7-7 7 7'/>
+                  </svg>
+                )}
+              </button>
+            )}
+
+            <button
+              onClick={() => onCopy(prompt.content, prompt.id)}
+              className={`p-1 text-sm rounded border transition-colors duration-200 cursor-pointer ${
+                copiedId === prompt.id
+                  ? 'bg-green-100 dark:bg-green-900/50 border-green-300 dark:border-green-600 text-green-700 dark:text-green-400'
+                  : 'bg-white dark:bg-gray-800 border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700'
+              } focus:outline-none`}
+              title={copiedId === prompt.id ? (t('copied') || '已复制') : (t('copy') || '复制')}
+            >
+              {copiedId === prompt.id ? (
+                <svg className='w-3.5 h-3.5' fill='none' stroke='currentColor' viewBox='0 0 24 24'>
+                  <path strokeLinecap='round' strokeLinejoin='round' strokeWidth='2' d='M5 13l4 4L19 7' />
+                </svg>
+              ) : (
+                <svg className='w-3.5 h-3.5' fill='none' stroke='currentColor' viewBox='0 0 24 24'>
+                  <path strokeLinecap='round' strokeLinejoin='round' strokeWidth='2' d='M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z' />
+                </svg>
+              )}
+            </button>
+
+            <button
+              onClick={() => onDuplicate(prompt.id)}
+              className='p-1 text-sm rounded bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700 focus:outline-none transition-colors duration-200 cursor-pointer'
+              title={t('duplicate')}
+            >
+              <svg className='w-3.5 h-3.5' fill='none' stroke='currentColor' viewBox='0 0 24 24'>
+                <path strokeLinecap='round' strokeLinejoin='round' strokeWidth='2' d='M9 13h6m-3-3v6m5 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z' />
+              </svg>
+            </button>
+
+            <button
+              onClick={() => onEdit(prompt.id)}
+              className='p-1 text-sm rounded bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700 focus:outline-none transition-colors duration-200 cursor-pointer'
+              title={t('edit')}
+            >
+              <svg className='w-3.5 h-3.5' fill='none' stroke='currentColor' viewBox='0 0 24 24'>
+                <path strokeLinecap='round' strokeLinejoin='round' strokeWidth='2' d='M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z' />
+              </svg>
+            </button>
+
+            <button
+              onClick={() => onDelete(prompt.id)}
+              className='p-1 text-sm rounded bg-white dark:bg-gray-800 border border-red-300 dark:border-red-600 text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 focus:outline-none transition-colors duration-200 cursor-pointer'
+              title={t('delete')}
+            >
+              <svg className='w-3.5 h-3.5' fill='none' stroke='currentColor' viewBox='0 0 24 24'>
+                <path strokeLinecap='round' strokeLinejoin='round' strokeWidth='2' d='M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16' />
+              </svg>
+            </button>
+          </div>
+        </div>
+      </div>
+    )
   }
 
   return (
