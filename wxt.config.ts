@@ -44,6 +44,9 @@ export default defineConfig({
       browser_specific_settings: {
         gecko: {
           id: import.meta.env.WXT_FIREFOX_EXTENSION_ID,
+          data_collection_permissions: {
+            required: ["none"],
+          },
         },
       },
       commands: {
