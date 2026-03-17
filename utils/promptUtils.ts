@@ -34,19 +34,62 @@ export function generatePromptId(title: string, content: string, tags?: string[]
 }
 
 /**
- * 排序提示词列表
- * 置顶项目优先，然后按 sortOrder 升序排序
+ * 排序方式枚举
  */
-export const sortPrompts = (items: PromptItem[]): PromptItem[] => {
+export type SortType = 'custom' | 'title-asc' | 'title-desc' | 'created-newest' | 'created-oldest' | 'modified-newest' | 'modified-oldest' | 'enabled-first' | 'disabled-first'
+
+/**
+ * 排序提示词列表
+ * 置顶项目优先，然后按指定方式排序
+ */
+export const sortPrompts = (items: PromptItem[], sortType: SortType = 'custom'): PromptItem[] => {
   return [...items].sort((a, b) => {
     // 置顶项目始终在前面
     if (a.pinned && !b.pinned) return -1
     if (!a.pinned && b.pinned) return 1
 
-    // 在同一置顶状态下，按照 sortOrder 排序
-    const aOrder = a.sortOrder !== undefined ? a.sortOrder : 999999
-    const bOrder = b.sortOrder !== undefined ? b.sortOrder : 999999
-    return aOrder - bOrder
+    // 在同一置顶状态下，按照指定方式排序
+    switch (sortType) {
+      case 'title-asc':
+        return a.title.localeCompare(b.title, 'zh-CN')
+
+      case 'title-desc':
+        return b.title.localeCompare(a.title, 'zh-CN')
+
+      case 'created-newest':
+        // 假设 id 包含时间信息，或使用 lastModified 作为创建时间的近似
+        return (b.lastModified || '').localeCompare(a.lastModified || '')
+
+      case 'created-oldest':
+        return (a.lastModified || '').localeCompare(b.lastModified || '')
+
+      case 'modified-newest':
+        return (b.lastModified || '').localeCompare(a.lastModified || '')
+
+      case 'modified-oldest':
+        return (a.lastModified || '').localeCompare(b.lastModified || '')
+
+      case 'enabled-first':
+        // 启用的在前，停用的在后
+        if (a.enabled && !b.enabled) return -1
+        if (!a.enabled && b.enabled) return 1
+        // 同样启用状态下，按修改时间排序
+        return (b.lastModified || '').localeCompare(a.lastModified || '')
+
+      case 'disabled-first':
+        // 停用的在前，启用的在后
+        if (!a.enabled && b.enabled) return -1
+        if (a.enabled && !b.enabled) return 1
+        // 同样启用状态下，按修改时间排序
+        return (b.lastModified || '').localeCompare(a.lastModified || '')
+
+      case 'custom':
+      default:
+        // 自定义排序：按照 sortOrder 排序
+        const aOrder = a.sortOrder !== undefined ? a.sortOrder : 999999
+        const bOrder = b.sortOrder !== undefined ? b.sortOrder : 999999
+        return aOrder - bOrder
+    }
   })
 }
 

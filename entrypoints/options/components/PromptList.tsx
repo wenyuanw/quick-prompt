@@ -16,6 +16,7 @@ import {
   rectSortingStrategy,
 } from '@dnd-kit/sortable'
 import type { PromptItem, Category } from '@/utils/types'
+import type { SortType } from '@/utils/promptUtils'
 import { t } from '../../../utils/i18n'
 import SortablePromptCard from './SortablePromptCard'
 
@@ -32,6 +33,7 @@ interface PromptListProps {
   onTogglePinned?: (id: string, pinned: boolean) => void
   selectedCategoryId?: string | null
   compact?: boolean
+  sortType?: SortType
 }
 
 const PromptList = ({
@@ -47,9 +49,13 @@ const PromptList = ({
   onTogglePinned,
   selectedCategoryId,
   compact = false,
+  sortType = 'custom',
 }: PromptListProps) => {
   const [copiedId, setCopiedId] = useState<string | null>(null)
   const [activeId, setActiveId] = useState<string | null>(null)
+
+  // 是否启用拖拽排序（仅在自定义排序模式下启用）
+  const isDragEnabled = sortType === 'custom'
 
   // 创建分类映射表
   const categoriesMap = useMemo(() => {
@@ -80,11 +86,12 @@ const PromptList = ({
   // 拖拽结束处理
   const handleDragEnd = (event: DragEndEvent) => {
     const { active, over } = event
-    
-    if (active.id !== over?.id && over?.id) {
+
+    // 只在自定义排序模式下允许拖拽排序
+    if (isDragEnabled && active.id !== over?.id && over?.id) {
       onReorder(active.id as string, over.id as string)
     }
-    
+
     setActiveId(null)
   }
 
@@ -120,6 +127,34 @@ const PromptList = ({
   // 获取当前被拖拽的提示词
   const activePrompt = activeId ? filteredPrompts.find(prompt => prompt.id === activeId) : null
 
+  // 如果不是自定义排序模式，直接渲染列表（不启用拖拽）
+  if (!isDragEnabled) {
+    return (
+      <div className={compact ? 'flex flex-col gap-1.5' : 'grid grid-cols-1 md:grid-cols-2 gap-4'}>
+        {filteredPrompts.map((prompt) => {
+          const category = categoriesMap[prompt.categoryId]
+
+          return (
+            <SortablePromptCard
+              key={prompt.id}
+              prompt={prompt}
+              category={category}
+              onEdit={onEdit}
+              onDelete={onDelete}
+              onDuplicate={onDuplicate}
+              onToggleEnabled={onToggleEnabled}
+              onTogglePinned={onTogglePinned}
+              onCopy={handleCopy}
+              copiedId={copiedId}
+              compact={compact}
+              isDragEnabled={false}
+            />
+          )
+        })}
+      </div>
+    )
+  }
+
   return (
     <DndContext
       sensors={sensors}
@@ -134,7 +169,7 @@ const PromptList = ({
         <div className={compact ? 'flex flex-col gap-1.5' : 'grid grid-cols-1 md:grid-cols-2 gap-4'}>
           {filteredPrompts.map((prompt) => {
             const category = categoriesMap[prompt.categoryId]
-            
+
             return (
               <SortablePromptCard
                 key={prompt.id}
@@ -148,6 +183,7 @@ const PromptList = ({
                 onCopy={handleCopy}
                 copiedId={copiedId}
                 compact={compact}
+                isDragEnabled={true}
               />
             )
           })}
@@ -169,6 +205,7 @@ const PromptList = ({
               copiedId={null}
               onDuplicate={() => {}}
               compact={compact}
+              isDragEnabled={true}
             />
           </div>
         ) : null}

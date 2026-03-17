@@ -15,6 +15,7 @@ interface SortablePromptCardProps {
   onCopy: (content: string, id: string) => void
   copiedId: string | null
   compact?: boolean
+  isDragEnabled?: boolean
 }
 
 const SortablePromptCard: React.FC<SortablePromptCardProps> = ({
@@ -28,6 +29,7 @@ const SortablePromptCard: React.FC<SortablePromptCardProps> = ({
   onCopy,
   copiedId,
   compact = false,
+  isDragEnabled = true,
 }) => {
   const {
     attributes,
@@ -104,17 +106,19 @@ const SortablePromptCard: React.FC<SortablePromptCardProps> = ({
             ? 'bg-gradient-to-r from-amber-50 to-orange-50 dark:from-amber-900/20 dark:to-orange-900/20'
             : ''
         }`}>
-          {/* 拖拽手柄 */}
-          <div
-            {...attributes}
-            {...listeners}
-            className="w-6 h-6 cursor-grab active:cursor-grabbing flex items-center justify-center rounded bg-white dark:bg-gray-800 hover:bg-emerald-50 dark:hover:bg-emerald-900/30 border border-gray-300 dark:border-gray-600 hover:border-emerald-400 dark:hover:border-emerald-500 shadow-sm transition-all duration-200 group flex-shrink-0"
-            title={t('dragToReorder') || '拖拽重新排序'}
-          >
-            <svg className="w-3 h-3 text-gray-500 dark:text-gray-400 group-hover:text-emerald-600 dark:group-hover:text-emerald-400 transition-colors duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M7 16V4m0 0L3 8m4-4l4 4m6 0v12m0 0l4-4m-4 4l-4-4"/>
-            </svg>
-          </div>
+          {/* 拖拽手柄 - 仅在自定义排序模式下显示 */}
+          {isDragEnabled && (
+            <div
+              {...attributes}
+              {...listeners}
+              className="w-6 h-6 cursor-grab active:cursor-grabbing flex items-center justify-center rounded bg-white dark:bg-gray-800 hover:bg-emerald-50 dark:hover:bg-emerald-900/30 border border-gray-300 dark:border-gray-600 hover:border-emerald-400 dark:hover:border-emerald-500 shadow-sm transition-all duration-200 group flex-shrink-0"
+              title={t('dragToReorder') || '拖拽重新排序'}
+            >
+              <svg className="w-3 h-3 text-gray-500 dark:text-gray-400 group-hover:text-emerald-600 dark:group-hover:text-emerald-400 transition-colors duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M7 16V4m0 0L3 8m4-4l4 4m6 0v12m0 0l4-4m-4 4l-4-4"/>
+              </svg>
+            </div>
+          )}
 
           {prompt.pinned && (
             <svg className='w-3.5 h-3.5 text-amber-600 dark:text-amber-400 flex-shrink-0' fill='none' stroke='currentColor' viewBox='0 0 24 24'>
@@ -275,19 +279,21 @@ const SortablePromptCard: React.FC<SortablePromptCardProps> = ({
                 <span className='text-xs text-gray-600 dark:text-gray-300 font-medium'>{category.name}</span>
               </div>
             )}
-            
-            {/* 拖拽手柄 */}
-            <div
-              {...attributes}
-              {...listeners}
-              className="w-7 h-7 cursor-grab active:cursor-grabbing flex items-center justify-center rounded-md bg-white dark:bg-gray-800 hover:bg-emerald-50 dark:hover:bg-emerald-900/30 border border-gray-300 dark:border-gray-600 hover:border-emerald-400 dark:hover:border-emerald-500 shadow-sm hover:shadow-md transition-all duration-200 group"
-              title={t('dragToReorder') || '拖拽重新排序'}
-            >
-              {/* 上下箭头排序图标 - 直观表示排序功能 */}
-              <svg className="w-3.5 h-3.5 text-gray-500 dark:text-gray-400 group-hover:text-emerald-600 dark:group-hover:text-emerald-400 transition-colors duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M7 16V4m0 0L3 8m4-4l4 4m6 0v12m0 0l4-4m-4 4l-4-4"/>
-              </svg>
-            </div>
+
+            {/* 拖拽手柄 - 仅在自定义排序模式下显示 */}
+            {isDragEnabled && (
+              <div
+                {...attributes}
+                {...listeners}
+                className="w-7 h-7 cursor-grab active:cursor-grabbing flex items-center justify-center rounded-md bg-white dark:bg-gray-800 hover:bg-emerald-50 dark:hover:bg-emerald-900/30 border border-gray-300 dark:border-gray-600 hover:border-emerald-400 dark:hover:border-emerald-500 shadow-sm hover:shadow-md transition-all duration-200 group"
+                title={t('dragToReorder') || '拖拽重新排序'}
+              >
+                {/* 上下箭头排序图标 - 直观表示排序功能 */}
+                <svg className="w-3.5 h-3.5 text-gray-500 dark:text-gray-400 group-hover:text-emerald-600 dark:group-hover:text-emerald-400 transition-colors duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M7 16V4m0 0L3 8m4-4l4 4m6 0v12m0 0l4-4m-4 4l-4-4"/>
+                </svg>
+              </div>
+            )}
           </div>
         </div>
       </div>

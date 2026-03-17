@@ -16,6 +16,7 @@ import {
   mergePrompts,
   PromptValidationException,
   PROMPT_VALIDATION_ERRORS,
+  SortType,
 } from "@/utils/promptUtils";
 import { t } from "../../../utils/i18n";
 
@@ -47,6 +48,15 @@ const PromptManager = () => {
   // 添加分类相关状态
   const [categories, setCategories] = useState<Category[]>([]);
   const [selectedCategoryId, setSelectedCategoryId] = useState<string | null>(null);
+
+  // 排序方式
+  const [sortType, setSortType] = useState<SortType>(() => {
+    try {
+      return (localStorage.getItem('promptSortType') as SortType) || 'custom'
+    } catch {
+      return 'custom'
+    }
+  });
 
   // 从URL获取查询参数
   useEffect(() => {
@@ -100,8 +110,8 @@ const PromptManager = () => {
   // 使用 useMemo 计算筛选和排序后的提示词
   const filteredPrompts = useMemo(() => {
     const filtered = filterPrompts(prompts, { searchTerm, categoryId: selectedCategoryId });
-    return sortPrompts(filtered);
-  }, [prompts, searchTerm, selectedCategoryId]);
+    return sortPrompts(filtered, sortType);
+  }, [prompts, searchTerm, selectedCategoryId, sortType]);
 
   // Save prompts to storage
   const savePrompts = async (newPrompts: PromptItem[]) => {
@@ -250,6 +260,12 @@ const PromptManager = () => {
       try { localStorage.setItem('promptLayoutCompact', String(next)) } catch {}
       return next
     })
+  };
+
+  // 切换排序方式
+  const handleSortChange = (newSortType: SortType) => {
+    setSortType(newSortType)
+    try { localStorage.setItem('promptSortType', newSortType) } catch {}
   };
 
   // 添加切换启用状态的函数
@@ -551,6 +567,29 @@ const PromptManager = () => {
                 </div>
               </div>
 
+              {/* 排序方式 */}
+              <div className="relative">
+                <select
+                  value={sortType}
+                  onChange={(e) => handleSortChange(e.target.value as SortType)}
+                  className="block w-full pl-3 pr-7 py-1.5 text-sm bg-white/50 dark:bg-gray-800/50 border border-gray-200 dark:border-gray-600 rounded-lg text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-transparent transition-all appearance-none cursor-pointer"
+                  title={t('sortBy')}
+                >
+                  <option value="custom">{t('sortByCustom')}</option>
+                  <option value="title-asc">{t('sortByTitleAsc')}</option>
+                  <option value="title-desc">{t('sortByTitleDesc')}</option>
+                  <option value="modified-newest">{t('sortByNewest')}</option>
+                  <option value="modified-oldest">{t('sortByOldest')}</option>
+                  <option value="enabled-first">{t('sortByEnabledFirst')}</option>
+                  <option value="disabled-first">{t('sortByDisabledFirst')}</option>
+                </select>
+                <div className="absolute inset-y-0 right-0 flex items-center pr-2 pointer-events-none">
+                  <svg className="h-3.5 w-3.5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7" />
+                  </svg>
+                </div>
+              </div>
+
               {/* 布局切换 Tab */}
               <div className="flex items-center bg-gray-100 dark:bg-gray-700 rounded-lg p-0.5">
                 <button
@@ -663,6 +702,7 @@ const PromptManager = () => {
           onTogglePinned={togglePromptPinned}
           selectedCategoryId={selectedCategoryId}
           compact={compactLayout}
+          sortType={sortType}
         />
 
         {/* 无结果提示 */}

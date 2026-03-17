@@ -1356,5 +1356,38 @@
   },
   "cardLayout": {
     "message": "卡片"
+  },
+  "sortBy": {
+    "message": "排序方式"
+  },
+  "sortByCustom": {
+    "message": "自定义排序"
+  },
+  "sortByTitle": {
+    "message": "按标题"
+  },
+  "sortByTitleAsc": {
+    "message": "标题 A-Z"
+  },
+  "sortByTitleDesc": {
+    "message": "标题 Z-A"
+  },
+  "sortByCreatedTime": {
+    "message": "按创建时间"
+  },
+  "sortByModifiedTime": {
+    "message": "按修改时间"
+  },
+  "sortByNewest": {
+    "message": "最新优先"
+  },
+  "sortByOldest": {
+    "message": "最旧优先"
+  },
+  "sortByEnabledFirst": {
+    "message": "启用优先"
+  },
+  "sortByDisabledFirst": {
+    "message": "停用优先"
   }
 }

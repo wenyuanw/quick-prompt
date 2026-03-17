@@ -1356,5 +1356,38 @@
   },
   "cardLayout": {
     "message": "Card"
+  },
+  "sortBy": {
+    "message": "Sort by"
+  },
+  "sortByCustom": {
+    "message": "Custom order"
+  },
+  "sortByTitle": {
+    "message": "By title"
+  },
+  "sortByTitleAsc": {
+    "message": "Title A-Z"
+  },
+  "sortByTitleDesc": {
+    "message": "Title Z-A"
+  },
+  "sortByCreatedTime": {
+    "message": "By created time"
+  },
+  "sortByModifiedTime": {
+    "message": "By modified time"
+  },
+  "sortByNewest": {
+    "message": "Newest first"
+  },
+  "sortByOldest": {
+    "message": "Oldest first"
+  },
+  "sortByEnabledFirst": {
+    "message": "Enabled first"
+  },
+  "sortByDisabledFirst": {
+    "message": "Disabled first"
   }
 }
