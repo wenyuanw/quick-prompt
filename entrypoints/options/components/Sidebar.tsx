@@ -333,9 +333,14 @@ const Sidebar: React.FC<SidebarProps> = ({ className = "" }) => {
               </NavLink>
             </div>
             {(!isCollapsed || isMobile) && (
-              <div className="text-[10px] text-center text-gray-400 dark:text-gray-500">
+              <a
+                href="https://quick-prompt.wenyuanw.me/"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="block text-[10px] text-center text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300 transition-colors"
+              >
                 <p>© {new Date().getFullYear()} Quick Prompt</p>
-              </div>
+              </a>
             )}
           </div>
         </div>
