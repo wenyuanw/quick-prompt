@@ -23,10 +23,6 @@ A powerful browser extension focused on prompt management and quick input. Helps
 - 🔍 Search and filter prompts functionality
 - 🌙 Automatically adapt to system light/dark theme
 
-## ⚠️ Known Issues
-
-- On Doubao (doubao.com) website, when using `/p` to trigger the prompt selector, some input fields may have an issue where the `/p` trigger text is not properly cleared. But don't worry! My trusty partner Cursor and I are working day and night to find a solution and fix it ASAP!
-
 ## 🚀 How to Use
 
 1. **Quick Trigger**: Type `/p` in any text input field on any webpage to trigger the prompt selector
