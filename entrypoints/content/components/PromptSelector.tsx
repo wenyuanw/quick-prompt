@@ -481,6 +481,12 @@ const PromptSelector: React.FC<PromptSelectorProps> = ({
                 onChange={(e) => {
                   setSearchTerm(e.target.value);
                 }}
+                onKeyDown={(e) => {
+                  e.stopPropagation();
+                }}
+                onBlur={(e) => {
+                  e.stopPropagation();
+                }}
               />
               <select
                 value={selectedCategoryId || ""}
@@ -646,6 +652,14 @@ export function showPromptSelector(
     `
   );
 
+  // 阻止容器获得焦点（焦点应该在内部 input 上）
+  container.setAttribute("tabindex", "-1");
+
+  // 阻止容器的 focus 事件冒泡到页面，防止网站抢夺焦点
+  container.addEventListener("focus", (e) => {
+    e.stopPropagation();
+  }, true);
+
   // 创建shadow DOM来隔离样式
   const shadowRoot = container.attachShadow({ mode: "open" });
 
@@ -696,29 +710,54 @@ export function showPromptSelector(
 
     // 在组件挂载时设置焦点到搜索框
     useEffect(() => {
-      // 延迟聚焦，确保元素已挂载
-      setTimeout(() => {
-        const searchInput = shadowRoot.querySelector(
-          ".qp-search-input"
-        ) as HTMLInputElement;
-        if (searchInput) {
-          searchInput.focus();
-        }
-      }, 100);
-    }, []);
+      const searchInput = shadowRoot.querySelector(
+        ".qp-search-input"
+      ) as HTMLInputElement;
 
-    // 添加键盘事件处理
-    useEffect(() => {
-      const handleKeyDown = (e: KeyboardEvent) => {
-        // 阻止事件冒泡，防止宿主页面接收到这些键盘事件
-        e.stopPropagation();
+      // 聚焦搜索框，但只在焦点尚未移动到其他元素时
+      const focusInputIfNotMoved = () => {
+        if (searchInput) {
+          // 只有当焦点还未移动到 shadow DOM 内其他元素时才聚焦
+          const activeElement = shadowRoot.activeElement;
+          if (!activeElement || activeElement === searchInput) {
+            searchInput.focus();
+          }
+        }
       };
 
-      // 使用捕获阶段以确保我们先接收到事件
-      document.addEventListener("keydown", handleKeyDown, true);
+      // 立即尝试
+      focusInputIfNotMoved();
+      // 延迟再试一次，确保元素已挂载
+      const timer1 = setTimeout(focusInputIfNotMoved, 50);
+      const timer2 = setTimeout(focusInputIfNotMoved, 100);
+
+      // 焦点保护：当焦点被外部抢走时恢复
+      // 只在焦点移到 shadow DOM 外部时才恢复
+      const handleFocusOut: EventListener = () => {
+        // 延迟检查，让焦点有时间稳定
+        setTimeout(() => {
+          // 如果 modal 还存在，且焦点不在 shadow DOM 内
+          if (searchInput?.isConnected) {
+            // 检查页面是否还有焦点（排除浏览器地址栏、DevTools 等情况）
+            if (!document.hasFocus()) {
+              return;
+            }
+            const activeElement = shadowRoot.activeElement;
+            if (!activeElement) {
+              // 焦点不在 shadow DOM 内，恢复焦点
+              searchInput.focus();
+            }
+          }
+        }, 0);
+      };
+
+      // 监听 shadowRoot 的 focusout 事件
+      shadowRoot.addEventListener("focusout", handleFocusOut, true);
 
       return () => {
-        document.removeEventListener("keydown", handleKeyDown, true);
+        clearTimeout(timer1);
+        clearTimeout(timer2);
+        shadowRoot.removeEventListener("focusout", handleFocusOut, true);
       };
     }, []);
 
