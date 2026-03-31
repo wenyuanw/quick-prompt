@@ -331,6 +331,28 @@ const Sidebar: React.FC<SidebarProps> = ({ className = "" }) => {
                 </svg>
                 {(!isCollapsed || isMobile) && t('googleAuth')}
               </NavLink>
+              <NavLink
+                to="/integrations/gitee-gist"
+                onClick={closeSidebar}
+                className={({ isActive }) =>
+                  `group flex items-center ${isCollapsed && !isMobile ? 'justify-center px-2' : 'px-2.5'} py-1.5 text-xs rounded-lg transition-all duration-200 ${
+                    isActive
+                      ? "bg-blue-50 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300"
+                      : "text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-700 hover:text-gray-800 dark:hover:text-gray-200"
+                  }`
+                }
+                title={isCollapsed && !isMobile ? t('giteeGistSync') : undefined}
+              >
+                <svg
+                  className={`flex-shrink-0 w-4 h-4 ${isCollapsed && !isMobile ? '' : 'mr-2'}`}
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4" />
+                </svg>
+                {(!isCollapsed || isMobile) && t('giteeGistSync')}
+              </NavLink>
             </div>
             {(!isCollapsed || isMobile) && (
               <a

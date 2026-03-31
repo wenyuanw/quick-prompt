@@ -5,6 +5,7 @@ import PromptManager from "./components/PromptManager";
 import CategoryManager from "./components/CategoryManager";
 import NotionIntegrationPage from "./components/NotionIntegrationPage";
 import GoogleAuthPage from "./components/GoogleAuthPage";
+import GistIntegrationPage from "./components/GistIntegrationPage";
 import GlobalSettings from "./components/GlobalSettings";
 import ToastContainer from "./components/ToastContainer";
 import "./App.css";
@@ -99,6 +100,7 @@ const App = () => {
                 <Route path="/settings" element={<GlobalSettings />} />
                 <Route path="/integrations/notion" element={<NotionIntegrationPage />} />
                 <Route path="/integrations/google" element={<GoogleAuthPage />} />
+                <Route path="/integrations/gitee-gist" element={<GistIntegrationPage />} />
               </Routes>
 
               {/* 回到顶部按钮 */}

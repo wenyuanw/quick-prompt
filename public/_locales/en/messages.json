@@ -1389,5 +1389,107 @@
   },
   "sortByDisabledFirst": {
     "message": "Disabled first"
+  },
+  "giteeGistIntegration": {
+    "message": "Gitee Gist Sync"
+  },
+  "giteeGistIntegrationDescription": {
+    "message": "Sync your prompts to Gitee Gist (code snippets) for backup and cross-device sharing."
+  },
+  "giteeGistSync": {
+    "message": "Gitee Gist"
+  },
+  "giteeGistToken": {
+    "message": "Gitee Personal Access Token"
+  },
+  "giteeGistTokenPlaceholder": {
+    "message": "Enter your Gitee personal access token"
+  },
+  "giteeGistTokenHelp": {
+    "message": "Generate a token at Gitee Settings > Security > Personal Access Tokens with gists scope."
+  },
+  "giteeGistId": {
+    "message": "Gist ID (Optional)"
+  },
+  "giteeGistIdPlaceholder": {
+    "message": "Leave empty to auto-create or auto-discover"
+  },
+  "giteeGistIdHelp": {
+    "message": "If left empty, will auto-discover existing backup or create a new Gist."
+  },
+  "gistAutoSyncEnabled": {
+    "message": "Enable Auto Sync"
+  },
+  "gistAutoSyncDescription": {
+    "message": "Automatically sync prompts to Gitee Gist when changes are made."
+  },
+  "gistPublicToggle": {
+    "message": "Public Gist"
+  },
+  "gistPublicDescription": {
+    "message": "When enabled, the Gist will be publicly visible. Otherwise it will be secret."
+  },
+  "syncFromGistToLocal": {
+    "message": "Download from Gist to Local"
+  },
+  "syncFromLocalToGist": {
+    "message": "Upload from Local to Gist"
+  },
+  "syncToGist": {
+    "message": "Sync to Gist"
+  },
+  "gistConnectionSuccess": {
+    "message": "Connection successful! Logged in as: $1"
+  },
+  "gistConnectionFailed": {
+    "message": "Connection failed"
+  },
+  "gistSyncSuccess": {
+    "message": "Sync completed successfully"
+  },
+  "gistSyncFailed": {
+    "message": "Sync failed"
+  },
+  "gistTokenRequired": {
+    "message": "Please configure Gitee Access Token first"
+  },
+  "fillGiteeToken": {
+    "message": "Please enter Gitee Access Token"
+  },
+  "gistCreatedSuccess": {
+    "message": "New Gist created successfully!"
+  },
+  "gistUpdatedSuccess": {
+    "message": "Gist updated successfully!"
+  },
+  "gistDownloadSuccess": {
+    "message": "Downloaded from Gist successfully!"
+  },
+  "gistDownloadFailed": {
+    "message": "Failed to download from Gist"
+  },
+  "gistNotFound": {
+    "message": "Gist not found. Please check the Gist ID or create a new one."
+  },
+  "gistNoBackupFound": {
+    "message": "No Quick Prompt backup found in your Gists."
+  },
+  "gistTokenStorageNote": {
+    "message": "Your token is stored locally in the browser and is never sent to third-party servers."
+  },
+  "gistPermissionsNote": {
+    "message": "The token requires gists permission scope to create and manage code snippets."
+  },
+  "gistSyncToDescription": {
+    "message": "Upload all local prompts and categories to Gitee Gist."
+  },
+  "gistCreateOrUpdatePrompts": {
+    "message": "Create a new Gist or update existing backup"
+  },
+  "gistPreserveCategories": {
+    "message": "Categories and all prompt data are included"
+  },
+  "viewGist": {
+    "message": "View Gist"
   }
 }

@@ -1389,5 +1389,107 @@
   },
   "sortByDisabledFirst": {
     "message": "停用优先"
+  },
+  "giteeGistIntegration": {
+    "message": "Gitee 代码片段同步"
+  },
+  "giteeGistIntegrationDescription": {
+    "message": "将提示词同步到 Gitee 代码片段（Gist），用于备份和跨设备共享。"
+  },
+  "giteeGistSync": {
+    "message": "Gitee 代码片段"
+  },
+  "giteeGistToken": {
+    "message": "Gitee 私人令牌"
+  },
+  "giteeGistTokenPlaceholder": {
+    "message": "输入你的 Gitee 私人令牌"
+  },
+  "giteeGistTokenHelp": {
+    "message": "在 Gitee 设置 > 安全设置 > 私人令牌中生成，需要 gists 权限。"
+  },
+  "giteeGistId": {
+    "message": "代码片段 ID（可选）"
+  },
+  "giteeGistIdPlaceholder": {
+    "message": "留空自动创建或自动发现"
+  },
+  "giteeGistIdHelp": {
+    "message": "如果留空，将自动发现已有的备份或创建新的代码片段。"
+  },
+  "gistAutoSyncEnabled": {
+    "message": "开启自动同步"
+  },
+  "gistAutoSyncDescription": {
+    "message": "当提示词发生变化时，自动同步到 Gitee 代码片段。"
+  },
+  "gistPublicToggle": {
+    "message": "公开代码片段"
+  },
+  "gistPublicDescription": {
+    "message": "开启后代码片段将公开可见，否则为私密。"
+  },
+  "syncFromGistToLocal": {
+    "message": "从代码片段下载到本地"
+  },
+  "syncFromLocalToGist": {
+    "message": "从本地上传到代码片段"
+  },
+  "syncToGist": {
+    "message": "同步到代码片段"
+  },
+  "gistConnectionSuccess": {
+    "message": "连接成功！已登录为：$1"
+  },
+  "gistConnectionFailed": {
+    "message": "连接失败"
+  },
+  "gistSyncSuccess": {
+    "message": "同步完成"
+  },
+  "gistSyncFailed": {
+    "message": "同步失败"
+  },
+  "gistTokenRequired": {
+    "message": "请先配置 Gitee 访问令牌"
+  },
+  "fillGiteeToken": {
+    "message": "请输入 Gitee 访问令牌"
+  },
+  "gistCreatedSuccess": {
+    "message": "新代码片段创建成功！"
+  },
+  "gistUpdatedSuccess": {
+    "message": "代码片段更新成功！"
+  },
+  "gistDownloadSuccess": {
+    "message": "从代码片段下载成功！"
+  },
+  "gistDownloadFailed": {
+    "message": "从代码片段下载失败"
+  },
+  "gistNotFound": {
+    "message": "未找到代码片段，请检查 ID 或创建新的。"
+  },
+  "gistNoBackupFound": {
+    "message": "未在你的代码片段中找到 Quick Prompt 备份。"
+  },
+  "gistTokenStorageNote": {
+    "message": "您的令牌仅存储在浏览器本地，不会发送到第三方服务器。"
+  },
+  "gistPermissionsNote": {
+    "message": "令牌需要 gists 权限范围来创建和管理代码片段。"
+  },
+  "gistSyncToDescription": {
+    "message": "将所有本地提示词和分类上传到 Gitee 代码片段。"
+  },
+  "gistCreateOrUpdatePrompts": {
+    "message": "创建新代码片段或更新现有备份"
+  },
+  "gistPreserveCategories": {
+    "message": "包含分类和所有提示词数据"
+  },
+  "viewGist": {
+    "message": "查看代码片段"
   }
 }
