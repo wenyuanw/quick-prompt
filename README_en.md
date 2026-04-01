@@ -19,7 +19,7 @@ A powerful browser extension focused on prompt management and quick input. Helps
 - 🎯 Support customizing prompts with categories, titles, content, tags and variables
 - 🧑‍💻 **Variable Support**: Use variables in prompts with `{{variable_name}}` format, fill in specific values when using
 - 💾 **Data Backup**: Export and import your prompt library for easy cross-device migration and backup
-- 🔗 **Notion Sync**: Support synchronizing prompt library with Notion database
+- 🔗 **Cloud Sync**: Support synchronizing prompt library with Notion database or Gitee/GitHub Gist
 - 🔍 Search and filter prompts functionality
 - 🌙 Automatically adapt to system light/dark theme
 
