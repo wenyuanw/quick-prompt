@@ -5,12 +5,13 @@ import { extractVariables } from './utils/variableParser'
 import { BROWSER_STORAGE_KEY } from '@/utils/constants'
 import { migratePromptsWithCategory } from '@/utils/categoryUtils'
 import type { EditableElement, PromptItem, PromptItemWithVariables } from '@/utils/types'
-import { t } from '@/utils/i18n'
+import { t, initLocale } from '@/utils/i18n'
 
 export default defineContentScript({
   matches: ['*://*/*'],
 
   async main(ctx) {
+    await initLocale()
     console.log(t('contentScriptLoaded'))
 
     // 记录上次输入的状态

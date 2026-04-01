@@ -1491,5 +1491,17 @@
   },
   "viewGist": {
     "message": "查看代码片段"
+  },
+  "languageSettings": {
+    "message": "语言设置"
+  },
+  "languageLabel": {
+    "message": "界面语言"
+  },
+  "languageDescription": {
+    "message": "选择扩展界面的显示语言。更改后页面将自动刷新。"
+  },
+  "followSystem": {
+    "message": "跟随系统"
   }
 }

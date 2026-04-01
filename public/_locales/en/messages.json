@@ -1491,5 +1491,17 @@
   },
   "viewGist": {
     "message": "View Gist"
+  },
+  "languageSettings": {
+    "message": "Language Settings"
+  },
+  "languageLabel": {
+    "message": "Interface Language"
+  },
+  "languageDescription": {
+    "message": "Select the display language for the extension interface. The page will refresh automatically after changes."
+  },
+  "followSystem": {
+    "message": "Follow System"
   }
 }

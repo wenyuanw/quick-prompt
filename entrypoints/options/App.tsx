@@ -9,11 +9,17 @@ import GlobalSettings from "./components/GlobalSettings";
 import ToastContainer from "./components/ToastContainer";
 import "./App.css";
 import "~/assets/tailwind.css";
-import { t } from "~/utils/i18n";
+import { t, initLocale } from "~/utils/i18n";
 const App = () => {
   // 添加回到顶部按钮相关状态
   const [showBackToTop, setShowBackToTop] = useState(false);
+  const [localeReady, setLocaleReady] = useState(false);
   const scrollContainerRef = useRef<HTMLDivElement>(null);
+
+  // 初始化语言
+  useEffect(() => {
+    initLocale().then(() => setLocaleReady(true));
+  }, []);
 
   // 主题切换逻辑
   useEffect(() => {
@@ -75,6 +81,8 @@ const App = () => {
       });
     }
   };
+
+  if (!localeReady) return null;
 
   return (
     <Router>

@@ -2,7 +2,7 @@ import { BROWSER_STORAGE_KEY } from '@/utils/constants'
 import { useState, useEffect } from 'react'
 import Logo from '~/assets/icon.png'
 import '~/assets/tailwind.css'
-import { t } from '../../utils/i18n'
+import { t, initLocale } from '@/utils/i18n'
 
 function App() {
   const [promptCount, setPromptCount] = useState<number>(0)
@@ -110,8 +110,10 @@ function App() {
 
   // 首次加载
   useEffect(() => {
-    loadPromptCount()
-    getShortcutKey()
+    (async () => {
+      await initLocale()
+      loadPromptCount()
+      getShortcutKey()
 
     // 检查系统暗黑模式设置并应用
     const applySystemTheme = () => {
@@ -125,16 +127,22 @@ function App() {
       }
     }
 
-    // 首次应用主题
-    applySystemTheme()
+      // 首次应用主题
+      applySystemTheme()
 
-    // 监听系统暗黑模式变化
-    const darkModeMediaQuery = window.matchMedia('(prefers-color-scheme: dark)')
-    const listener = () => applySystemTheme()
-    darkModeMediaQuery.addEventListener('change', listener)
+      // 监听系统暗黑模式变化
+      const darkModeMediaQuery = window.matchMedia('(prefers-color-scheme: dark)')
+      const listener = () => applySystemTheme()
+      darkModeMediaQuery.addEventListener('change', listener)
+
+      // Store cleanup ref for later
+      ;(window as any).__darkModeCleanup = () => {
+        darkModeMediaQuery.removeEventListener('change', listener)
+      }
+    })()
 
     return () => {
-      darkModeMediaQuery.removeEventListener('change', listener)
+      ;(window as any).__darkModeCleanup?.()
     }
   }, [])
 

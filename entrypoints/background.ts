@@ -1,6 +1,6 @@
 import { BROWSER_STORAGE_KEY, DEFAULT_PROMPTS } from "@/utils/constants"
 import { initializeDefaultCategories, migratePromptsWithCategory } from "@/utils/categoryUtils"
-import { t } from "@/utils/i18n"
+import { t, initLocale } from "@/utils/i18n"
 
 // Import extracted modules
 import { checkShortcutConfiguration, handleCommand } from "@/utils/browser/shortcutManager"
@@ -9,8 +9,10 @@ import { setupNotificationHandlers } from "@/utils/browser/notificationManager"
 import { setupStorageChangeListeners } from "@/utils/browser/storageManager"
 import { handleRuntimeMessage } from "@/utils/browser/messageHandler"
 
-export default defineBackground(() => {
+export default defineBackground(async () => {
   console.log('Hello background!', { id: browser.runtime.id })
+
+  await initLocale()
 
   // Initialization logic (Modified to include Notion sync setting)
   const initializeDefaultData = async () => {

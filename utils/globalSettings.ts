@@ -2,6 +2,7 @@ import { browser } from '#imports';
 
 export interface GlobalSettings {
   closeModalOnOutsideClick: boolean;
+  language?: string;
   // 可以添加更多全局设置
 }
 
