@@ -637,13 +637,13 @@
     "message": "追加模式"
   },
   "appendModeDescription": {
-    "message": "只添加 Notion 中有但本地没有的提示词"
+    "message": "仅添加本地不存在的提示词，不会覆盖已有数据。"
   },
   "overwriteMode": {
     "message": "覆盖模式"
   },
   "overwriteModeDescription": {
-    "message": "完全用 Notion 数据替换本地数据"
+    "message": "将本地数据完全替换为远程数据。"
   },
   "oneTimeOperationNote": {
     "message": "注意：这是一次性操作"
@@ -1451,7 +1451,7 @@
     "message": "同步失败"
   },
   "gistTokenRequired": {
-    "message": "请先配置 Gitee 访问令牌"
+    "message": "请先配置访问令牌"
   },
   "fillGiteeToken": {
     "message": "请输入 Gitee 访问令牌"
@@ -1503,5 +1503,38 @@
   },
   "followSystem": {
     "message": "跟随系统"
+  },
+  "gistSync": {
+    "message": "Gist 同步"
+  },
+  "gistSyncDescription": {
+    "message": "将提示词同步到 Gist，用于备份和跨设备共享。"
+  },
+  "githubGistToken": {
+    "message": "GitHub 个人访问令牌"
+  },
+  "githubGistTokenPlaceholder": {
+    "message": "输入你的 GitHub 个人访问令牌"
+  },
+  "githubGistTokenHelp": {
+    "message": "在 GitHub Settings > Developer settings > Personal access tokens 中生成，需要 gist 权限。"
+  },
+  "githubGistId": {
+    "message": "Gist ID（可选）"
+  },
+  "githubGistIdPlaceholder": {
+    "message": "留空自动创建或自动发现"
+  },
+  "githubGistIdHelp": {
+    "message": "如果留空，将自动发现已有的备份或创建新的 Gist。"
+  },
+  "fillGithubToken": {
+    "message": "请输入 GitHub 访问令牌"
+  },
+  "testingConnection": {
+    "message": "正在测试连接..."
+  },
+  "saveAndTest": {
+    "message": "保存并测试连接"
   }
 }

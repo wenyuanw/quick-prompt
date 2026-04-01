@@ -634,13 +634,13 @@
     "message": "Append Mode"
   },
   "appendModeDescription": {
-    "message": "Only add prompts that exist in Notion but not locally"
+    "message": "Only add prompts that don't exist locally. Existing data won't be overwritten."
   },
   "overwriteMode": {
     "message": "Overwrite Mode"
   },
   "overwriteModeDescription": {
-    "message": "Completely replace local data with Notion data"
+    "message": "Completely replace local data with remote data."
   },
   "oneTimeOperationNote": {
     "message": "Note: This is a one-time operation"
@@ -1451,7 +1451,7 @@
     "message": "Sync failed"
   },
   "gistTokenRequired": {
-    "message": "Please configure Gitee Access Token first"
+    "message": "Please configure Access Token first"
   },
   "fillGiteeToken": {
     "message": "Please enter Gitee Access Token"
@@ -1503,5 +1503,38 @@
   },
   "followSystem": {
     "message": "Follow System"
+  },
+  "gistSync": {
+    "message": "Gist Sync"
+  },
+  "gistSyncDescription": {
+    "message": "Sync your prompts to Gist for backup and cross-device sharing."
+  },
+  "githubGistToken": {
+    "message": "GitHub Personal Access Token"
+  },
+  "githubGistTokenPlaceholder": {
+    "message": "Enter your GitHub personal access token"
+  },
+  "githubGistTokenHelp": {
+    "message": "Generate a token at GitHub Settings > Developer settings > Personal access tokens with gist scope."
+  },
+  "githubGistId": {
+    "message": "Gist ID (Optional)"
+  },
+  "githubGistIdPlaceholder": {
+    "message": "Leave empty to auto-create or auto-discover"
+  },
+  "githubGistIdHelp": {
+    "message": "If left empty, will auto-discover existing backup or create a new Gist."
+  },
+  "fillGithubToken": {
+    "message": "Please enter GitHub Access Token"
+  },
+  "testingConnection": {
+    "message": "Testing connection..."
+  },
+  "saveAndTest": {
+    "message": "Save & Test Connection"
   }
 }

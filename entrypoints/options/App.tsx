@@ -107,7 +107,7 @@ const App = () => {
                 <Route path="/settings" element={<GlobalSettings />} />
                 <Route path="/integrations/notion" element={<NotionIntegrationPage />} />
 
-                <Route path="/integrations/gitee-gist" element={<GistIntegrationPage />} />
+                <Route path="/integrations/gist" element={<GistIntegrationPage />} />
               </Routes>
 
               {/* 回到顶部按钮 */}
