@@ -37,3 +37,11 @@
 - Never commit secrets. Copy `.env.example` → `.env` and set: `WXT_CHROME_APP_CLIENT_ID_PREFIX`, `WXT_WEB_APP_CLIENT_ID_PREFIX`, `WXT_FIREFOX_EXTENSION_ID`.
 - OAuth scopes and IDs are assembled in `wxt.config.ts`; keep published IDs stable.
 
+## Cursor Cloud specific instructions
+
+- **No ESLint/Prettier**: This repo has no linter config. Use `pnpm compile` (TypeScript `--noEmit`) as the primary static check.
+- **Unit tests**: `pnpm test:run` runs Vitest (98 tests across 4 files as of writing). Tests do not require a browser or extension runtime.
+- **Dev server**: `pnpm dev` launches WXT dev mode which builds to `.output/chrome-mv3-dev/` and auto-opens Chrome with the extension loaded. The dev server runs at `http://localhost:3000` and supports hot reload.
+- **Build scripts emit warnings about unapproved build scripts** (`esbuild`, `spawn-sync`). These are non-blocking and can be safely ignored; the build succeeds without approving them.
+- **`postinstall` hook**: `pnpm install` automatically runs `wxt prepare` which generates WXT types in `.wxt/`. If you see missing type errors, re-run `pnpm install`.
+- **`.env` file**: Copy `.env.example` to `.env` before first run. Default OAuth client IDs are baked into `wxt.config.ts` as fallbacks, so the extension works without custom `.env` values.
