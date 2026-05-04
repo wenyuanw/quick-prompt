@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react'
-import { ChevronLeft, ChevronRight, FileText, ImageIcon, Loader2, X } from 'lucide-react'
+import { ChevronLeft, ChevronRight, FileText, FolderOpen, HardDrive, ImageIcon, Loader2, X } from 'lucide-react'
 
 import type { PromptAttachment } from '@/utils/types'
 import { formatFileSize, isImageAttachment } from '@/utils/attachments/metadata'
@@ -7,10 +7,13 @@ import { createImageThumbnailDataUrl } from '@/utils/attachments/imageThumbnail'
 import {
   getAttachmentRootHandle,
   getFileFromAttachmentRoot,
-  hasReadWritePermission,
+  verifyReadWritePermission,
+  pickAndStoreAttachmentRoot,
+  useInternalAttachmentStorage,
 } from '@/utils/attachments/fileSystem'
 import { t } from '@/utils/i18n'
 import { Button } from '@/components/ui/button'
+import { Alert, AlertDescription } from '@/components/ui/alert'
 
 interface PromptAttachmentPreviewProps {
   attachments?: PromptAttachment[]
@@ -63,13 +66,18 @@ const setRuntimeThumbnailCache = (
   }
 }
 
+let lastRootPermissionFailed = false
+
 const getAuthorizedRoot = async () => {
   const root = await getAttachmentRootHandle()
+  const hasPermission = root ? await verifyReadWritePermission(root) : false
 
-  if (!root || !(await hasReadWritePermission(root))) {
+  if (!root || !hasPermission) {
+    lastRootPermissionFailed = true
     throw new Error(t('attachmentPermissionLost'))
   }
 
+  lastRootPermissionFailed = false
   return root
 }
 
@@ -124,6 +132,9 @@ const PromptAttachmentPreview: React.FC<PromptAttachmentPreviewProps> = ({
   const objectUrlsRef = useRef<Set<string>>(new Set())
   const [imagePreviews, setImagePreviews] = useState<Record<string, ImagePreviewState>>({})
   const [activeImageId, setActiveImageId] = useState<string | null>(null)
+  const [needsReauthorization, setNeedsReauthorization] = useState(false)
+  const [isReauthorizing, setIsReauthorizing] = useState(false)
+  const [previewRefreshKey, setPreviewRefreshKey] = useState(0)
 
   const getPreview = (attachment: PromptAttachment): ImagePreviewState | undefined => {
     const loadedPreview = imagePreviews[attachment.id]
@@ -186,6 +197,9 @@ const PromptAttachmentPreview: React.FC<PromptAttachmentPreviewProps> = ({
         },
       }))
     } catch {
+      if (lastRootPermissionFailed) {
+        setNeedsReauthorization(true)
+      }
       setImagePreviews((current) => ({
         ...current,
         [attachment.id]: {
@@ -219,6 +233,36 @@ const PromptAttachmentPreview: React.FC<PromptAttachmentPreviewProps> = ({
     void loadFullImage(nextAttachment)
   }
 
+  const handleReauthorizeExternal = async () => {
+    if (isReauthorizing) return
+    setIsReauthorizing(true)
+    try {
+      await pickAndStoreAttachmentRoot()
+      setNeedsReauthorization(false)
+      setImagePreviews({})
+      setPreviewRefreshKey((k) => k + 1)
+    } catch (err) {
+      console.error("Error reauthorizing attachment directory:", err)
+    } finally {
+      setIsReauthorizing(false)
+    }
+  }
+
+  const handleSwitchToInternal = async () => {
+    if (isReauthorizing) return
+    setIsReauthorizing(true)
+    try {
+      await useInternalAttachmentStorage()
+      setNeedsReauthorization(false)
+      setImagePreviews({})
+      setPreviewRefreshKey((k) => k + 1)
+    } catch (err) {
+      console.error("Error switching to internal storage:", err)
+    } finally {
+      setIsReauthorizing(false)
+    }
+  }
+
   useEffect(() => {
     const imageAttachments = safeAttachments.filter((attachment) => (
       isImageAttachment(attachment) && !attachment.thumbnailDataUrl
@@ -247,6 +291,9 @@ const PromptAttachmentPreview: React.FC<PromptAttachmentPreviewProps> = ({
           }
           nextPreviews[attachment.id] = preview
         } catch {
+          if (lastRootPermissionFailed) {
+            setNeedsReauthorization(true)
+          }
           nextPreviews[attachment.id] = { error: t('attachmentPermissionLost') }
         }
       }))
@@ -264,7 +311,7 @@ const PromptAttachmentPreview: React.FC<PromptAttachmentPreviewProps> = ({
       canceled = true
       objectUrls.forEach((url) => URL.revokeObjectURL(url))
     }
-  }, [safeAttachments])
+  }, [safeAttachments, previewRefreshKey])
 
   useEffect(() => {
     return () => {
@@ -278,6 +325,36 @@ const PromptAttachmentPreview: React.FC<PromptAttachmentPreviewProps> = ({
   }
 
   return (
+    <>
+      {needsReauthorization && (
+        <Alert variant="warning" className="mb-2">
+          <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+            <AlertDescription>{t('attachmentPermissionLost')}</AlertDescription>
+            <div className="flex shrink-0 gap-2">
+              <Button
+                type="button"
+                variant="outline"
+                size="sm"
+                onClick={handleReauthorizeExternal}
+                disabled={isReauthorizing}
+              >
+                {isReauthorizing ? <Loader2 className="size-3.5 animate-spin" /> : <FolderOpen className="size-3.5" />}
+                {t('reauthorizeAttachmentDirectory')}
+              </Button>
+              <Button
+                type="button"
+                variant="ghost"
+                size="sm"
+                onClick={handleSwitchToInternal}
+                disabled={isReauthorizing}
+              >
+                {isReauthorizing ? <Loader2 className="size-3.5 animate-spin" /> : <HardDrive className="size-3.5" />}
+                {t('switchToInternalStorage')}
+              </Button>
+            </div>
+          </div>
+        </Alert>
+      )}
     <div className={compact ? 'flex w-fit flex-wrap items-center gap-1.5' : 'mt-3 flex flex-wrap gap-2'}>
       {safeAttachments.map((attachment) => {
         const preview = getPreview(attachment)
@@ -407,6 +484,7 @@ const PromptAttachmentPreview: React.FC<PromptAttachmentPreviewProps> = ({
         </div>
       )}
     </div>
+    </>
   )
 }
 

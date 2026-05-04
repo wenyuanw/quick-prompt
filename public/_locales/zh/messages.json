@@ -1726,6 +1726,21 @@
   "attachmentStorageReauthorized": {
     "message": "附件文件夹已重新授权。"
   },
+  "currentAttachmentStorageMode": {
+    "message": "当前附件存储模式"
+  },
+  "currentAttachmentStorageModeDescription": {
+    "message": "管理附件文件的存储位置和访问权限。"
+  },
+  "attachmentStorageInternalLabel": {
+    "message": "内置存储"
+  },
+  "attachmentStorageExternalLabel": {
+    "message": "外部文件夹"
+  },
+  "switchToInternalStorage": {
+    "message": "切换到内置存储"
+  },
   "webdavUploadTitle": {
     "message": "上传本地备份"
   },
