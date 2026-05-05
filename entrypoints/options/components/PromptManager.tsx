@@ -815,8 +815,8 @@ const PromptManager = () => {
         />
 
         <SectionCard contentClassName="pt-6">
-          <div className="grid gap-3 md:grid-cols-[minmax(220px,1fr)_180px_160px_210px_auto]">
-            <div className="relative">
+          <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-[minmax(220px,1fr)_minmax(150px,180px)_minmax(140px,160px)] xl:grid-cols-[minmax(260px,1fr)_minmax(150px,180px)_minmax(140px,160px)_minmax(180px,210px)_minmax(170px,auto)]">
+            <div className="relative min-w-0 sm:col-span-2 lg:col-span-1">
               <Search className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
               <Input
                 type="text"
@@ -827,69 +827,76 @@ const PromptManager = () => {
               />
             </div>
 
-            <Select
-              value={selectedCategoryId || "__all__"}
-              onValueChange={(value) => updateSelectedCategory(value === "__all__" ? null : value)}
-            >
-              <SelectTrigger>
-                <SelectValue placeholder={t('allCategories')} />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="__all__">{t('allCategories')}</SelectItem>
-                {categories.map((category) => (
-                  <SelectItem key={category.id} value={category.id}>
-                    {category.name}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
+            <div className="min-w-0">
+              <Select
+                value={selectedCategoryId || "__all__"}
+                onValueChange={(value) => updateSelectedCategory(value === "__all__" ? null : value)}
+              >
+                <SelectTrigger>
+                  <SelectValue placeholder={t('allCategories')} />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="__all__">{t('allCategories')}</SelectItem>
+                  {categories.map((category) => (
+                    <SelectItem key={category.id} value={category.id}>
+                      {category.name}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
 
-            <Select
-              value={selectedTag || "__all__"}
-              onValueChange={(value) => updateSelectedTag(value === "__all__" ? null : value)}
-            >
-              <SelectTrigger title={t('filterByTag')}>
-                <SelectValue placeholder={t('allTags')} />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="__all__">{t('allTags')}</SelectItem>
-                {availableTags.map((tag) => (
-                  <SelectItem key={tag} value={tag}>
-                    {tag}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
+            <div className="min-w-0">
+              <Select
+                value={selectedTag || "__all__"}
+                onValueChange={(value) => updateSelectedTag(value === "__all__" ? null : value)}
+              >
+                <SelectTrigger title={t('filterByTag')}>
+                  <SelectValue placeholder={t('allTags')} />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="__all__">{t('allTags')}</SelectItem>
+                  {availableTags.map((tag) => (
+                    <SelectItem key={tag} value={tag}>
+                      {tag}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
 
-            <Select value={sortType} onValueChange={(value) => handleSortChange(value as SortType)}>
-              <SelectTrigger title={t('sortBy')}>
-                <SelectValue placeholder={t('sortBy')} />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="custom">{t('sortByCustom')}</SelectItem>
-                <SelectItem value="title-asc">{t('sortByTitleAsc')}</SelectItem>
-                <SelectItem value="title-desc">{t('sortByTitleDesc')}</SelectItem>
-                <SelectItem value="modified-newest">{t('sortByNewest')}</SelectItem>
-                <SelectItem value="modified-oldest">{t('sortByOldest')}</SelectItem>
-                <SelectItem value="enabled-first">{t('sortByEnabledFirst')}</SelectItem>
-                <SelectItem value="disabled-first">{t('sortByDisabledFirst')}</SelectItem>
-              </SelectContent>
-            </Select>
+            <div className="min-w-0">
+              <Select value={sortType} onValueChange={(value) => handleSortChange(value as SortType)}>
+                <SelectTrigger title={t('sortBy')}>
+                  <SelectValue placeholder={t('sortBy')} />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="custom">{t('sortByCustom')}</SelectItem>
+                  <SelectItem value="title-asc">{t('sortByTitleAsc')}</SelectItem>
+                  <SelectItem value="title-desc">{t('sortByTitleDesc')}</SelectItem>
+                  <SelectItem value="modified-newest">{t('sortByNewest')}</SelectItem>
+                  <SelectItem value="modified-oldest">{t('sortByOldest')}</SelectItem>
+                  <SelectItem value="enabled-first">{t('sortByEnabledFirst')}</SelectItem>
+                  <SelectItem value="disabled-first">{t('sortByDisabledFirst')}</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
 
             <Tabs
               value={compactLayout ? "compact" : "card"}
               onValueChange={(value) => {
                 if ((value === "compact") !== compactLayout) toggleCompactLayout();
               }}
+              className="min-w-0"
             >
               <TabsList className="grid w-full grid-cols-2">
                 <TabsTrigger value="card" title={t('normalLayout')}>
                   <Grid2X2 className="size-4" />
-                  <span className="hidden sm:inline">{t('cardLayout')}</span>
+                  <span className="hidden xl:inline">{t('cardLayout')}</span>
                 </TabsTrigger>
                 <TabsTrigger value="compact" title={t('compactLayout')}>
                   <List className="size-4" />
-                  <span className="hidden sm:inline">{t('compactLayout')}</span>
+                  <span className="hidden xl:inline">{t('compactLayout')}</span>
                 </TabsTrigger>
               </TabsList>
             </Tabs>

@@ -23,11 +23,11 @@ export function PageHeader({
   return (
     <div
       className={cn(
-        "flex flex-col gap-4 rounded-2xl border border-border bg-card/90 p-4 shadow-sm backdrop-blur sm:flex-row sm:items-center sm:justify-between",
+        "flex flex-col gap-4 rounded-2xl border border-border bg-card/90 p-4 shadow-sm backdrop-blur sm:flex-row sm:flex-wrap sm:items-center sm:justify-between",
         className,
       )}
     >
-      <div className="flex min-w-0 items-center gap-3">
+      <div className="flex min-w-0 flex-1 items-center gap-3 sm:min-w-64">
         {Icon && (
           <div className="flex size-10 shrink-0 items-center justify-center rounded-2xl bg-primary/10 text-primary">
             <Icon className="size-5" />
@@ -43,7 +43,7 @@ export function PageHeader({
           {meta && <div className="mt-2">{meta}</div>}
         </div>
       </div>
-      {actions && <div className="flex shrink-0 flex-wrap items-center gap-2">{actions}</div>}
+      {actions && <div className="flex min-w-0 flex-wrap items-center gap-2 sm:justify-end">{actions}</div>}
     </div>
   );
 }
