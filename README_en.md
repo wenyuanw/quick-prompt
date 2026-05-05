@@ -8,8 +8,6 @@ English | [中文](./README.md)
 
 A powerful browser extension focused on prompt management and quick input. Helps users create, manage, and organize prompt libraries, and quickly insert preset prompt content in any webpage input field, boosting your productivity.
 
-> Since browser extensions only work on web pages, I've open-sourced a functionally identical [Raycast extension](https://github.com/wenyuanw/quick-prompt-raycast) that's compatible with the browser extension's data format, allowing seamless migration using the same JSON data.
-
 ## ✨ Features
 
 - 📚 **Prompt Management**: Easily create, edit and manage your prompt library
@@ -78,7 +76,14 @@ Prompts support variable configuration. After selecting a prompt with variables,
 
 ### From App Store
 
-Now available on Chrome Web Store! [Click here to download](https://chromewebstore.google.com/detail/quick-prompt/hnjamiaoicaepbkhdoknhhcedjdocpkd)
+<p>
+  <a href="https://chromewebstore.google.com/detail/quick-prompt/hnjamiaoicaepbkhdoknhhcedjdocpkd">
+    <img src="https://img.shields.io/badge/Chrome-Web%20Store-4285F4?style=for-the-badge&logo=googlechrome&logoColor=white" alt="Chrome Web Store">
+  </a>
+  <a href="https://addons.mozilla.org/firefox/addon/quick-prompt/">
+    <img src="https://img.shields.io/badge/Firefox-Add--ons-FF7139?style=for-the-badge&logo=firefoxbrowser&logoColor=white" alt="Firefox Add-ons">
+  </a>
+</p>
 
 ### From GitHub Releases
 
