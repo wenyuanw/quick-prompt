@@ -6,10 +6,13 @@ import {
   FileInput,
   FilePenLine,
   FileText,
+  FolderOpen,
   Grid2X2,
+  HardDrive,
   Library,
   Link2,
   List,
+  Loader2,
   Plus,
   Search,
   Upload,
@@ -28,6 +31,8 @@ import {
   type AttachmentStorageRootHandle,
   getAttachmentRootHandle,
   verifyReadWritePermission,
+  pickAndStoreAttachmentRoot,
+  useInternalAttachmentStorage,
 } from "@/utils/attachments/fileSystem";
 import {
   deletePromptAttachmentFiles,
@@ -149,6 +154,7 @@ const PromptManager = () => {
   const [isRemoteImporting, setIsRemoteImporting] = useState(false);
   const [isConfirmModalOpen, setIsConfirmModalOpen] = useState(false);
   const [promptToDelete, setPromptToDelete] = useState<string | null>(null);
+  const [isReauthorizing, setIsReauthorizing] = useState(false);
 
   // 布局模式
   const [compactLayout, setCompactLayout] = useState<boolean>(() => {
@@ -401,6 +407,33 @@ const PromptManager = () => {
     }
 
     closeModal();
+  };
+
+  // Re-authorize attachment directory
+  const handleReauthorizeExternal = async () => {
+    if (isReauthorizing) return;
+    setIsReauthorizing(true);
+    try {
+      await pickAndStoreAttachmentRoot();
+      setError(null);
+    } catch (err) {
+      console.error("Error reauthorizing attachment directory:", err);
+    } finally {
+      setIsReauthorizing(false);
+    }
+  };
+
+  const handleSwitchToInternal = async () => {
+    if (isReauthorizing) return;
+    setIsReauthorizing(true);
+    try {
+      await useInternalAttachmentStorage();
+      setError(null);
+    } catch (err) {
+      console.error("Error switching to internal storage:", err);
+    } finally {
+      setIsReauthorizing(false);
+    }
   };
 
   // Delete a prompt
@@ -674,22 +707,52 @@ const PromptManager = () => {
     <PageSurface className="flex min-h-full flex-col">
       <div className="flex-shrink-0 space-y-4 px-4 pt-4 sm:px-6 lg:px-8">
         {error && (
-          <Alert variant="destructive">
-            <AlertCircle className="size-4" />
-            <AlertDescription className="flex items-center justify-between gap-3">
-              <span>{error}</span>
-              <Button
-                type="button"
-                variant="ghost"
-                size="icon-sm"
-                onClick={() => setError(null)}
-                aria-label={t("close")}
-                className="text-destructive hover:bg-destructive/10"
-              >
-                <X className="size-4" />
-              </Button>
-            </AlertDescription>
-          </Alert>
+          error === t('attachmentPermissionLost') ? (
+            <Alert variant="warning">
+              <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+                <AlertDescription>{error}</AlertDescription>
+                <div className="flex shrink-0 gap-2">
+                  <Button
+                    type="button"
+                    variant="outline"
+                    size="sm"
+                    onClick={handleReauthorizeExternal}
+                    disabled={isReauthorizing}
+                  >
+                    {isReauthorizing ? <Loader2 className="size-3.5 animate-spin" /> : <FolderOpen className="size-3.5" />}
+                    {t("reauthorizeAttachmentDirectory")}
+                  </Button>
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    size="sm"
+                    onClick={handleSwitchToInternal}
+                    disabled={isReauthorizing}
+                  >
+                    {isReauthorizing ? <Loader2 className="size-3.5 animate-spin" /> : <HardDrive className="size-3.5" />}
+                    {t("switchToInternalStorage")}
+                  </Button>
+                </div>
+              </div>
+            </Alert>
+          ) : (
+            <Alert variant="destructive">
+              <AlertCircle className="size-4" />
+              <AlertDescription className="flex items-center justify-between gap-3">
+                <span>{error}</span>
+                <Button
+                  type="button"
+                  variant="ghost"
+                  size="icon-sm"
+                  onClick={() => setError(null)}
+                  aria-label={t("close")}
+                  className="text-destructive hover:bg-destructive/10"
+                >
+                  <X className="size-4" />
+                </Button>
+              </AlertDescription>
+            </Alert>
+          )
         )}
 
         <PageHeader

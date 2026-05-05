@@ -1,13 +1,22 @@
 import React, { useState, useEffect } from 'react';
 import { browser } from '#imports';
-import { ExternalLink, Keyboard, Languages, MousePointerClick, Settings2 } from "lucide-react";
+import { ExternalLink, FolderOpen, HardDrive, Keyboard, Languages, Loader2, MousePointerClick, Settings2, ShieldCheck } from "lucide-react";
 import { getGlobalSettings, updateGlobalSettings, type GlobalSettings } from '@/utils/globalSettings';
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { Switch } from "@/components/ui/switch";
+import { Alert, AlertDescription } from "@/components/ui/alert";
 import { LoadingState } from "@/components/common/LoadingState";
 import { PageHeader } from "@/components/common/PageHeader";
+import {
+  type AttachmentStorageMode,
+  getAttachmentStorageMode,
+  getAttachmentRootHandle,
+  hasReadWritePermission,
+  pickAndStoreAttachmentRoot,
+  useInternalAttachmentStorage,
+} from "@/utils/attachments/fileSystem";
 import { SectionCard } from "@/components/common/SectionCard";
 import { SettingsRow } from "@/components/common/SettingsRow";
 import { PageSurface } from "@/components/layout/AppShell";
@@ -21,6 +30,9 @@ const GlobalSettingsPage: React.FC = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
   const [shortcuts, setShortcuts] = useState<{ [key: string]: string }>({});
+  const [storageMode, setStorageMode] = useState<AttachmentStorageMode | undefined>(undefined);
+  const [permissionExpired, setPermissionExpired] = useState(false);
+  const [isReauthorizing, setIsReauthorizing] = useState(false);
 
   useEffect(() => {
     const loadSettings = async () => {
@@ -41,6 +53,19 @@ const GlobalSettingsPage: React.FC = () => {
           setShortcuts(shortcutMap);
         } catch (error) {
           console.warn('Unable to get shortcuts:', error);
+        }
+
+        try {
+          const mode = await getAttachmentStorageMode();
+          setStorageMode(mode);
+          if (mode === "external") {
+            const root = await getAttachmentRootHandle();
+            if (root && !(await hasReadWritePermission(root))) {
+              setPermissionExpired(true);
+            }
+          }
+        } catch (error) {
+          console.warn('Unable to load attachment storage info:', error);
         }
       } catch (error) {
         console.error('Failed to load settings:', error);
@@ -63,6 +88,48 @@ const GlobalSettingsPage: React.FC = () => {
       setSettings(prev => ({ ...prev, [key]: settings[key] }));
     } finally {
       setIsSaving(false);
+    }
+  };
+
+  const handleReauthorizeExternal = async () => {
+    if (isReauthorizing) return;
+    setIsReauthorizing(true);
+    try {
+      await pickAndStoreAttachmentRoot();
+      setPermissionExpired(false);
+      setStorageMode("external");
+    } catch (error) {
+      console.error('Failed to reauthorize attachment directory:', error);
+    } finally {
+      setIsReauthorizing(false);
+    }
+  };
+
+  const handleSwitchToInternal = async () => {
+    if (isReauthorizing) return;
+    setIsReauthorizing(true);
+    try {
+      await useInternalAttachmentStorage();
+      setStorageMode("internal");
+      setPermissionExpired(false);
+    } catch (error) {
+      console.error('Failed to switch to internal storage:', error);
+    } finally {
+      setIsReauthorizing(false);
+    }
+  };
+
+  const handleChooseExternalDirectory = async () => {
+    if (isReauthorizing) return;
+    setIsReauthorizing(true);
+    try {
+      await pickAndStoreAttachmentRoot();
+      setStorageMode("external");
+      setPermissionExpired(false);
+    } catch (error) {
+      console.error('Failed to choose attachment directory:', error);
+    } finally {
+      setIsReauthorizing(false);
     }
   };
 
@@ -183,6 +250,71 @@ const GlobalSettingsPage: React.FC = () => {
                 </button>
               ))}
             </div>
+          </div>
+        </SectionCard>
+
+        <SectionCard
+          title={t('currentAttachmentStorageMode')}
+          description={t('currentAttachmentStorageModeDescription')}
+          contentClassName="p-0"
+        >
+          <div className="px-5 py-4">
+            <div className="flex items-center justify-between gap-3">
+              <div className="flex items-center gap-2">
+                {storageMode === "internal" ? (
+                  <HardDrive className="size-4 text-muted-foreground" />
+                ) : (
+                  <FolderOpen className="size-4 text-muted-foreground" />
+                )}
+                <span className="text-sm font-medium text-foreground">
+                  {storageMode === "internal"
+                    ? t('attachmentStorageInternalLabel')
+                    : t('attachmentStorageExternalLabel')}
+                </span>
+              </div>
+              {storageMode === "external" ? (
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="sm"
+                  onClick={handleSwitchToInternal}
+                  disabled={isReauthorizing}
+                >
+                  {isReauthorizing ? <Loader2 className="size-3.5 animate-spin" /> : <HardDrive className="size-3.5" />}
+                  {t('switchToInternalStorage')}
+                </Button>
+              ) : (
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="sm"
+                  onClick={handleChooseExternalDirectory}
+                  disabled={isReauthorizing}
+                >
+                  {isReauthorizing ? <Loader2 className="size-3.5 animate-spin" /> : <FolderOpen className="size-3.5" />}
+                  {t('chooseAttachmentDirectory')}
+                </Button>
+              )}
+            </div>
+
+            {permissionExpired && (
+              <Alert variant="warning" className="mt-3">
+                <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+                  <AlertDescription>{t('attachmentPermissionLost')}</AlertDescription>
+                  <Button
+                    type="button"
+                    variant="outline"
+                    size="sm"
+                    onClick={handleReauthorizeExternal}
+                    disabled={isReauthorizing}
+                    className="shrink-0"
+                  >
+                    {isReauthorizing ? <Loader2 className="size-3.5 animate-spin" /> : <ShieldCheck className="size-3.5" />}
+                    {t('reauthorizeAttachmentDirectory')}
+                  </Button>
+                </div>
+              </Alert>
+            )}
           </div>
         </SectionCard>
 

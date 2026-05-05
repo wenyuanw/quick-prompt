@@ -1726,6 +1726,21 @@
   "attachmentStorageReauthorized": {
     "message": "Attachment folder reauthorized."
   },
+  "currentAttachmentStorageMode": {
+    "message": "Current Attachment Storage Mode"
+  },
+  "currentAttachmentStorageModeDescription": {
+    "message": "Manage where attachments are stored and their access permissions."
+  },
+  "attachmentStorageInternalLabel": {
+    "message": "Internal Storage"
+  },
+  "attachmentStorageExternalLabel": {
+    "message": "External Folder"
+  },
+  "switchToInternalStorage": {
+    "message": "Switch to Internal Storage"
+  },
   "webdavUploadTitle": {
     "message": "Upload Local Backup"
   },
