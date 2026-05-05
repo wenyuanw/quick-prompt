@@ -250,6 +250,12 @@ const PromptAttachmentPreview: React.FC<PromptAttachmentPreviewProps> = ({
 
   const handleSwitchToInternal = async () => {
     if (isReauthorizing) return
+
+    if (safeAttachments.length > 0) {
+      alert(t('switchToInternalStorageBlockedByAttachments'))
+      return
+    }
+
     setIsReauthorizing(true)
     try {
       await useInternalAttachmentStorage()

@@ -1738,8 +1738,17 @@
   "attachmentStorageExternalLabel": {
     "message": "External Folder"
   },
+  "currentAttachmentDirectory": {
+    "message": "Current folder: $1"
+  },
   "switchToInternalStorage": {
     "message": "Switch to Internal Storage"
+  },
+  "switchToInternalStorageBlockedByAttachments": {
+    "message": "Existing attachments are still stored in the external folder. Remove or migrate them before switching to internal storage."
+  },
+  "attachmentStorageMigrationFailed": {
+    "message": "Failed to migrate existing attachments. Storage mode was not changed."
   },
   "webdavUploadTitle": {
     "message": "Upload Local Backup"

@@ -243,6 +243,10 @@ export const useInternalAttachmentStorage = async (): Promise<InternalAttachment
   return INTERNAL_ATTACHMENT_ROOT_HANDLE;
 };
 
+export const getInternalAttachmentRootHandle = (): InternalAttachmentRootHandle => {
+  return INTERNAL_ATTACHMENT_ROOT_HANDLE;
+};
+
 export const getAttachmentRootHandle = async (): Promise<AttachmentStorageRootHandle | undefined> => {
   const mode = await getAttachmentStorageMode();
 

@@ -1738,8 +1738,17 @@
   "attachmentStorageExternalLabel": {
     "message": "外部文件夹"
   },
+  "currentAttachmentDirectory": {
+    "message": "当前文件夹：$1"
+  },
   "switchToInternalStorage": {
     "message": "切换到内置存储"
+  },
+  "switchToInternalStorageBlockedByAttachments": {
+    "message": "已有附件仍存储在外部文件夹中。请先移除或迁移这些附件，再切换到内置存储。"
+  },
+  "attachmentStorageMigrationFailed": {
+    "message": "迁移现有附件失败，存储模式未切换。"
   },
   "webdavUploadTitle": {
     "message": "上传本地备份"

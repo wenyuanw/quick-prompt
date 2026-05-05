@@ -425,6 +425,12 @@ const PromptManager = () => {
 
   const handleSwitchToInternal = async () => {
     if (isReauthorizing) return;
+
+    if (hasPromptAttachments(prompts)) {
+      alert(t('switchToInternalStorageBlockedByAttachments'));
+      return;
+    }
+
     setIsReauthorizing(true);
     try {
       await useInternalAttachmentStorage();
@@ -445,8 +451,14 @@ const PromptManager = () => {
   const handleConfirmDelete = async () => {
     if (promptToDelete) {
       try {
-        const root = await getAuthorizedAttachmentRoot();
-        const newPrompts = await deletePromptWithAttachments(root, prompts, promptToDelete);
+        const prompt = prompts.find((p) => p.id === promptToDelete);
+        if (!prompt) return;
+
+        const hasAttachments = Array.isArray(prompt.attachments) && prompt.attachments.length > 0;
+        const newPrompts = hasAttachments
+          ? await deletePromptWithAttachments(await getAuthorizedAttachmentRoot(), prompts, promptToDelete)
+          : prompts.filter((p) => p.id !== promptToDelete);
+
         await savePrompts(newPrompts);
 
         if (editingPrompt?.id === promptToDelete) {
