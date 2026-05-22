@@ -1,0 +1,36 @@
+<svg width="100%" height="100%" viewBox="0 0 512 512" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="512" y2="512">
+      <stop offset="0%" stop-color="#A78BFA"/>
+      <stop offset="100%" stop-color="#6D28D9"/>
+    </linearGradient>
+  </defs>
+
+  <!-- 背景底板 -->
+  <rect width="512" height="512" rx="104" fill="url(#bg)"/>
+
+  <!-- 聊天气泡 (保持 24px 粗细，视觉中心为 Y=250) -->
+  <path
+    d="M130 150H382C420 150 442 172 442 210V290C442 328 420 350 382 350H270L210 410V350H130C92 350 70 328 70 290V210C70 172 92 150 130 150Z"
+    fill="none"
+    stroke="white"
+    stroke-width="24"
+    stroke-linejoin="round"
+  />
+
+  <!-- 文字图形组 -->
+  <g stroke="white" stroke-width="24" stroke-linecap="round" stroke-linejoin="round" fill="none">
+
+    <!-- 斜杠 "/" (整体等比例缩小，保持斜率，视觉高度减小) -->
+    <path d="M 192 300 L 226 200" />
+
+    <!-- 字母 "p"：
+          1. 整体高度缩减，给气泡顶部和底部留出更多呼吸空间
+          2. V 200: 主干顶点下降
+          3. H 290: 缩小宽度
+          4. A 30 34 0 0 1 290 268: 椭圆弧等比缩小（X半径30，Y半径34）
+          5. 依然保持与气泡边框同宽的 24px 粗细，维持单线设计美感
+    -->
+    <path d="M 272 300 V 200 H 290 A 30 34 0 0 1 290 268 H 272" />
+  </g>
+</svg>
