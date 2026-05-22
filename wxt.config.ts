@@ -14,7 +14,7 @@ export default defineConfig({
       minify: configEnv.mode === "production",
     },
   }),
-  modules: ["@wxt-dev/module-react"],
+  modules: ["@wxt-dev/module-react", "@wxt-dev/auto-icons"],
   manifest: () => {
     const defaultChrome = "509806635063-m19ppgekifuo0jhlrjpsshahp59m38bf";
     const defaultWeb = "509806635063-b3lip3rck8qcu1lm2vfsjuud39gfjtuk";
