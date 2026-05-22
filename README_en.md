@@ -1,10 +1,8 @@
-# Quick Prompt
-
-English | [中文](./README.md)
-
 <p align="center">
-  <img src="./assets/icon.png" alt="Quick Prompt Logo" width="128" style="background: transparent;">
+  <img src="./assets/banner.svg" alt="Quick Prompt" width="100%">
 </p>
+
+<h1 align="center">Quick Prompt</h1>
 
 A powerful browser extension focused on prompt management and quick input. Helps users create, manage, and organize prompt libraries, and quickly insert preset prompt content in any webpage input field, boosting your productivity.
 
