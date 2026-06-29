@@ -220,25 +220,13 @@ function App() {
   return (
     <div className="flex h-screen min-w-[280px] flex-col bg-background text-foreground">
       <div className="space-y-2 px-3 pt-3 pb-2.5">
-        <div className="flex items-center gap-2">
-          <Input
-            type="text"
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-            placeholder={t("searchKeywordPlaceholder")}
-            className="h-9 flex-1"
-          />
-          <Button
-            variant="ghost"
-            size="icon-sm"
-            onClick={openOptionsPage}
-            title={t("managePrompts")}
-            aria-label={t("managePrompts")}
-            className="shrink-0"
-          >
-            <Settings2 className="size-4" />
-          </Button>
-        </div>
+        <Input
+          type="text"
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
+          placeholder={t("searchKeywordPlaceholder")}
+          className="h-9"
+        />
         <div className="flex gap-1.5 overflow-x-auto pb-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
           <CategoryChip
             label={t("allCategories")}
@@ -350,8 +338,18 @@ function App() {
         )}
       </div>
 
-      <footer className="border-t border-border px-3 py-1.5 text-[11px] text-muted-foreground">
-        {t("totalPrompts2", [filteredPrompts.length.toString()])}
+      <footer className="flex items-center justify-between gap-2 border-t border-border px-3 py-1.5 text-[11px] text-muted-foreground">
+        <span>{t("totalPrompts2", [filteredPrompts.length.toString()])}</span>
+        <Button
+          variant="ghost"
+          size="sm"
+          onClick={openOptionsPage}
+          title={t("managePrompts")}
+          className="h-7 gap-1.5 px-2 text-[11px] text-muted-foreground"
+        >
+          <Settings2 className="size-3.5" />
+          {t("managePrompts")}
+        </Button>
       </footer>
 
       {pendingAction && (
