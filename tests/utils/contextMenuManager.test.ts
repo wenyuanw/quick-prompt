@@ -29,10 +29,11 @@ describe("contextMenuManager", () => {
     resolveRemoveAll?.();
     await registration;
 
-    expect(create).toHaveBeenCalledTimes(3);
+    expect(create).toHaveBeenCalledTimes(4);
     expect(create.mock.calls.map(([item]) => item.id)).toEqual([
       "open-options",
       "category-management",
+      "open-sidepanel",
       "save-prompt",
     ]);
   });
