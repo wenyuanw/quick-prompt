@@ -8,6 +8,7 @@ import {
   FolderPlus,
   Library,
   MousePointer2,
+  PanelRight,
   Settings2,
   Sparkles,
 } from "lucide-react"
@@ -27,6 +28,7 @@ function App() {
   const [error, setError] = useState<string | null>(null)
   const [shortcutKey, setShortcutKey] = useState<string>('')
   const [saveShortcutKey, setSaveShortcutKey] = useState<string>('')
+  const [sidePanelShortcutKey, setSidePanelShortcutKey] = useState<string>('')
   const [shortcutSettingsUrl, setShortcutSettingsUrl] = useState<string>('')
   const [showShortcutHelp, setShowShortcutHelp] = useState<boolean>(false)
 
@@ -81,18 +83,21 @@ function App() {
       const commands = await browser.commands.getAll()
       const commandMap = {
         prompt: commands.find(cmd => cmd.name === 'open-prompt-selector'),
-        save: commands.find(cmd => cmd.name === 'save-selected-prompt')
+        save: commands.find(cmd => cmd.name === 'save-selected-prompt'),
+        sidePanel: commands.find(cmd => cmd.name === 'open-side-panel')
       }
       
       // 提取快捷键字符串
       const shortcuts = {
         prompt: commandMap.prompt?.shortcut || '',
-        save: commandMap.save?.shortcut || ''
+        save: commandMap.save?.shortcut || '',
+        sidePanel: commandMap.sidePanel?.shortcut || ''
       }
       
       // 更新状态
       setShortcutKey(shortcuts.prompt)
       setSaveShortcutKey(shortcuts.save)
+      setSidePanelShortcutKey(shortcuts.sidePanel)
       
       // 判断是否显示帮助信息：当任一快捷键未设置且用户未选择不再提醒时显示
       const hasAllShortcuts = shortcuts.prompt && shortcuts.save
@@ -176,6 +181,24 @@ function App() {
     }
   }
 
+  // 打开侧边栏（Chrome 使用 sidePanel，Firefox 使用 sidebarAction）
+  const openSidePanel = async () => {
+    const anyBrowser = browser as any
+    try {
+      if (anyBrowser.sidePanel?.open) {
+        const [tab] = await browser.tabs.query({ active: true, currentWindow: true })
+        if (tab?.windowId != null) {
+          await anyBrowser.sidePanel.open({ windowId: tab.windowId })
+        }
+      } else if (anyBrowser.sidebarAction?.toggle) {
+        await anyBrowser.sidebarAction.toggle()
+      }
+      window.close()
+    } catch (err) {
+      console.error('弹出窗口：打开侧边栏出错', err)
+    }
+  }
+
   // 打开快捷键设置页面
   const openShortcutSettings = () => {
     // 对于Firefox，直接打开about:addons后需要用户进一步操作
@@ -255,6 +278,18 @@ function App() {
           </div>
         </CardContent>
       </Card>
+
+      <Button onClick={openSidePanel} variant="soft" className="mb-2 w-full justify-between">
+        <span className="inline-flex items-center gap-2">
+          <PanelRight className="size-4" />
+          {t("openSidePanel")}
+        </span>
+        {sidePanelShortcutKey ? (
+          <KeyBadge>{sidePanelShortcutKey}</KeyBadge>
+        ) : (
+          <ArrowRight className="size-4" />
+        )}
+      </Button>
 
       <Button onClick={openOptionsPage} className="mb-3 w-full justify-between">
         <span className="inline-flex items-center gap-2">

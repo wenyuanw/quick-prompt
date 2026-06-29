@@ -1,6 +1,6 @@
 import { isDarkMode } from '@/utils/tools'
 import { showPromptSelector } from './components/PromptSelector'
-import { extractVariables } from './utils/variableParser'
+import { extractVariables } from '@/utils/variableParser'
 import { migratePromptsWithCategory } from '@/utils/categoryUtils'
 import { getAllPrompts } from '@/utils/promptStore'
 import type { EditableElement, PromptItemWithVariables } from '@/utils/types'
@@ -10,6 +10,7 @@ import {
   findEditableElement,
   getActiveEditableElement,
   getSelectedText,
+  insertContentIntoEditable,
 } from './utils/editableTarget'
 import {
   isOpenPromptSelectorShortcut,
@@ -25,6 +26,11 @@ export default defineContentScript({
 
     // 记录上次输入的状态
     let isPromptSelectorOpen = false
+
+    // 记录最近一次聚焦的可编辑元素。
+    // 侧边栏（side panel）获得焦点时，页面输入框会失焦，
+    // 因此需要保留引用，以便从侧边栏插入提示词。
+    let lastFocusedEditable: HTMLElement | null = null
 
     // 设置容器的主题属性
     const setThemeAttributes = (container: HTMLElement) => {
@@ -119,6 +125,18 @@ export default defineContentScript({
       }
     }
 
+    // 跟踪最近聚焦的可编辑元素，供侧边栏插入时回退使用
+    document.addEventListener(
+      'focusin',
+      (event) => {
+        const editableElement = findEditableElement(event.target)
+        if (editableElement) {
+          lastFocusedEditable = editableElement
+        }
+      },
+      true
+    )
+
     // 用于记录可编辑元素的最后一次内容
     const editableValuesMap = new WeakMap<HTMLElement, string>()
 
@@ -176,6 +194,29 @@ export default defineContentScript({
         // 使用通用函数打开提示词选择器
         await openPromptSelector()
         return { success: true }
+      }
+
+      if (message.action === 'insertPrompt') {
+        // 来自侧边栏的插入请求：把（已填充变量的）内容插入当前/最近聚焦的输入框
+        try {
+          const content: string = message.content ?? ''
+
+          // 优先使用当前聚焦元素，否则回退到最近聚焦的可编辑元素
+          let target = getFocusedTextInput()
+          if (!target && lastFocusedEditable && lastFocusedEditable.isConnected) {
+            target = createEditableAdapter(lastFocusedEditable)
+          }
+
+          if (!target) {
+            return { success: false, error: 'noFocusedInput' }
+          }
+
+          insertContentIntoEditable(target, content, { removePromptTrigger: false })
+          return { success: true }
+        } catch (error) {
+          console.error('内容脚本: 插入提示词失败', error)
+          return { success: false, error: 'insertFailed' }
+        }
       }
 
       if (message.action === 'getSelectedText') {

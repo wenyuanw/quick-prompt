@@ -65,6 +65,13 @@ export default defineConfig({
           },
           description: '__MSG_saveSelectedPrompt__',
         },
+        "open-side-panel": {
+          suggested_key: {
+            default: "Ctrl+Shift+L",
+            mac: "Command+Shift+L",
+          },
+          description: '__MSG_openSidePanel__',
+        },
       },
     };
   },

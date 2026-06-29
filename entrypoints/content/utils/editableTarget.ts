@@ -1,4 +1,6 @@
 import type { EditableElement } from '@/utils/types'
+import { getNewlineStrategy, setElementContentByStrategy } from '@/utils/newlineRules'
+import { t } from '@/utils/i18n'
 
 const PROMPT_TRIGGER = '/p'
 const NON_TEXT_INPUT_TYPES = new Set([
@@ -272,5 +274,89 @@ export const buildPromptInsertion = (
   return {
     value: textBeforeCursor + content + textAfterCursor,
     cursorPosition: textBeforeCursor.length + content.length,
+  }
+}
+
+/**
+ * 将处理后的内容插入到目标可编辑元素中。
+ * 同时支持标准 input/textarea 与 contenteditable，供选择器与侧边栏插入共用。
+ */
+export const insertContentIntoEditable = (
+  targetElement: EditableElement,
+  content: string,
+  options: { removePromptTrigger?: boolean } = {}
+): void => {
+  const { removePromptTrigger = false } = options
+
+  // 检查是否为自定义适配器（contenteditable 元素）
+  const editableElement = targetElement._element
+  const isContentEditableAdapter = !!editableElement
+
+  if (isContentEditableAdapter && editableElement) {
+    try {
+      // contenteditable 元素的特殊处理
+      const newlineStrategy = getNewlineStrategy(window.location.href)
+
+      // 获取当前内容和光标位置
+      const fullText = editableElement.textContent || ''
+      const cursorPosition = targetElement.selectionStart ?? fullText.length
+      const insertion = buildPromptInsertion(fullText, cursorPosition, content, {
+        removePromptTrigger,
+      })
+
+      // 创建并分发 beforeinput 事件
+      const beforeInputEvent = new InputEvent('beforeinput', {
+        bubbles: true,
+        cancelable: true,
+        inputType: 'insertFromPaste',
+        data: content,
+      })
+
+      // 如果 beforeinput 事件没有被阻止，则继续处理
+      if (editableElement.dispatchEvent(beforeInputEvent)) {
+        setElementContentByStrategy(editableElement, insertion.value, newlineStrategy)
+
+        // 创建并分发 input 事件
+        const inputEvent = new InputEvent('input', {
+          bubbles: true,
+          inputType: 'insertFromPaste',
+          data: content,
+        })
+        editableElement.dispatchEvent(inputEvent)
+
+        targetElement.setSelectionRange?.(insertion.cursorPosition, insertion.cursorPosition)
+      }
+
+      // 确保编辑器获得焦点
+      editableElement.focus()
+    } catch (error) {
+      console.error(t('errorProcessingContentEditable'), error)
+    }
+    return
+  }
+
+  // 标准输入框处理逻辑
+  const cursorPosition = targetElement.selectionStart ?? targetElement.value.length
+  const insertion = buildPromptInsertion(targetElement.value, cursorPosition, content, {
+    removePromptTrigger,
+  })
+  targetElement.value = insertion.value
+
+  // 设置光标位置
+  if (targetElement.setSelectionRange) {
+    targetElement.setSelectionRange(insertion.cursorPosition, insertion.cursorPosition)
+  }
+  targetElement.focus()
+
+  // 触发 input 事件
+  try {
+    const inputEvent = new InputEvent('input', {
+      bubbles: true,
+      inputType: 'insertFromPaste',
+      data: content,
+    })
+    targetElement.dispatchEvent(inputEvent)
+  } catch (error) {
+    console.warn(t('cannotTriggerInputEvent'), error)
   }
 }

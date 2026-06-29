@@ -1791,5 +1791,26 @@
   },
   "webdavAutoUploadTaskNote": {
     "message": "When automatic upload is enabled, local prompt or category changes are uploaded to WebDAV in the background."
+  },
+  "openSidePanel": {
+    "message": "Open Side Panel"
+  },
+  "sidePanelInsert": {
+    "message": "Insert"
+  },
+  "sidePanelCopied": {
+    "message": "Copied to clipboard"
+  },
+  "sidePanelInsertSuccess": {
+    "message": "Inserted into the page input"
+  },
+  "sidePanelInsertNoInput": {
+    "message": "No input focused on the page. Copied to clipboard instead."
+  },
+  "sidePanelInsertFailed": {
+    "message": "Insertion failed. Copied to clipboard instead."
+  },
+  "sidePanelCancel": {
+    "message": "Cancel"
   }
 }

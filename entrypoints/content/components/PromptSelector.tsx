@@ -3,15 +3,15 @@ import { createRoot } from "react-dom/client";
 import { Check, ChevronDown, Copy, SearchX } from "lucide-react";
 import type { PromptItemWithVariables, EditableElement, Category } from "@/utils/types";
 import { getPromptSelectorStyles } from "../utils/styles";
-import { extractVariables } from "../utils/variableParser";
+import { extractVariables } from "@/utils/variableParser";
 import { showVariableInput } from "./VariableInput";
 import { isDarkMode, getCopyShortcutText } from "@/utils/tools";
 import { getCategories } from "@/utils/categoryUtils";
 import { getGlobalSetting } from "@/utils/globalSettings";
 import { t } from "@/utils/i18n";
-import { getNewlineStrategy, setElementContentByStrategy } from "@/utils/newlineRules";
+import { filterAndSortPrompts } from "@/utils/promptFilter";
 import PromptAttachmentPreview from "./PromptAttachmentPreview";
-import { buildPromptInsertion } from "../utils/editableTarget";
+import { insertContentIntoEditable } from "../utils/editableTarget";
 
 interface PromptSelectorProps {
   prompts: PromptItemWithVariables[];
@@ -108,34 +108,10 @@ const PromptSelector: React.FC<PromptSelectorProps> = ({
     return () => document.removeEventListener('mousedown', handlePointerDown, true);
   }, [isCategoryMenuOpen]);
 
-  // 过滤提示列表 - 同时考虑搜索词和分类筛选
-  const filteredPrompts = prompts.filter((prompt) => {
-    // 首先按分类筛选
-    if (selectedCategoryId && prompt.categoryId !== selectedCategoryId) {
-      return false;
-    }
-    
-    // 再按搜索词筛选
-    if (searchTerm.trim()) {
-      const term = searchTerm.toLowerCase();
-      return (
-        prompt.title.toLowerCase().includes(term) ||
-        prompt.content.toLowerCase().includes(term) ||
-        prompt.tags.some((tag) => tag.toLowerCase().includes(term))
-      );
-    }
-    
-    return true;
-  }).sort((a, b) => {
-    // 按置顶状态和最后修改时间排序：置顶的在前面，同级别内按最后修改时间降序
-    // 首先按置顶状态排序，置顶的在前面
-    if (a.pinned && !b.pinned) return -1;
-    if (!a.pinned && b.pinned) return 1;
-    
-    // 如果置顶状态相同，按最后修改时间降序排序（新的在前面）
-    const aTime = a.lastModified ? new Date(a.lastModified).getTime() : 0;
-    const bTime = b.lastModified ? new Date(b.lastModified).getTime() : 0;
-    return bTime - aTime;
+  // 过滤提示列表 - 同时考虑搜索词和分类筛选（与侧边栏共用逻辑）
+  const filteredPrompts = filterAndSortPrompts(prompts, {
+    searchTerm,
+    categoryId: selectedCategoryId,
   });
 
   // 当组件挂载时聚焦搜索框
@@ -343,76 +319,7 @@ const PromptSelector: React.FC<PromptSelectorProps> = ({
 
   // 应用处理后的内容到目标元素
   const applyProcessedContent = (content: string) => {
-    // 检查是否为自定义适配器（contenteditable 元素）
-    const editableElement = targetElement._element;
-    const isContentEditableAdapter = !!editableElement;
-
-    if (isContentEditableAdapter) {
-      try {
-        // contenteditable 元素的特殊处理
-        const newlineStrategy = getNewlineStrategy(window.location.href);
-
-        // 获取当前内容和光标位置
-        const fullText = editableElement.textContent || "";
-        const cursorPosition = targetElement.selectionStart ?? fullText.length;
-        const insertion = buildPromptInsertion(fullText, cursorPosition, content, {
-          removePromptTrigger,
-        });
-
-        // 创建并分发 beforeinput 事件
-        const beforeInputEvent = new InputEvent("beforeinput", {
-          bubbles: true,
-          cancelable: true,
-          inputType: "insertFromPaste",
-          data: content,
-        });
-
-        // 如果 beforeinput 事件没有被阻止，则继续处理
-        if (editableElement.dispatchEvent(beforeInputEvent)) {
-          setElementContentByStrategy(editableElement, insertion.value, newlineStrategy);
-
-          // 创建并分发 input 事件
-          const inputEvent = new InputEvent("input", {
-            bubbles: true,
-            inputType: "insertFromPaste",
-            data: content,
-          });
-          editableElement.dispatchEvent(inputEvent);
-
-          targetElement.setSelectionRange?.(insertion.cursorPosition, insertion.cursorPosition);
-        }
-
-        // 确保编辑器获得焦点
-        editableElement.focus();
-      } catch (error) {
-        console.error(t('errorProcessingContentEditable'), error);
-      }
-    } else {
-      // 原有的标准输入框处理逻辑
-      const cursorPosition = targetElement.selectionStart ?? targetElement.value.length;
-      const insertion = buildPromptInsertion(targetElement.value, cursorPosition, content, {
-        removePromptTrigger,
-      });
-      targetElement.value = insertion.value;
-
-      // 设置光标位置
-      if (targetElement.setSelectionRange) {
-        targetElement.setSelectionRange(insertion.cursorPosition, insertion.cursorPosition);
-      }
-      targetElement.focus();
-
-      // 触发 input 事件
-      try {
-        const inputEvent = new InputEvent("input", {
-          bubbles: true,
-          inputType: "insertFromPaste",
-          data: content,
-        });
-        targetElement.dispatchEvent(inputEvent);
-      } catch (error) {
-        console.warn(t('cannotTriggerInputEvent'), error);
-      }
-    }
+    insertContentIntoEditable(targetElement, content, { removePromptTrigger });
 
     // 关闭弹窗
     onClose();

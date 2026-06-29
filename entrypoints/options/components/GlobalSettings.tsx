@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { browser } from '#imports';
-import { ExternalLink, FolderOpen, HardDrive, Keyboard, Languages, Loader2, MousePointerClick, Settings2, ShieldCheck } from "lucide-react";
+import { ExternalLink, FolderOpen, HardDrive, Keyboard, Languages, Loader2, MousePointerClick, PanelRight, Settings2, ShieldCheck } from "lucide-react";
 import { getGlobalSettings, updateGlobalSettings, type GlobalSettings } from '@/utils/globalSettings';
 import { getAllPrompts } from "@/utils/promptStore";
 import { Badge } from "@/components/ui/badge";
@@ -385,6 +385,7 @@ const GlobalSettingsPage: React.FC = () => {
               {[
                 { key: 'open-prompt-selector', label: t('openPromptSelector'), icon: MousePointerClick },
                 { key: 'save-selected-prompt', label: t('saveSelectedPrompt'), icon: Keyboard },
+                { key: 'open-side-panel', label: t('openSidePanel'), icon: PanelRight },
               ].map(({ key, label, icon: Icon }) => (
                 <button
                   key={key}

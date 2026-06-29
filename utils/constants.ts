@@ -50,6 +50,7 @@ export const DEFAULT_PROMPTS: PromptItem[] = [
     tags: ["画图", "吉卜力"],
     enabled: true,
     categoryId: "painting",
+    promptSourcePreviewDataUrl: "https://placehold.co/80x80/f59e0b/white?text=Ghibli",
   },
   {
     id: "default-code-explain",

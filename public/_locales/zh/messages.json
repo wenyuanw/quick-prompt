@@ -1791,5 +1791,26 @@
   },
   "webdavAutoUploadTaskNote": {
     "message": "开启自动上传后，本地提示词或分类变化会在后台上传到 WebDAV。"
+  },
+  "openSidePanel": {
+    "message": "打开侧边栏"
+  },
+  "sidePanelInsert": {
+    "message": "插入"
+  },
+  "sidePanelCopied": {
+    "message": "已复制到剪贴板"
+  },
+  "sidePanelInsertSuccess": {
+    "message": "已插入到页面输入框"
+  },
+  "sidePanelInsertNoInput": {
+    "message": "页面没有聚焦的输入框，已复制到剪贴板"
+  },
+  "sidePanelInsertFailed": {
+    "message": "插入失败，已复制到剪贴板"
+  },
+  "sidePanelCancel": {
+    "message": "取消"
   }
 }

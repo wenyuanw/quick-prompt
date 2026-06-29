@@ -12,6 +12,11 @@ const CONTEXT_MENU_ITEMS: Array<Browser.contextMenus.CreateProperties & { titleK
     contexts: ['action'],
   },
   {
+    id: 'open-sidepanel',
+    titleKey: 'openSidePanel',
+    contexts: ['action'],
+  },
+  {
     id: 'save-prompt',
     titleKey: 'savePrompt',
     contexts: ['selection'],
@@ -36,7 +41,7 @@ export const createContextMenus = async (): Promise<void> => {
 }
 
 // Handle context menu clicks
-export const handleContextMenuClick = async (info: Browser.contextMenus.OnClickData, _tab?: Browser.tabs.Tab): Promise<void> => {
+export const handleContextMenuClick = async (info: Browser.contextMenus.OnClickData, tab?: Browser.tabs.Tab): Promise<void> => {
   if (info.menuItemId === 'save-prompt' && info.selectionText) {
     console.log('背景脚本: 右键菜单被点击，选中文本:', info.selectionText)
 
@@ -58,5 +63,17 @@ export const handleContextMenuClick = async (info: Browser.contextMenus.OnClickD
     // 打开分类管理页
     const optionsUrl = browser.runtime.getURL('/options.html#/categories')
     await browser.tabs.create({ url: optionsUrl })
+  } else if (info.menuItemId === 'open-sidepanel') {
+    // 打开侧边栏（Chrome 使用 sidePanel，Firefox 使用 sidebarAction）
+    const anyBrowser = browser as any
+    try {
+      if (anyBrowser.sidePanel?.open && tab?.windowId != null) {
+        await anyBrowser.sidePanel.open({ windowId: tab.windowId })
+      } else if (anyBrowser.sidebarAction?.open) {
+        await anyBrowser.sidebarAction.open()
+      }
+    } catch (error) {
+      console.error('背景脚本: 打开侧边栏失败:', error)
+    }
   }
 };

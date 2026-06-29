@@ -9,6 +9,7 @@ import { createContextMenus, handleContextMenuClick } from "@/utils/browser/cont
 import { setupNotificationHandlers } from "@/utils/browser/notificationManager"
 import { setupStorageChangeListeners } from "@/utils/browser/storageManager"
 import { handleRuntimeMessage } from "@/utils/browser/messageHandler"
+import { setupSidePanelConnections } from "@/utils/browser/sidePanelManager"
 
 export default defineBackground(async () => {
   console.log('Hello background!', { id: browser.runtime.id })
@@ -41,6 +42,7 @@ export default defineBackground(async () => {
   await createContextMenus();
   setupNotificationHandlers();
   setupStorageChangeListeners();
+  setupSidePanelConnections();
 
   // Setup event listeners
   browser.contextMenus.onClicked.addListener(handleContextMenuClick);
