@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from "react";
 import { createRoot } from "react-dom/client";
 import type { PromptItemWithVariables, EditableElement } from "@/utils/types";
 import { getPromptSelectorStyles } from "../utils/styles";
-import { extractVariables, replaceVariables } from "../utils/variableParser";
+import { extractVariables, replaceVariables } from "@/utils/variableParser";
 import { isDarkMode } from "@/utils/tools";
 import { getGlobalSetting } from "@/utils/globalSettings";
 import { t } from "@/utils/i18n";

@@ -13,10 +13,10 @@ const variableRegex = /\{\{([^{}]+)\}\}/g;
  */
 export function extractVariables(content: string): string[] {
   if (!content) return [];
-  
+
   const variables: string[] = [];
   let match;
-  
+
   // 使用正则表达式匹配所有变量
   while ((match = variableRegex.exec(content)) !== null) {
     // match[1] 是变量名（不含括号）
@@ -24,7 +24,10 @@ export function extractVariables(content: string): string[] {
       variables.push(match[1]);
     }
   }
-  
+
+  // 重置正则状态，避免下次调用时受 lastIndex 影响
+  variableRegex.lastIndex = 0;
+
   return variables;
 }
 
@@ -36,10 +39,10 @@ export function extractVariables(content: string): string[] {
  */
 export function replaceVariables(content: string, variableValues: Record<string, string>): string {
   if (!content) return '';
-  
+
   // 替换所有变量
   return content.replace(variableRegex, (match, varName) => {
     // 如果提供了变量值，则替换；否则保留原样
     return variableValues[varName] !== undefined ? variableValues[varName] : match;
   });
-} 
+}
