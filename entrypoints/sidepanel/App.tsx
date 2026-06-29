@@ -3,12 +3,10 @@ import {
   Check,
   ClipboardCopy,
   CornerDownLeft,
-  Library,
   SearchX,
   Settings2,
   X,
 } from "lucide-react"
-import Logo from "~/assets/icon.png"
 import "~/assets/tailwind.css"
 import "./style.css"
 import { t, initLocale } from "@/utils/i18n"
@@ -221,34 +219,26 @@ function App() {
 
   return (
     <div className="flex h-screen min-w-[280px] flex-col bg-background text-foreground">
-      <header className="flex items-center gap-2 border-b border-border px-3 py-2.5">
-        <img src={Logo} className="size-7" alt="Quick Prompt" />
-        <div className="min-w-0 flex-1">
-          <h1 className="truncate text-sm font-semibold leading-tight">Quick Prompt</h1>
-          <p className="flex items-center gap-1 truncate text-[11px] text-muted-foreground">
-            <Library className="size-3" />
-            {t("promptLibrary")}
-          </p>
+      <div className="space-y-2 px-3 pt-3 pb-2.5">
+        <div className="flex items-center gap-2">
+          <Input
+            type="text"
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            placeholder={t("searchKeywordPlaceholder")}
+            className="h-9 flex-1"
+          />
+          <Button
+            variant="ghost"
+            size="icon-sm"
+            onClick={openOptionsPage}
+            title={t("managePrompts")}
+            aria-label={t("managePrompts")}
+            className="shrink-0"
+          >
+            <Settings2 className="size-4" />
+          </Button>
         </div>
-        <Button
-          variant="ghost"
-          size="icon-sm"
-          onClick={openOptionsPage}
-          title={t("managePrompts")}
-          aria-label={t("managePrompts")}
-        >
-          <Settings2 className="size-4" />
-        </Button>
-      </header>
-
-      <div className="space-y-2 px-3 py-2.5">
-        <Input
-          type="text"
-          value={searchTerm}
-          onChange={(e) => setSearchTerm(e.target.value)}
-          placeholder={t("searchKeywordPlaceholder")}
-          className="h-9"
-        />
         <div className="flex gap-1.5 overflow-x-auto pb-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
           <CategoryChip
             label={t("allCategories")}
