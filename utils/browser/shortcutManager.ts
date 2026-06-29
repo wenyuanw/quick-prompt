@@ -1,5 +1,14 @@
 import { t } from "@/utils/i18n"
-import { closeSidePanelForWindow, isSidePanelOpen } from "@/utils/browser/sidePanelManager"
+import {
+  isSidePanelOpen,
+  markSidePanelClosed,
+  markSidePanelOpen,
+  requestSidePanelClose,
+} from "@/utils/browser/sidePanelManager"
+
+// 侧边栏切换去抖时间戳：快速连按时，等上一次开/关稳定后再处理，避免在面板创建过程中误判
+let lastSidePanelToggleAt = 0
+const SIDE_PANEL_TOGGLE_DEBOUNCE_MS = 300
 
 // 检测快捷键配置状态
 export const checkShortcutConfiguration = async (): Promise<void> => {
@@ -48,39 +57,68 @@ export const handleCommand = async (command: string, tab?: Browser.tabs.Tab): Pr
   if (command === 'open-side-panel') {
     console.log('背景脚本: 快捷键切换侧边栏');
     const anyBrowser = browser as any;
-    try {
-      // 优先使用命令回调直接提供的 tab.windowId（同步可得，不消耗用户手势）
-      const windowId = tab?.windowId;
+    const windowId = tab?.windowId;
 
-      // 已打开 -> 关闭（close() 无需用户手势）
-      if (windowId != null && isSidePanelOpen(windowId)) {
-        closeSidePanelForWindow(windowId);
-        return;
+    // Firefox：使用原生切换
+    if (!anyBrowser.sidePanel && anyBrowser.sidebarAction?.toggle) {
+      try {
+        anyBrowser.sidebarAction.toggle();
+      } catch (error) {
+        console.error('背景脚本: 切换侧边栏失败:', error);
       }
+      return;
+    }
 
-      // 未打开 -> 打开。注意：open() 必须在用户手势内调用，
-      // 因此当已知 windowId 时，绝不能在 open() 之前出现 await，否则手势会失效。
-      if (windowId != null && anyBrowser.sidePanel?.open) {
-        anyBrowser.sidePanel.open({ windowId });
-        return;
-      }
-
-      // 回退路径（命令未提供 tab 时）：可能因 await 丢失手势，尽力而为
-      if (anyBrowser.sidePanel?.open) {
+    // 拿不到 windowId 的兜底（极少见）：尽力打开
+    if (windowId == null) {
+      try {
         const tabs = await browser.tabs.query({ active: true, currentWindow: true });
         const fallbackWindowId = tabs[0]?.windowId;
-        if (fallbackWindowId != null) {
-          if (isSidePanelOpen(fallbackWindowId)) {
-            closeSidePanelForWindow(fallbackWindowId);
-          } else {
-            anyBrowser.sidePanel.open({ windowId: fallbackWindowId });
-          }
+        if (fallbackWindowId != null && anyBrowser.sidePanel?.open) {
+          anyBrowser.sidePanel.open({ windowId: fallbackWindowId });
         }
-      } else if (anyBrowser.sidebarAction?.toggle) {
-        await anyBrowser.sidebarAction.toggle();
+      } catch (error) {
+        console.error('背景脚本: 打开侧边栏失败:', error);
       }
-    } catch (error) {
-      console.error('背景脚本: 快捷键切换侧边栏失败:', error);
+      return;
+    }
+
+    // 去抖：快速连按时，等上一次开/关稳定后再处理，避免在面板创建过程中产生竞态
+    const now = Date.now();
+    if (now - lastSidePanelToggleAt < SIDE_PANEL_TOGGLE_DEBOUNCE_MS) {
+      return;
+    }
+    lastSidePanelToggleAt = now;
+
+    if (isSidePanelOpen(windowId)) {
+      // 已打开 -> 关闭。close() 无需用户手势，可异步执行。先乐观更新状态。
+      markSidePanelClosed(windowId);
+      if (anyBrowser.sidePanel?.close) {
+        anyBrowser.sidePanel
+          .close({ windowId })
+          .catch((error: unknown) => {
+            // 关闭失败时尝试让面板自行关闭；若也失败则回滚状态
+            if (!requestSidePanelClose(windowId)) {
+              markSidePanelOpen(windowId);
+            }
+            console.error('背景脚本: 关闭侧边栏失败:', error);
+          });
+      } else if (!requestSidePanelClose(windowId)) {
+        markSidePanelOpen(windowId);
+      }
+      return;
+    }
+
+    // 未打开 -> 打开。open() 必须在用户手势内同步调用，open() 之前不能有 await。
+    // 先乐观标记为打开，使紧接着的下一次按键能正确判定为"关闭"。
+    if (anyBrowser.sidePanel?.open) {
+      markSidePanelOpen(windowId);
+      anyBrowser.sidePanel
+        .open({ windowId })
+        .catch((error: unknown) => {
+          markSidePanelClosed(windowId);
+          console.error('背景脚本: 打开侧边栏失败:', error);
+        });
     }
     return;
   }

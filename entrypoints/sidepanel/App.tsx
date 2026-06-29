@@ -20,6 +20,7 @@ import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
 import { Toaster } from "@/components/ui/sonner"
 import { toast } from "sonner"
+import PromptAttachmentPreview from "@/entrypoints/options/components/PromptAttachmentPreview"
 
 type ActionMode = "copy" | "insert"
 
@@ -119,8 +120,9 @@ function App() {
     return () => browser.storage.onChanged.removeListener(handleStorageChange)
   }, [loadData])
 
-  // 与后台建立长连接，上报自身 windowId，使快捷键能够「切换」开关侧边栏。
-  // 后台可据此关闭本侧边栏（或通过 'close' 消息让其自行 window.close()）。
+  // 与后台建立长连接，上报自身 windowId，使后台能跟踪本窗口侧边栏处于打开状态，
+  // 从而让快捷键可靠地「切换」开/关。后台也可通过该连接发送 'close' 让面板自行关闭
+  // （作为 sidePanel.close() 的回退方案）。
   useEffect(() => {
     let port: Browser.runtime.Port | null = null
     let disposed = false
@@ -131,17 +133,22 @@ function App() {
         const win = await (browser as any).windows?.getCurrent?.()
         windowId = win?.id
       } catch {
-        /* 忽略：拿不到 windowId 时仍连接，只是无法被精确定位关闭 */
+        /* 忽略：拿不到 windowId 时仍连接，只是无法被后台精确定位 */
       }
       if (disposed) return
 
-      port = browser.runtime.connect({ name: "sidepanel" })
+      try {
+        port = browser.runtime.connect({ name: "sidepanel" })
+      } catch {
+        return
+      }
+
       port.onMessage.addListener((message: any) => {
         if (message?.action === "close") {
           window.close()
         }
       })
-      // 若后台 service worker 被回收导致连接断开，重连以重新登记状态
+      // service worker 被回收会导致连接断开，重连以重新登记状态
       port.onDisconnect.addListener(() => {
         port = null
         if (!disposed) setTimeout(connect, 500)
@@ -335,6 +342,20 @@ function App() {
                   <p className="line-clamp-2 whitespace-pre-wrap break-words text-xs text-muted-foreground">
                     {prompt.content}
                   </p>
+                  {prompt.attachments && prompt.attachments.length > 0 && (
+                    <div className="mt-2">
+                      <PromptAttachmentPreview attachments={prompt.attachments} compact />
+                    </div>
+                  )}
+                  {prompt.promptSourcePreviewDataUrl && (
+                    <img
+                      src={prompt.promptSourcePreviewDataUrl}
+                      alt=""
+                      loading="lazy"
+                      decoding="async"
+                      className="mt-2 max-h-28 max-w-full rounded-lg border border-border object-contain"
+                    />
+                  )}
                   <div className="mt-2 flex flex-wrap items-center gap-x-2 gap-y-1 text-[11px] text-muted-foreground">
                     {category && (
                       <span className="inline-flex items-center gap-1">
