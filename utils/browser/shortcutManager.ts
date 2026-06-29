@@ -1,4 +1,5 @@
 import { t } from "@/utils/i18n"
+import { closeSidePanelForWindow, isSidePanelOpen } from "@/utils/browser/sidePanelManager"
 
 // 检测快捷键配置状态
 export const checkShortcutConfiguration = async (): Promise<void> => {
@@ -45,23 +46,41 @@ export const checkShortcutConfiguration = async (): Promise<void> => {
 // Handle keyboard commands
 export const handleCommand = async (command: string, tab?: Browser.tabs.Tab): Promise<void> => {
   if (command === 'open-side-panel') {
-    console.log('背景脚本: 快捷键打开侧边栏');
+    console.log('背景脚本: 快捷键切换侧边栏');
     const anyBrowser = browser as any;
     try {
-      // 键盘命令属于用户手势，允许直接打开侧边栏
-      let windowId = tab?.windowId;
-      if (windowId == null) {
-        const tabs = await browser.tabs.query({ active: true, currentWindow: true });
-        windowId = tabs[0]?.windowId;
+      // 优先使用命令回调直接提供的 tab.windowId（同步可得，不消耗用户手势）
+      const windowId = tab?.windowId;
+
+      // 已打开 -> 关闭（close() 无需用户手势）
+      if (windowId != null && isSidePanelOpen(windowId)) {
+        closeSidePanelForWindow(windowId);
+        return;
       }
 
-      if (anyBrowser.sidePanel?.open && windowId != null) {
-        await anyBrowser.sidePanel.open({ windowId });
+      // 未打开 -> 打开。注意：open() 必须在用户手势内调用，
+      // 因此当已知 windowId 时，绝不能在 open() 之前出现 await，否则手势会失效。
+      if (windowId != null && anyBrowser.sidePanel?.open) {
+        anyBrowser.sidePanel.open({ windowId });
+        return;
+      }
+
+      // 回退路径（命令未提供 tab 时）：可能因 await 丢失手势，尽力而为
+      if (anyBrowser.sidePanel?.open) {
+        const tabs = await browser.tabs.query({ active: true, currentWindow: true });
+        const fallbackWindowId = tabs[0]?.windowId;
+        if (fallbackWindowId != null) {
+          if (isSidePanelOpen(fallbackWindowId)) {
+            closeSidePanelForWindow(fallbackWindowId);
+          } else {
+            anyBrowser.sidePanel.open({ windowId: fallbackWindowId });
+          }
+        }
       } else if (anyBrowser.sidebarAction?.toggle) {
         await anyBrowser.sidebarAction.toggle();
       }
     } catch (error) {
-      console.error('背景脚本: 快捷键打开侧边栏失败:', error);
+      console.error('背景脚本: 快捷键切换侧边栏失败:', error);
     }
     return;
   }

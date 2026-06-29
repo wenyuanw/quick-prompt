@@ -119,6 +119,48 @@ function App() {
     return () => browser.storage.onChanged.removeListener(handleStorageChange)
   }, [loadData])
 
+  // 与后台建立长连接，上报自身 windowId，使快捷键能够「切换」开关侧边栏。
+  // 后台可据此关闭本侧边栏（或通过 'close' 消息让其自行 window.close()）。
+  useEffect(() => {
+    let port: Browser.runtime.Port | null = null
+    let disposed = false
+
+    const connect = async () => {
+      let windowId: number | undefined
+      try {
+        const win = await (browser as any).windows?.getCurrent?.()
+        windowId = win?.id
+      } catch {
+        /* 忽略：拿不到 windowId 时仍连接，只是无法被精确定位关闭 */
+      }
+      if (disposed) return
+
+      port = browser.runtime.connect({ name: "sidepanel" })
+      port.onMessage.addListener((message: any) => {
+        if (message?.action === "close") {
+          window.close()
+        }
+      })
+      // 若后台 service worker 被回收导致连接断开，重连以重新登记状态
+      port.onDisconnect.addListener(() => {
+        port = null
+        if (!disposed) setTimeout(connect, 500)
+      })
+      port.postMessage({ type: "init", windowId })
+    }
+
+    connect()
+
+    return () => {
+      disposed = true
+      try {
+        port?.disconnect()
+      } catch {
+        /* noop */
+      }
+    }
+  }, [])
+
   const filteredPrompts = useMemo(
     () =>
       filterAndSortPrompts(prompts, {
