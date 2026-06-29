@@ -28,6 +28,7 @@ function App() {
   const [error, setError] = useState<string | null>(null)
   const [shortcutKey, setShortcutKey] = useState<string>('')
   const [saveShortcutKey, setSaveShortcutKey] = useState<string>('')
+  const [sidePanelShortcutKey, setSidePanelShortcutKey] = useState<string>('')
   const [shortcutSettingsUrl, setShortcutSettingsUrl] = useState<string>('')
   const [showShortcutHelp, setShowShortcutHelp] = useState<boolean>(false)
 
@@ -82,18 +83,21 @@ function App() {
       const commands = await browser.commands.getAll()
       const commandMap = {
         prompt: commands.find(cmd => cmd.name === 'open-prompt-selector'),
-        save: commands.find(cmd => cmd.name === 'save-selected-prompt')
+        save: commands.find(cmd => cmd.name === 'save-selected-prompt'),
+        sidePanel: commands.find(cmd => cmd.name === 'open-side-panel')
       }
       
       // 提取快捷键字符串
       const shortcuts = {
         prompt: commandMap.prompt?.shortcut || '',
-        save: commandMap.save?.shortcut || ''
+        save: commandMap.save?.shortcut || '',
+        sidePanel: commandMap.sidePanel?.shortcut || ''
       }
       
       // 更新状态
       setShortcutKey(shortcuts.prompt)
       setSaveShortcutKey(shortcuts.save)
+      setSidePanelShortcutKey(shortcuts.sidePanel)
       
       // 判断是否显示帮助信息：当任一快捷键未设置且用户未选择不再提醒时显示
       const hasAllShortcuts = shortcuts.prompt && shortcuts.save
@@ -280,7 +284,11 @@ function App() {
           <PanelRight className="size-4" />
           {t("openSidePanel")}
         </span>
-        <ArrowRight className="size-4" />
+        {sidePanelShortcutKey ? (
+          <KeyBadge>{sidePanelShortcutKey}</KeyBadge>
+        ) : (
+          <ArrowRight className="size-4" />
+        )}
       </Button>
 
       <Button onClick={openOptionsPage} className="mb-3 w-full justify-between">

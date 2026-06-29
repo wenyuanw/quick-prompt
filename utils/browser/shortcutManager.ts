@@ -43,7 +43,29 @@ export const checkShortcutConfiguration = async (): Promise<void> => {
 };
 
 // Handle keyboard commands
-export const handleCommand = async (command: string): Promise<void> => {
+export const handleCommand = async (command: string, tab?: Browser.tabs.Tab): Promise<void> => {
+  if (command === 'open-side-panel') {
+    console.log('背景脚本: 快捷键打开侧边栏');
+    const anyBrowser = browser as any;
+    try {
+      // 键盘命令属于用户手势，允许直接打开侧边栏
+      let windowId = tab?.windowId;
+      if (windowId == null) {
+        const tabs = await browser.tabs.query({ active: true, currentWindow: true });
+        windowId = tabs[0]?.windowId;
+      }
+
+      if (anyBrowser.sidePanel?.open && windowId != null) {
+        await anyBrowser.sidePanel.open({ windowId });
+      } else if (anyBrowser.sidebarAction?.toggle) {
+        await anyBrowser.sidebarAction.toggle();
+      }
+    } catch (error) {
+      console.error('背景脚本: 快捷键打开侧边栏失败:', error);
+    }
+    return;
+  }
+
   if (command === 'open-prompt-selector') {
     console.log(t('backgroundShortcutOpenSelector'));
     try {
