@@ -183,7 +183,12 @@ MIT
   <img src="https://contrib.rocks/image?repo=wenyuanw/quick-prompt" />
 </a>
 
-
 ## Star History
 
-[![Star History Chart](https://api.star-history.com/svg?repos=wenyuanw/quick-prompt&type=Date)](https://www.star-history.com/#wenyuanw/quick-prompt&Date)
+<a href="https://www.star-history.com/?repos=wenyuanw%2Fquick-prompt&type=date&legend=top-left">
+ <picture>
+   <source media="(prefers-color-scheme: dark)" srcset="https://api.star-history.com/chart?repos=wenyuanw/quick-prompt&type=date&theme=dark&legend=top-left&sealed_token=YuhCK7eu83sPU8JMkxIpjKCfYL_7LwFy3-e4R4nrlRRZPVfpGBqIoLuVo_uRLWQk1lKK9k1XnWQZSVvpG6wRZv-okCdAMurAR16qfTBEKQvZiDTs_-vZM4RsWjXz406gYPFyuIZ_FboDI6NcUfImRzY7mkDLv1ileclutK0AF3jLDbKXq1l98lCEQGZN" />
+   <source media="(prefers-color-scheme: light)" srcset="https://api.star-history.com/chart?repos=wenyuanw/quick-prompt&type=date&legend=top-left&sealed_token=YuhCK7eu83sPU8JMkxIpjKCfYL_7LwFy3-e4R4nrlRRZPVfpGBqIoLuVo_uRLWQk1lKK9k1XnWQZSVvpG6wRZv-okCdAMurAR16qfTBEKQvZiDTs_-vZM4RsWjXz406gYPFyuIZ_FboDI6NcUfImRzY7mkDLv1ileclutK0AF3jLDbKXq1l98lCEQGZN" />
+   <img alt="Star History Chart" src="https://api.star-history.com/chart?repos=wenyuanw/quick-prompt&type=date&legend=top-left&sealed_token=YuhCK7eu83sPU8JMkxIpjKCfYL_7LwFy3-e4R4nrlRRZPVfpGBqIoLuVo_uRLWQk1lKK9k1XnWQZSVvpG6wRZv-okCdAMurAR16qfTBEKQvZiDTs_-vZM4RsWjXz406gYPFyuIZ_FboDI6NcUfImRzY7mkDLv1ileclutK0AF3jLDbKXq1l98lCEQGZN" />
+ </picture>
+</a>
