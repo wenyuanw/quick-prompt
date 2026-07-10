@@ -16,6 +16,7 @@ import {
   isOpenPromptSelectorShortcut,
   isSaveSelectedPromptShortcut,
 } from './utils/keyboardShortcuts'
+import { shouldOpenPromptSelectorForInput } from './utils/promptTrigger'
 
 export default defineContentScript({
   matches: ['*://*/*'],
@@ -152,7 +153,7 @@ export default defineContentScript({
       const lastValue = editableValuesMap.get(editableElement) || ''
 
       // 检查是否输入了"/p"并且弹窗尚未打开
-      if (value?.toLowerCase()?.endsWith('/p') && lastValue !== value && !isPromptSelectorOpen) {
+      if (shouldOpenPromptSelectorForInput(event as InputEvent, value, lastValue, isPromptSelectorOpen)) {
         editableValuesMap.set(editableElement, value)
         await openPromptSelector(adapter, { removePromptTrigger: true })
       } else if (!value?.toLowerCase()?.endsWith('/p')) {
