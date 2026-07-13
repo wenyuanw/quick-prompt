@@ -1,5 +1,8 @@
 import { describe, expect, it } from 'vitest'
-import { shouldOpenPromptSelectorForInput } from '@/entrypoints/content/utils/promptTrigger'
+import {
+  shouldOpenPromptSelector,
+  shouldOpenPromptSelectorForInput,
+} from '@/entrypoints/content/utils/promptTrigger'
 
 const input = (isComposing: boolean): InputEvent =>
   new InputEvent('input', {
@@ -18,8 +21,14 @@ describe('content prompt trigger', () => {
     expect(shouldOpenPromptSelectorForInput(input(false), '/p', '/', false)).toBe(true)
   })
 
+  it('opens the selector after IME commit when the last tracked value was still /', () => {
+    expect(shouldOpenPromptSelector('/p', '/', false)).toBe(true)
+  })
+
   it('does not reopen for duplicate input or while the selector is open', () => {
     expect(shouldOpenPromptSelectorForInput(input(false), '/p', '/p', false)).toBe(false)
     expect(shouldOpenPromptSelectorForInput(input(false), '/p', '/', true)).toBe(false)
+    expect(shouldOpenPromptSelector('/p', '/p', false)).toBe(false)
+    expect(shouldOpenPromptSelector('/p', '/', true)).toBe(false)
   })
 })
