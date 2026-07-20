@@ -16,6 +16,10 @@ import {
   isOpenPromptSelectorShortcut,
   isSaveSelectedPromptShortcut,
 } from './utils/keyboardShortcuts'
+import {
+  endsWithPromptTrigger,
+  shouldOpenPromptSelector,
+} from './utils/promptTrigger'
 
 export default defineContentScript({
   matches: ['*://*/*'],
@@ -140,6 +144,22 @@ export default defineContentScript({
     // 用于记录可编辑元素的最后一次内容
     const editableValuesMap = new WeakMap<HTMLElement, string>()
 
+    const tryOpenPromptSelectorForEditable = async (editableElement: HTMLElement) => {
+      const adapter = createEditableAdapter(editableElement)
+      const value = adapter.value
+      const lastValue = editableValuesMap.get(editableElement) || ''
+
+      if (shouldOpenPromptSelector(value, lastValue, isPromptSelectorOpen)) {
+        editableValuesMap.set(editableElement, value)
+        await openPromptSelector(adapter, { removePromptTrigger: true })
+        return
+      }
+
+      if (!endsWithPromptTrigger(value)) {
+        editableValuesMap.set(editableElement, value)
+      }
+    }
+
     // 监听输入框输入事件
     document.addEventListener('input', async (event) => {
       const editableElement = findEditableElement(event.target)
@@ -147,18 +167,21 @@ export default defineContentScript({
         return
       }
 
-      const adapter = createEditableAdapter(editableElement)
-      const value = adapter.value
-      const lastValue = editableValuesMap.get(editableElement) || ''
-
-      // 检查是否输入了"/p"并且弹窗尚未打开
-      if (value?.toLowerCase()?.endsWith('/p') && lastValue !== value && !isPromptSelectorOpen) {
-        editableValuesMap.set(editableElement, value)
-        await openPromptSelector(adapter, { removePromptTrigger: true })
-      } else if (!value?.toLowerCase()?.endsWith('/p')) {
-        // 更新上次输入值
-        editableValuesMap.set(editableElement, value)
+      if (event instanceof InputEvent && event.isComposing) {
+        return
       }
+
+      await tryOpenPromptSelectorForEditable(editableElement)
+    })
+
+    // IME 提交后输入框可能已是 /p，但不会再触发 input 事件
+    document.addEventListener('compositionend', async (event) => {
+      const editableElement = findEditableElement(event.target)
+      if (!editableElement) {
+        return
+      }
+
+      await tryOpenPromptSelectorForEditable(editableElement)
     })
 
     // Chrome commands can be preempted by browser/OS shortcuts; keep a page-level fallback.
