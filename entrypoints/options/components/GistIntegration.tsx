@@ -15,6 +15,10 @@ import { CATEGORIES_STORAGE_KEY } from "@/utils/constants";
 import type { PromptItem, Category } from "@/utils/types";
 import { getAllPrompts, setAllPrompts } from "@/utils/promptStore";
 import {
+  applyImportedGlobalSettings,
+  getGlobalSettings,
+} from "@/utils/globalSettings";
+import {
   GIST_STORAGE_KEYS,
   serializeToGistContent,
   deserializeFromGistContent,
@@ -201,7 +205,8 @@ const GistIntegration: React.FC = () => {
     setIsSyncing(true);
     try {
       const { prompts, categories } = await getPromptsAndCategories();
-      const content = serializeToGistContent(prompts, categories);
+      const globalSettings = await getGlobalSettings();
+      const content = serializeToGistContent(prompts, categories, globalSettings);
       let currentGistId = await resolveGistId();
       if (currentGistId) {
         await config.updateGist(token, currentGistId, content);
@@ -245,6 +250,7 @@ const GistIntegration: React.FC = () => {
       await browser.storage.local.set({
         [CATEGORIES_STORAGE_KEY]: data.categories,
       });
+      await applyImportedGlobalSettings(data.globalSettings);
       showMessage("success", t("gistDownloadSuccess"));
     } catch (error: any) {
       console.error("Error syncing from gist:", error);
@@ -287,6 +293,7 @@ const GistIntegration: React.FC = () => {
       await browser.storage.local.set({
         [CATEGORIES_STORAGE_KEY]: mergedCategories,
       });
+      await applyImportedGlobalSettings(data.globalSettings);
       showMessage(
         "success",
         `${t("gistDownloadSuccess")} (+${newPrompts.length} prompts, +${newCategories.length} categories)`

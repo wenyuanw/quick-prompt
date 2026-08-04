@@ -1,4 +1,8 @@
 import type { Category, PromptItem } from "@/utils/types";
+import {
+  parseBackupGlobalSettings,
+  type GlobalSettings,
+} from "@/utils/globalSettings";
 
 export const WEBDAV_FILENAME = "quick-prompt-backup.json";
 export const WEBDAV_CURRENT_VERSION = "1.0";
@@ -29,6 +33,8 @@ export interface WebDavExportData {
   promptFiles?: WebDavPromptFileReference[];
   categories: Category[];
   storageFormat?: string;
+  /** Optional; absent in older backups for backward compatibility */
+  globalSettings?: GlobalSettings;
 }
 
 export interface WebDavPromptFileReference {
@@ -143,13 +149,15 @@ export const getWebDavHeaders = (
 
 export const serializeToWebDavContent = (
   prompts: PromptItem[],
-  categories: Category[]
+  categories: Category[],
+  globalSettings?: GlobalSettings | null
 ): string => {
   const data: WebDavExportData = {
     version: WEBDAV_CURRENT_VERSION,
     exportedAt: new Date().toISOString(),
     prompts,
     categories,
+    ...(globalSettings ? { globalSettings } : {}),
   };
 
   return JSON.stringify(data, null, 2);
@@ -157,14 +165,18 @@ export const serializeToWebDavContent = (
 
 export const serializeWebDavManifestContent = (
   prompts: PromptItem[],
-  categories: Category[]
+  categories: Category[],
+  globalSettings?: GlobalSettings | null
 ): string => {
+  // Keep the legacy manifest shape (no inline prompts array) and only
+  // append globalSettings when present for backward-compatible readers.
   const data = {
     version: WEBDAV_CURRENT_VERSION,
     exportedAt: new Date().toISOString(),
     storageFormat: WEBDAV_PROMPT_FILES_FORMAT,
     promptFiles: prompts.map(buildWebDavPromptFileReference),
     categories,
+    ...(globalSettings ? { globalSettings } : {}),
   };
 
   return JSON.stringify(data, null, 2);
@@ -217,6 +229,7 @@ export const deserializeFromWebDavContent = (content: string): WebDavExportData 
   const data = JSON.parse(content);
   const promptFiles = normalizePromptFileReferences(data.promptFiles);
   const isPromptFileManifest = data.storageFormat === WEBDAV_PROMPT_FILES_FORMAT || Array.isArray(data.promptFiles);
+  const globalSettings = parseBackupGlobalSettings(data.globalSettings);
 
   if (!Array.isArray(data.prompts) && !isPromptFileManifest) {
     throw new Error("WebDAV backup data must include a prompts array or promptFiles array");
@@ -229,6 +242,7 @@ export const deserializeFromWebDavContent = (content: string): WebDavExportData 
     promptFiles,
     categories: Array.isArray(data.categories) ? data.categories : [],
     ...(typeof data.storageFormat === "string" ? { storageFormat: data.storageFormat } : {}),
+    ...(globalSettings ? { globalSettings } : {}),
   };
 };
 

@@ -13,6 +13,10 @@ import { CATEGORIES_STORAGE_KEY } from "@/utils/constants";
 import type { Category, PromptItem } from "@/utils/types";
 import { getAllPrompts, setAllPrompts } from "@/utils/promptStore";
 import {
+  applyImportedGlobalSettings,
+  getGlobalSettings,
+} from "@/utils/globalSettings";
+import {
   type AttachmentStorageRootHandle,
   getAttachmentRootHandle,
   pickAndStoreAttachmentRoot,
@@ -267,7 +271,8 @@ const WebDavIntegration: React.FC = () => {
       }
 
       const { prompts, categories } = await getPromptsAndCategories();
-      const result = await uploadWebDavBackup(config, rootHandle, prompts, categories);
+      const globalSettings = await getGlobalSettings();
+      const result = await uploadWebDavBackup(config, rootHandle, prompts, categories, globalSettings);
 
       if (result.success) {
         showMessage("success", t("webdavUploadSuccess", [
@@ -310,6 +315,7 @@ const WebDavIntegration: React.FC = () => {
       await browser.storage.local.set({
         [CATEGORIES_STORAGE_KEY]: result.categories,
       });
+      await applyImportedGlobalSettings(result.globalSettings);
       showMessage("success", t("webdavDownloadSuccess", [String(result.downloadedFiles.length)]));
     } catch (error) {
       console.error("Error downloading WebDAV backup:", error);

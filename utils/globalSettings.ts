@@ -58,7 +58,7 @@ const normalizeQuickInjectRules = (
   return normalized;
 };
 
-const normalizeGlobalSettings = (
+export const normalizeGlobalSettings = (
   partial?: Partial<GlobalSettings> | null
 ): GlobalSettings => {
   const merged = {
@@ -73,6 +73,32 @@ const normalizeGlobalSettings = (
     quickInjectMode: merged.quickInjectMode === 'append' ? 'append' : 'overwrite',
     quickInjectRules: normalizeQuickInjectRules(merged.quickInjectRules),
   };
+};
+
+/**
+ * Parse optional globalSettings from a backup payload.
+ * Returns null when the field is absent so older backups stay compatible.
+ */
+export const parseBackupGlobalSettings = (
+  value: unknown
+): GlobalSettings | null => {
+  if (!value || typeof value !== 'object' || Array.isArray(value)) {
+    return null;
+  }
+
+  return normalizeGlobalSettings(value as Partial<GlobalSettings>);
+};
+
+export const applyImportedGlobalSettings = async (
+  value: unknown
+): Promise<boolean> => {
+  const settings = parseBackupGlobalSettings(value);
+  if (!settings) {
+    return false;
+  }
+
+  await saveGlobalSettings(settings);
+  return true;
 };
 
 // 获取全局设置
