@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { browser } from '#imports';
-import { ExternalLink, FolderOpen, HardDrive, Keyboard, Languages, Loader2, MousePointerClick, PanelRight, Settings2, ShieldCheck, Zap } from "lucide-react";
+import { ExternalLink, FolderOpen, HardDrive, Keyboard, Languages, Loader2, MousePointerClick, PanelRight, Settings2, ShieldCheck } from "lucide-react";
 import {
   getGlobalSettings,
   normalizeHostname,
@@ -45,6 +45,7 @@ import { PageSurface } from "@/components/layout/AppShell";
 import { cn } from "@/lib/utils";
 import { t, initLocale, setLocale, getCurrentLocale, SUPPORTED_LOCALES } from '@/utils/i18n';
 import type { PromptItem } from "@/utils/types";
+import Logo from "~/assets/logo.svg";
 
 const hasPromptAttachments = (prompts: PromptItem[]): boolean => (
   prompts.some((prompt) => Array.isArray(prompt.attachments) && prompt.attachments.length > 0)
@@ -362,7 +363,7 @@ const GlobalSettingsPage: React.FC = () => {
 
           <div className="px-5 py-4">
             <div className="mb-3 flex items-center gap-2">
-              <Zap className="size-4 text-primary" />
+              <img src={Logo} alt="" className="size-4 rounded-[4px]" />
               <h3 className="text-sm font-medium text-foreground">{t('quickInjectSection')}</h3>
             </div>
 

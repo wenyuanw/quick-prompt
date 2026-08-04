@@ -9,6 +9,7 @@ import {
   findEditableElement,
 } from './editableTarget'
 import { browser } from '#imports'
+import logoUrl from '~/assets/logo.svg'
 
 const BUTTON_HOST_ID = 'quick-prompt-quick-inject-host'
 
@@ -27,49 +28,35 @@ const createButtonStyles = (): string => `
     height: 28px;
     padding: 0;
     margin: 0;
-    border: 1px solid rgba(15, 23, 42, 0.12);
+    border: none;
     border-radius: 8px;
-    background: #ffffff;
-    color: #0f172a;
-    box-shadow: 0 4px 14px rgba(15, 23, 42, 0.14);
+    background: transparent;
+    box-shadow: 0 4px 14px rgba(15, 23, 42, 0.18);
     cursor: pointer;
-    transition: transform 120ms ease, background-color 120ms ease, box-shadow 120ms ease;
+    overflow: hidden;
+    transition: transform 120ms ease, box-shadow 120ms ease;
   }
 
   .qp-quick-inject-btn:hover {
     transform: translateY(-1px);
-    background: #f8fafc;
-    box-shadow: 0 6px 18px rgba(15, 23, 42, 0.18);
+    box-shadow: 0 6px 18px rgba(15, 23, 42, 0.24);
   }
 
   .qp-quick-inject-btn:focus-visible {
-    outline: 2px solid #2563eb;
+    outline: 2px solid #7c3aed;
     outline-offset: 2px;
   }
 
-  .qp-quick-inject-btn[data-theme="dark"] {
-    border-color: rgba(148, 163, 184, 0.35);
-    background: #0f172a;
-    color: #e2e8f0;
-    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.35);
-  }
-
-  .qp-quick-inject-btn[data-theme="dark"]:hover {
-    background: #1e293b;
-  }
-
-  .qp-quick-inject-btn svg {
-    width: 14px;
-    height: 14px;
+  .qp-quick-inject-btn img {
+    width: 28px;
+    height: 28px;
+    display: block;
     pointer-events: none;
   }
 `
 
-const boltIconSvg = `
-  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-    <path d="M13 2 3 14h8l-1 8 10-12h-8l1-8z"></path>
-  </svg>
-`
+const createLogoMarkup = (): string =>
+  `<img src="${logoUrl}" alt="" width="28" height="28" draggable="false" />`
 
 export class QuickInjectController {
   private config: QuickInjectRuntimeConfig = {
@@ -142,7 +129,7 @@ export class QuickInjectController {
     button.className = 'qp-quick-inject-btn'
     button.setAttribute('aria-label', t('quickInjectButtonLabel'))
     button.title = t('quickInjectButtonLabel')
-    button.innerHTML = boltIconSvg
+    button.innerHTML = createLogoMarkup()
     button.style.pointerEvents = 'auto'
 
     button.addEventListener('pointerdown', (event) => {
@@ -243,8 +230,6 @@ export class QuickInjectController {
       Math.max(8, rect.right - 34)
     )
 
-    const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches
-    this.button.dataset.theme = prefersDark ? 'dark' : 'light'
     this.button.style.top = `${top}px`
     this.button.style.left = `${left}px`
     this.button.style.display = 'inline-flex'
