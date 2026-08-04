@@ -360,3 +360,78 @@ export const insertContentIntoEditable = (
     console.warn(t('cannotTriggerInputEvent'), error)
   }
 }
+
+export type ContentApplyMode = 'overwrite' | 'append'
+
+export const buildAppliedContent = (
+  currentValue: string,
+  content: string,
+  mode: ContentApplyMode
+): string => {
+  if (mode === 'overwrite' || !currentValue) {
+    return content
+  }
+
+  const separator = currentValue.endsWith('\n') ? '' : '\n'
+  return `${currentValue}${separator}${content}`
+}
+
+/**
+ * 按覆盖/追加模式将内容写入可编辑元素（供快捷注入使用）。
+ */
+export const applyContentToEditable = (
+  targetElement: EditableElement,
+  content: string,
+  mode: ContentApplyMode = 'overwrite'
+): void => {
+  const editableElement = targetElement._element
+  const isContentEditableAdapter = !!editableElement
+  const nextValue = buildAppliedContent(targetElement.value, content, mode)
+
+  if (isContentEditableAdapter && editableElement) {
+    try {
+      const newlineStrategy = getNewlineStrategy(window.location.href)
+      const beforeInputEvent = new InputEvent('beforeinput', {
+        bubbles: true,
+        cancelable: true,
+        inputType: 'insertFromPaste',
+        data: content,
+      })
+
+      if (editableElement.dispatchEvent(beforeInputEvent)) {
+        setElementContentByStrategy(editableElement, nextValue, newlineStrategy)
+
+        const inputEvent = new InputEvent('input', {
+          bubbles: true,
+          inputType: 'insertFromPaste',
+          data: content,
+        })
+        editableElement.dispatchEvent(inputEvent)
+        targetElement.setSelectionRange?.(nextValue.length, nextValue.length)
+      }
+
+      editableElement.focus()
+    } catch (error) {
+      console.error(t('errorProcessingContentEditable'), error)
+    }
+    return
+  }
+
+  targetElement.value = nextValue
+
+  if (targetElement.setSelectionRange) {
+    targetElement.setSelectionRange(nextValue.length, nextValue.length)
+  }
+  targetElement.focus()
+
+  try {
+    const inputEvent = new InputEvent('input', {
+      bubbles: true,
+      inputType: 'insertFromPaste',
+      data: content,
+    })
+    targetElement.dispatchEvent(inputEvent)
+  } catch (error) {
+    console.warn(t('cannotTriggerInputEvent'), error)
+  }
+}
