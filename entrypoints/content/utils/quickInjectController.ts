@@ -227,10 +227,10 @@ export class QuickInjectController {
       return
     }
 
-    const top = Math.max(8, rect.top + 6)
+    const top = Math.max(8, rect.top + 4)
     const left = Math.min(
-      window.innerWidth - 36,
-      Math.max(8, rect.right - 34)
+      window.innerWidth - 26,
+      Math.max(8, rect.right - 22)
     )
 
     this.button.style.top = `${top}px`
