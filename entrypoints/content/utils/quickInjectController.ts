@@ -24,39 +24,42 @@ const createButtonStyles = (): string => `
     display: none;
     align-items: center;
     justify-content: center;
-    width: 28px;
-    height: 28px;
+    width: 18px;
+    height: 18px;
     padding: 0;
     margin: 0;
     border: none;
-    border-radius: 8px;
+    border-radius: 5px;
     background: transparent;
-    box-shadow: 0 4px 14px rgba(15, 23, 42, 0.18);
+    box-shadow: none;
     cursor: pointer;
     overflow: hidden;
-    transition: transform 120ms ease, box-shadow 120ms ease;
+    opacity: 0.42;
+    transition: opacity 120ms ease, transform 120ms ease;
   }
 
   .qp-quick-inject-btn:hover {
-    transform: translateY(-1px);
-    box-shadow: 0 6px 18px rgba(15, 23, 42, 0.24);
+    opacity: 0.88;
+    transform: none;
+    box-shadow: none;
   }
 
   .qp-quick-inject-btn:focus-visible {
-    outline: 2px solid #7c3aed;
-    outline-offset: 2px;
+    opacity: 1;
+    outline: 1px solid #7c3aed;
+    outline-offset: 1px;
   }
 
   .qp-quick-inject-btn img {
-    width: 28px;
-    height: 28px;
+    width: 18px;
+    height: 18px;
     display: block;
     pointer-events: none;
   }
 `
 
 const createLogoMarkup = (): string =>
-  `<img src="${logoUrl}" alt="" width="28" height="28" draggable="false" />`
+  `<img src="${logoUrl}" alt="" width="18" height="18" draggable="false" />`
 
 export class QuickInjectController {
   private config: QuickInjectRuntimeConfig = {
