@@ -249,10 +249,9 @@ const QuickInjectSettingsPage: React.FC = () => {
                       </Select>
                       <Button
                         type="button"
-                        variant="ghost"
+                        variant="destructive"
                         size="sm"
                         disabled={isSaving}
-                        className="text-muted-foreground"
                         onClick={() => {
                           void handleRemoveQuickInjectRule(rule.domain);
                         }}
