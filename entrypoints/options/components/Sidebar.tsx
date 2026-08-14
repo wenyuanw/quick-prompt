@@ -308,6 +308,7 @@ function SidebarLink({
   const link = (
     <NavLink
       to={path}
+      end
       onClick={handleClick}
       className={({ isActive }) =>
         cn(
