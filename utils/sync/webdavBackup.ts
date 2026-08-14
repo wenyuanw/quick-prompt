@@ -20,6 +20,7 @@ import {
   getFileFromAttachmentRoot,
 } from "@/utils/attachments/fileSystem";
 import { buildPromptAttachmentDirectoryPath } from "@/utils/attachments/metadata";
+import type { GlobalSettings } from "@/utils/globalSettings";
 import type { Category, PromptAttachment, PromptItem } from "@/utils/types";
 
 export type WebDavBackupDownloadMode = "append" | "replace";
@@ -37,6 +38,7 @@ export interface WebDavBackupDownloadResult {
   categories: Category[];
   downloadedFiles: string[];
   errors: string[];
+  globalSettings?: GlobalSettings;
 }
 
 const getErrorMessage = (error: unknown): string => (
@@ -55,6 +57,7 @@ interface WebDavRemoteBackupSnapshot {
   prompts: PromptItem[];
   categories: Category[];
   promptFiles: WebDavPromptFileReference[];
+  globalSettings?: GlobalSettings;
 }
 
 const readRemoteBackupSnapshot = async (config: WebDavConfig): Promise<WebDavRemoteBackupSnapshot> => {
@@ -66,6 +69,7 @@ const readRemoteBackupSnapshot = async (config: WebDavConfig): Promise<WebDavRem
       prompts: data.prompts,
       categories: data.categories,
       promptFiles: [],
+      ...(data.globalSettings ? { globalSettings: data.globalSettings } : {}),
     };
   }
 
@@ -84,6 +88,7 @@ const readRemoteBackupSnapshot = async (config: WebDavConfig): Promise<WebDavRem
     prompts,
     categories: data.categories,
     promptFiles: data.promptFiles,
+    ...(data.globalSettings ? { globalSettings: data.globalSettings } : {}),
   };
 };
 
@@ -156,7 +161,8 @@ export const uploadWebDavBackup = async (
   config: WebDavConfig,
   rootHandle: AttachmentStorageRootHandle,
   prompts: PromptItem[],
-  categories: Category[]
+  categories: Category[],
+  globalSettings?: GlobalSettings | null
 ): Promise<WebDavBackupUploadResult> => {
   const uploadedFiles: string[] = [];
   const deletedFiles: string[] = [];
@@ -258,7 +264,7 @@ export const uploadWebDavBackup = async (
     await putWebDavFile(
       config,
       WEBDAV_FILENAME,
-      serializeWebDavManifestContent(prompts, categories),
+      serializeWebDavManifestContent(prompts, categories, globalSettings),
       "application/json"
     );
     uploadedFiles.push(WEBDAV_FILENAME);
@@ -368,6 +374,9 @@ export const downloadWebDavBackup = async (
       categories: remoteCategories,
       downloadedFiles,
       errors,
+      ...(remoteSnapshot.globalSettings
+        ? { globalSettings: remoteSnapshot.globalSettings }
+        : {}),
     };
   }
 
@@ -386,5 +395,8 @@ export const downloadWebDavBackup = async (
     ],
     downloadedFiles,
     errors,
+    ...(remoteSnapshot.globalSettings
+      ? { globalSettings: remoteSnapshot.globalSettings }
+      : {}),
   };
 };

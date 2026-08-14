@@ -53,6 +53,10 @@ import {
   restorePromptBackupAttachments,
   type PromptBackupAttachmentFile,
 } from "@/utils/promptBackupArchive";
+import {
+  applyImportedGlobalSettings,
+  getGlobalSettings,
+} from "@/utils/globalSettings";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -311,7 +315,8 @@ const PromptManager = () => {
     confirmMessageKey: string,
     onSuccess?: () => void,
     importedCategories: Category[] = [],
-    attachmentFiles: PromptBackupAttachmentFile[] = []
+    attachmentFiles: PromptBackupAttachmentFile[] = [],
+    importedGlobalSettings?: unknown
   ): Promise<boolean> => {
     const shouldConfirmImport = prompts.length > 0 || (categories.length > 0 && importedCategories.length > 0);
 
@@ -328,7 +333,8 @@ const PromptManager = () => {
       const { merged, addedCount, updatedCount } = mergePrompts(prompts, validPrompts);
       const categoryMerge = mergePromptBackupCategories(categories, importedCategories);
       const categoryChangeCount = categoryMerge.addedCount + categoryMerge.updatedCount;
-      const changedCount = addedCount + updatedCount + categoryChangeCount;
+      const settingsApplied = await applyImportedGlobalSettings(importedGlobalSettings);
+      const changedCount = addedCount + updatedCount + categoryChangeCount + (settingsApplied ? 1 : 0);
 
       if (changedCount === 0) {
         alert(t('noNewPromptsFound'));
@@ -356,6 +362,7 @@ const PromptManager = () => {
       if (importedCategories.length > 0) {
         await savePromptCategories(importedCategories);
       }
+      await applyImportedGlobalSettings(importedGlobalSettings);
       alert(t('importSuccessful', [(validPrompts.length + importedCategories.length).toString()]));
     }
 
@@ -582,7 +589,8 @@ const PromptManager = () => {
 
     try {
       const root = hasPromptAttachments(prompts) ? await getAuthorizedAttachmentRoot() : undefined;
-      const dataBlob = await createPromptBackupZip(root, prompts, categories);
+      const globalSettings = await getGlobalSettings();
+      const dataBlob = await createPromptBackupZip(root, prompts, categories, globalSettings);
       const url = URL.createObjectURL(dataBlob);
       const link = document.createElement("a");
       link.href = url;
@@ -639,7 +647,8 @@ const PromptManager = () => {
         'importPromptsConfirm',
         undefined,
         importedData.categories,
-        importedData.attachmentFiles
+        importedData.attachmentFiles,
+        importedData.globalSettings
       );
       clearFileInput();
     } catch (err) {
@@ -697,7 +706,8 @@ const PromptManager = () => {
         'remoteImportPromptsConfirm',
         closeRemoteImportModal,
         importedData.categories,
-        importedData.attachmentFiles
+        importedData.attachmentFiles,
+        importedData.globalSettings
       );
     } catch (err) {
       console.error(t('remoteImportPromptsError'), err);

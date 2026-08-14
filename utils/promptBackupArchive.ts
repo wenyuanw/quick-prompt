@@ -1,4 +1,5 @@
 import type { Category, PromptAttachment, PromptItem } from "@/utils/types";
+import type { GlobalSettings } from "@/utils/globalSettings";
 import { ATTACHMENTS_DIR_NAME } from "@/utils/attachments/metadata";
 import {
   type AttachmentStorageRootHandle,
@@ -35,6 +36,8 @@ export interface ParsedPromptBackup {
   prompts: PromptItem[];
   categories: Category[];
   attachmentFiles: PromptBackupAttachmentFile[];
+  /** Optional; absent in older backups for backward compatibility */
+  globalSettings?: GlobalSettings;
 }
 
 export interface CategoryMergeResult {
@@ -165,7 +168,8 @@ const getReferencedAttachmentPaths = (prompts: PromptItem[]): string[] => (
 export const createPromptBackupZip = async (
   rootHandle: AttachmentStorageRootHandle | undefined,
   prompts: PromptItem[],
-  categories: Category[]
+  categories: Category[],
+  globalSettings?: GlobalSettings | null
 ): Promise<Blob> => {
   const entries: ZipArchiveInputEntry[] = [
     { path: "prompts/", data: new Uint8Array() },
@@ -201,7 +205,7 @@ export const createPromptBackupZip = async (
 
   entries.push({
     path: WEBDAV_FILENAME,
-    data: serializeWebDavManifestContent(prompts, categories),
+    data: serializeWebDavManifestContent(prompts, categories, globalSettings),
   });
 
   return createZipArchive(entries);
@@ -233,6 +237,7 @@ const parseJsonBackup = (content: string): ParsedPromptBackup => {
     prompts: validateAndNormalizePrompts(backup.prompts),
     categories: normalizeBackupCategories(backup.categories),
     attachmentFiles: [],
+    ...(backup.globalSettings ? { globalSettings: backup.globalSettings } : {}),
   };
 };
 
@@ -278,6 +283,7 @@ const parseZipBackup = async (bytes: Uint8Array): Promise<ParsedPromptBackup> =>
     prompts: normalizedPrompts,
     categories: normalizeBackupCategories(backup.categories),
     attachmentFiles,
+    ...(backup.globalSettings ? { globalSettings: backup.globalSettings } : {}),
   };
 };
 

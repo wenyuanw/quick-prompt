@@ -65,6 +65,10 @@ const migrateAttachmentsToRoot = async (
 const GlobalSettingsPage: React.FC = () => {
   const [settings, setSettings] = useState<GlobalSettings>({
     closeModalOnOutsideClick: true,
+    quickInjectEnabled: false,
+    quickInjectOnFocus: false,
+    quickInjectMode: 'overwrite',
+    quickInjectRules: [],
   });
   const [isLoading, setIsLoading] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
@@ -120,7 +124,10 @@ const GlobalSettingsPage: React.FC = () => {
     loadSettings();
   }, []);
 
-  const handleSettingChange = async (key: keyof GlobalSettings, value: any) => {
+  const handleSettingChange = async <K extends keyof GlobalSettings>(
+    key: K,
+    value: GlobalSettings[K]
+  ) => {
     try {
       setIsSaving(true);
       const newSettings = { ...settings, [key]: value };
@@ -427,4 +434,4 @@ const GlobalSettingsPage: React.FC = () => {
   );
 };
 
-export default GlobalSettingsPage; 
+export default GlobalSettingsPage;

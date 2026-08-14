@@ -108,6 +108,33 @@ describe("webdav sync helpers", () => {
     expect(result.categories).toEqual(categories);
   });
 
+  it("includes optional globalSettings and remains compatible with legacy payloads", () => {
+    const legacy = deserializeFromWebDavContent(JSON.stringify({
+      version: "1.0",
+      exportedAt: "2024-01-15T12:00:00.000Z",
+      prompts: [createPrompt()],
+      categories: [createCategory()],
+    }));
+    expect(legacy.globalSettings).toBeUndefined();
+
+    const modernContent = serializeToWebDavContent(
+      [createPrompt()],
+      [createCategory()],
+      {
+        closeModalOnOutsideClick: true,
+        quickInjectEnabled: true,
+        quickInjectOnFocus: false,
+        quickInjectMode: "overwrite",
+        quickInjectRules: [{ domain: "example.com", promptId: "p1" }],
+      }
+    );
+    const modern = deserializeFromWebDavContent(modernContent);
+    expect(modern.globalSettings).toMatchObject({
+      quickInjectEnabled: true,
+      quickInjectRules: [{ domain: "example.com", promptId: "p1" }],
+    });
+  });
+
   it("parses all DAV hrefs from multistatus XML", () => {
     const xml = `<?xml version="1.0" encoding="utf-8"?>
       <d:multistatus xmlns:d="DAV:">

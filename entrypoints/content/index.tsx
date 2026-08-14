@@ -20,6 +20,7 @@ import {
   endsWithPromptTrigger,
   shouldOpenPromptSelector,
 } from './utils/promptTrigger'
+import { startQuickInjectController } from './utils/quickInjectController'
 
 export default defineContentScript({
   matches: ['*://*/*'],
@@ -27,6 +28,9 @@ export default defineContentScript({
   async main(ctx) {
     await initLocale()
     console.log(t('contentScriptLoaded'))
+
+    // Domain-based quick inject (icon + optional auto-inject on focus)
+    await startQuickInjectController()
 
     // 记录上次输入的状态
     let isPromptSelectorOpen = false

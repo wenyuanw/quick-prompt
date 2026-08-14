@@ -4,6 +4,10 @@
  */
 
 import type { PromptItem, Category } from '@/utils/types'
+import {
+  parseBackupGlobalSettings,
+  type GlobalSettings,
+} from '@/utils/globalSettings'
 
 // ==================== 类型定义 ====================
 
@@ -17,6 +21,8 @@ export interface GistExportData {
   exportedAt: string
   prompts: PromptItem[]
   categories: Category[]
+  /** Optional; absent in older backups for backward compatibility */
+  globalSettings?: GlobalSettings
 }
 
 /**
@@ -96,17 +102,19 @@ export const CURRENT_VERSION = '1.0'
 // ==================== 序列化/反序列化 ====================
 
 /**
- * 将 prompts 和 categories 序列化为 Gist 内容
+ * 将 prompts、categories 与可选的全局设置序列化为 Gist 内容
  */
 export const serializeToGistContent = (
   prompts: PromptItem[],
-  categories: Category[]
+  categories: Category[],
+  globalSettings?: GlobalSettings | null
 ): string => {
   const data: GistExportData = {
     version: CURRENT_VERSION,
     exportedAt: new Date().toISOString(),
     prompts,
     categories,
+    ...(globalSettings ? { globalSettings } : {}),
   }
   return JSON.stringify(data, null, 2)
 }
@@ -141,11 +149,14 @@ export const deserializeFromGistContent = (content: string): GistExportData => {
     )
   }
 
+  const globalSettings = parseBackupGlobalSettings(data.globalSettings)
+
   return {
     version: data.version || '1.0',
     exportedAt: data.exportedAt || new Date().toISOString(),
     prompts: data.prompts,
     categories: Array.isArray(data.categories) ? data.categories : [],
+    ...(globalSettings ? { globalSettings } : {}),
   }
 }
 

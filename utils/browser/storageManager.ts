@@ -6,6 +6,7 @@ import { updateGitHubGist, createGitHubGist, findQuickPromptGist as findGitHubGi
 import { getAttachmentRootHandle, verifyReadWritePermission } from "@/utils/attachments/fileSystem"
 import { uploadWebDavBackup } from "@/utils/sync/webdavBackup"
 import { WEBDAV_STORAGE_KEYS, type WebDavConfig } from "@/utils/sync/webdavSync"
+import { getGlobalSettings } from "@/utils/globalSettings"
 import type { Category } from "@/utils/types"
 import { getAllPrompts, isPromptStorageChange } from "@/utils/promptStore"
 
@@ -129,7 +130,8 @@ const handleGistAutoSync = () => {
       const categoriesResult = await browser.storage.local.get(CATEGORIES_STORAGE_KEY)
       const prompts = await getAllPrompts()
       const categories = (categoriesResult[CATEGORIES_STORAGE_KEY] as Category[]) || []
-      const content = serializeToGistContent(prompts, categories)
+      const globalSettings = await getGlobalSettings()
+      const content = serializeToGistContent(prompts, categories, globalSettings)
 
       // Gitee auto-sync
       if (settings[GIST_STORAGE_KEYS.GITEE_AUTO_SYNC] && settings[GIST_STORAGE_KEYS.GITEE_TOKEN]) {
@@ -232,6 +234,7 @@ const runWebDavAutoSync = async (): Promise<void> => {
     const categoriesResult = await browser.storage.local.get(CATEGORIES_STORAGE_KEY)
     const prompts = await getAllPrompts()
     const categories = (categoriesResult[CATEGORIES_STORAGE_KEY] as Category[]) || []
+    const globalSettings = await getGlobalSettings()
     const syncId = `webdav_auto_${Date.now()}_${++webDavSyncSequence}`
 
     await setWebDavSyncStatus({
@@ -241,7 +244,7 @@ const runWebDavAutoSync = async (): Promise<void> => {
     })
 
     try {
-      const result = await uploadWebDavBackup(config, root, prompts, categories)
+      const result = await uploadWebDavBackup(config, root, prompts, categories, globalSettings)
 
       if (result.success && result.errors.length === 0) {
         await setWebDavSyncStatus({

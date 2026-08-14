@@ -231,6 +231,75 @@
   "closeModalOnOutsideClickDescription": {
     "message": "启用后，点击弹窗外部区域将自动关闭弹窗。禁用后，只能通过ESC键或关闭按钮关闭弹窗。"
   },
+  "quickInjectSection": {
+    "message": "快捷注入"
+  },
+  "quickInjectPageDescription": {
+    "message": "按域名配置快捷注入按钮与可选的聚焦自动注入"
+  },
+  "loadingQuickInjectSettings": {
+    "message": "正在加载快捷注入设置..."
+  },
+  "quickInjectEnabled": {
+    "message": "启用快捷注入"
+  },
+  "quickInjectEnabledDescription": {
+    "message": "开启后，在已配置域名的输入框旁显示快捷注入按钮。"
+  },
+  "quickInjectOnFocus": {
+    "message": "聚焦时自动注入"
+  },
+  "quickInjectOnFocusDescription": {
+    "message": "开启后，聚焦到空输入框时自动写入该域名绑定的提示词。需先启用快捷注入。"
+  },
+  "quickInjectMode": {
+    "message": "写入方式"
+  },
+  "quickInjectModeDescription": {
+    "message": "点击图标注入时使用覆盖或追加。聚焦自动注入仅作用于空输入框。"
+  },
+  "quickInjectModeOverwrite": {
+    "message": "覆盖"
+  },
+  "quickInjectModeAppend": {
+    "message": "追加"
+  },
+  "quickInjectRules": {
+    "message": "域名规则"
+  },
+  "quickInjectRulesDescription": {
+    "message": "为指定域名绑定一条提示词。只有出现在此列表中的域名才会显示快捷注入按钮。"
+  },
+  "quickInjectDomainPlaceholder": {
+    "message": "例如 chat.openai.com"
+  },
+  "quickInjectSelectPrompt": {
+    "message": "选择提示词"
+  },
+  "quickInjectAddRule": {
+    "message": "添加规则"
+  },
+  "quickInjectRemoveRule": {
+    "message": "删除"
+  },
+  "confirmDeleteQuickInjectRule": {
+    "message": "确认删除规则"
+  },
+  "confirmDeleteQuickInjectRuleMessage": {
+    "message": "确定要删除域名「$1」的快捷注入规则吗？删除后该域名将不再显示快捷注入按钮。"
+  },
+  "quickInjectNoRules": {
+    "message": "尚未添加域名规则"
+  },
+  "quickInjectDomainRequired": {
+    "message": "请填写域名并选择提示词"
+  },
+  "quickInjectDomainExists": {
+    "message": "该域名已存在规则"
+  },
+  "quickInjectButtonLabel": {
+    "message": "快捷注入提示词"
+  },
   "keyboardShortcuts": {
     "message": "键盘快捷键"
   },

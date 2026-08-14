@@ -11,6 +11,8 @@ vi.mock("@/utils/i18n", () => ({
     promptCategoryManagement: "Manage categories",
     globalSettings: "Global settings",
     globalSettingsDescription: "Manage global settings",
+    quickInjectSection: "Quick Inject",
+    quickInjectPageDescription: "Configure quick inject",
     gistSync: "Gist sync",
     notionSync: "Notion sync",
     webdavSync: "WebDAV sync",
@@ -25,7 +27,7 @@ const { default: Sidebar } = await import("@/entrypoints/options/components/Side
 
 describe("Sidebar", () => {
   beforeEach(() => {
-    localStorage.clear();
+    window.localStorage.clear();
     window.history.pushState({}, "", "/options.html");
     Object.defineProperty(window, "innerWidth", {
       configurable: true,
@@ -48,9 +50,10 @@ describe("Sidebar", () => {
     const navItems = Array.from(container.querySelector("nav")?.children ?? []);
 
     expect(collapseButton.textContent).toBe("");
-    expect(navItems).toHaveLength(4);
+    expect(navItems).toHaveLength(5);
     expect(navItems[2]).toHaveTextContent("Global settings");
-    expect(navItems[3]).toContainElement(collapseButton);
+    expect(navItems[3]).toHaveTextContent("Quick Inject");
+    expect(navItems[4]).toContainElement(collapseButton);
   });
 
   it.each([
@@ -73,6 +76,11 @@ describe("Sidebar", () => {
       name: "Global settings",
       getLink: () => screen.getByRole("link", { name: "Global settings" }),
       expectedHash: "#/settings",
+    },
+    {
+      name: "Quick Inject",
+      getLink: () => screen.getByRole("link", { name: "Quick Inject" }),
+      expectedHash: "#/settings/quick-inject",
     },
     {
       name: "Gist sync",
@@ -149,5 +157,21 @@ describe("Sidebar", () => {
       document.title,
       "/options.html#/categories",
     );
+  });
+
+  it("does not keep Global settings active when Quick Inject is selected", () => {
+    window.history.pushState({}, "", "/options.html#/settings/quick-inject");
+
+    render(
+      <HashRouter>
+        <Sidebar />
+      </HashRouter>,
+    );
+
+    const globalSettings = screen.getByRole("link", { name: "Global settings" });
+    const quickInject = screen.getByRole("link", { name: "Quick Inject" });
+
+    expect(quickInject.className).toContain("bg-primary/10");
+    expect(globalSettings.className).not.toContain("bg-primary/10");
   });
 });

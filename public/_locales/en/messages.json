@@ -228,6 +228,75 @@
   "closeModalOnOutsideClickDescription": {
     "message": "When enabled, clicking outside the modal area will automatically close the modal. When disabled, the modal can only be closed using the ESC key or close button."
   },
+  "quickInjectSection": {
+    "message": "Quick Inject"
+  },
+  "quickInjectPageDescription": {
+    "message": "Configure the per-domain quick-inject button and optional focus auto-inject"
+  },
+  "loadingQuickInjectSettings": {
+    "message": "Loading quick inject settings..."
+  },
+  "quickInjectEnabled": {
+    "message": "Enable quick inject"
+  },
+  "quickInjectEnabledDescription": {
+    "message": "When enabled, a quick-inject button appears next to inputs on configured domains."
+  },
+  "quickInjectOnFocus": {
+    "message": "Auto-inject on focus"
+  },
+  "quickInjectOnFocusDescription": {
+    "message": "When enabled, focusing an empty input automatically inserts the domain's bound prompt. Requires quick inject to be enabled."
+  },
+  "quickInjectMode": {
+    "message": "Write mode"
+  },
+  "quickInjectModeDescription": {
+    "message": "Use overwrite or append when clicking the icon. Focus auto-inject only runs on empty inputs."
+  },
+  "quickInjectModeOverwrite": {
+    "message": "Overwrite"
+  },
+  "quickInjectModeAppend": {
+    "message": "Append"
+  },
+  "quickInjectRules": {
+    "message": "Domain rules"
+  },
+  "quickInjectRulesDescription": {
+    "message": "Bind one prompt per domain. The quick-inject button only appears on domains listed here."
+  },
+  "quickInjectDomainPlaceholder": {
+    "message": "e.g. chat.openai.com"
+  },
+  "quickInjectSelectPrompt": {
+    "message": "Select a prompt"
+  },
+  "quickInjectAddRule": {
+    "message": "Add rule"
+  },
+  "quickInjectRemoveRule": {
+    "message": "Remove"
+  },
+  "confirmDeleteQuickInjectRule": {
+    "message": "Confirm delete rule"
+  },
+  "confirmDeleteQuickInjectRuleMessage": {
+    "message": "Delete the quick-inject rule for \"$1\"? That domain will no longer show the quick-inject button."
+  },
+  "quickInjectNoRules": {
+    "message": "No domain rules yet"
+  },
+  "quickInjectDomainRequired": {
+    "message": "Enter a domain and select a prompt"
+  },
+  "quickInjectDomainExists": {
+    "message": "A rule already exists for this domain"
+  },
+  "quickInjectButtonLabel": {
+    "message": "Quick inject prompt"
+  },
   "keyboardShortcuts": {
     "message": "Keyboard Shortcuts"
   },

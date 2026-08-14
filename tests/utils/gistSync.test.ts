@@ -93,6 +93,27 @@ describe('serializeToGistContent', () => {
     expect(result).not.toContain('data:')
     expect(result).not.toContain('base64')
   })
+
+  it('应该在提供时序列化 globalSettings，未提供时省略该字段', () => {
+    const withoutSettings = JSON.parse(serializeToGistContent([], []))
+    expect(withoutSettings.globalSettings).toBeUndefined()
+
+    const withSettings = JSON.parse(serializeToGistContent([], [], {
+      closeModalOnOutsideClick: false,
+      quickInjectEnabled: true,
+      quickInjectOnFocus: true,
+      quickInjectMode: 'append',
+      quickInjectRules: [{ domain: 'claude.ai', promptId: 'p1' }],
+    }))
+
+    expect(withSettings.globalSettings).toEqual({
+      closeModalOnOutsideClick: false,
+      quickInjectEnabled: true,
+      quickInjectOnFocus: true,
+      quickInjectMode: 'append',
+      quickInjectRules: [{ domain: 'claude.ai', promptId: 'p1' }],
+    })
+  })
 })
 
 describe('deserializeFromGistContent', () => {
@@ -165,6 +186,35 @@ describe('deserializeFromGistContent', () => {
     const result = deserializeFromGistContent(content)
 
     expect(result.categories).toEqual([])
+  })
+
+  it('应该兼容缺少 globalSettings 的旧备份，并解析新备份中的设置', () => {
+    const legacy = deserializeFromGistContent(JSON.stringify({
+      version: '1.0',
+      exportedAt: '2024-01-15T12:00:00.000Z',
+      prompts: [createPrompt()],
+      categories: [],
+    }))
+    expect(legacy.globalSettings).toBeUndefined()
+
+    const modern = deserializeFromGistContent(JSON.stringify({
+      version: '1.0',
+      exportedAt: '2024-01-15T12:00:00.000Z',
+      prompts: [createPrompt()],
+      categories: [],
+      globalSettings: {
+        closeModalOnOutsideClick: true,
+        quickInjectEnabled: true,
+        quickInjectOnFocus: false,
+        quickInjectMode: 'overwrite',
+        quickInjectRules: [{ domain: 'chat.openai.com', promptId: 'sys' }],
+      },
+    }))
+
+    expect(modern.globalSettings).toMatchObject({
+      quickInjectEnabled: true,
+      quickInjectRules: [{ domain: 'chat.openai.com', promptId: 'sys' }],
+    })
   })
 })
 

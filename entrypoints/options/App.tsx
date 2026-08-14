@@ -8,6 +8,7 @@ import NotionIntegrationPage from "./components/NotionIntegrationPage";
 import GistIntegrationPage from "./components/GistIntegrationPage";
 import WebDavIntegrationPage from "./components/WebDavIntegrationPage";
 import GlobalSettings from "./components/GlobalSettings";
+import QuickInjectSettings from "./components/QuickInjectSettings";
 import ToastContainer from "./components/ToastContainer";
 import "./App.css";
 import "~/assets/tailwind.css";
@@ -93,6 +94,7 @@ const App = () => {
                 <Route path="/" element={<PromptManager />} />
                 <Route path="/categories" element={<CategoryManager />} />
                 <Route path="/settings" element={<GlobalSettings />} />
+                <Route path="/settings/quick-inject" element={<QuickInjectSettings />} />
                 <Route path="/integrations/notion" element={<NotionIntegrationPage />} />
 
                 <Route path="/integrations/gist" element={<GistIntegrationPage />} />
