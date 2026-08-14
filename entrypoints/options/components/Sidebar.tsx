@@ -12,6 +12,7 @@ import {
   Sparkles,
   Tags,
   X,
+  Zap,
 } from "lucide-react";
 
 import Logo from "~/assets/icon.png";
@@ -75,7 +76,7 @@ const Sidebar: React.FC<SidebarProps> = ({ className = "" }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
   const [isCollapsed, setIsCollapsed] = useState(() => {
-    const saved = localStorage.getItem(SIDEBAR_COLLAPSED_KEY);
+    const saved = window.localStorage.getItem(SIDEBAR_COLLAPSED_KEY);
     return saved === "true";
   });
 
@@ -110,6 +111,12 @@ const Sidebar: React.FC<SidebarProps> = ({ className = "" }) => {
       icon: Settings2,
       description: t("globalSettingsDescription"),
     },
+    {
+      path: "/settings/quick-inject",
+      name: t("quickInjectSection"),
+      icon: Zap,
+      description: t("quickInjectPageDescription"),
+    },
   ];
 
   const integrationItems = [
@@ -134,7 +141,7 @@ const Sidebar: React.FC<SidebarProps> = ({ className = "" }) => {
   const toggleCollapse = () => {
     const newState = !isCollapsed;
     setIsCollapsed(newState);
-    localStorage.setItem(SIDEBAR_COLLAPSED_KEY, String(newState));
+    window.localStorage.setItem(SIDEBAR_COLLAPSED_KEY, String(newState));
   };
 
   const collapsed = isCollapsed && !isMobile;

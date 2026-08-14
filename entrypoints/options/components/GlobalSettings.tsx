@@ -1,30 +1,15 @@
 import React, { useState, useEffect } from 'react';
 import { browser } from '#imports';
 import { ExternalLink, FolderOpen, HardDrive, Keyboard, Languages, Loader2, MousePointerClick, PanelRight, Settings2, ShieldCheck } from "lucide-react";
-import {
-  getGlobalSettings,
-  normalizeHostname,
-  updateGlobalSettings,
-  type GlobalSettings,
-  type QuickInjectDomainRule,
-  type QuickInjectMode,
-} from '@/utils/globalSettings';
+import { getGlobalSettings, updateGlobalSettings, type GlobalSettings } from '@/utils/globalSettings';
 import { getAllPrompts } from "@/utils/promptStore";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { Separator } from "@/components/ui/separator";
 import { Switch } from "@/components/ui/switch";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { LoadingState } from "@/components/common/LoadingState";
 import { PageHeader } from "@/components/common/PageHeader";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
 import {
   type AttachmentStorageMode,
   type AttachmentStorageRootHandle,
@@ -45,7 +30,6 @@ import { PageSurface } from "@/components/layout/AppShell";
 import { cn } from "@/lib/utils";
 import { t, initLocale, setLocale, getCurrentLocale, SUPPORTED_LOCALES } from '@/utils/i18n';
 import type { PromptItem } from "@/utils/types";
-import Logo from "~/assets/logo.svg";
 
 const hasPromptAttachments = (prompts: PromptItem[]): boolean => (
   prompts.some((prompt) => Array.isArray(prompt.attachments) && prompt.attachments.length > 0)
@@ -94,10 +78,6 @@ const GlobalSettingsPage: React.FC = () => {
   const [permissionExpired, setPermissionExpired] = useState(false);
   const [isReauthorizing, setIsReauthorizing] = useState(false);
   const [pendingStorageMode, setPendingStorageMode] = useState<AttachmentStorageMode | null>(null);
-  const [enabledPrompts, setEnabledPrompts] = useState<PromptItem[]>([]);
-  const [newRuleDomain, setNewRuleDomain] = useState('');
-  const [newRulePromptId, setNewRulePromptId] = useState('');
-  const [ruleError, setRuleError] = useState('');
 
   useEffect(() => {
     const loadSettings = async () => {
@@ -106,13 +86,6 @@ const GlobalSettingsPage: React.FC = () => {
         const globalSettings = await getGlobalSettings();
         setSettings(globalSettings);
         await initLocale();
-
-        try {
-          const prompts = await getAllPrompts();
-          setEnabledPrompts(prompts.filter((prompt) => prompt.enabled !== false));
-        } catch (error) {
-          console.warn('Unable to load prompts for quick inject:', error);
-        }
 
         try {
           const commands = await browser.commands.getAll();
@@ -166,45 +139,6 @@ const GlobalSettingsPage: React.FC = () => {
     } finally {
       setIsSaving(false);
     }
-  };
-
-  const handleQuickInjectRulesChange = async (rules: QuickInjectDomainRule[]) => {
-    setRuleError('');
-    await handleSettingChange('quickInjectRules', rules);
-  };
-
-  const handleAddQuickInjectRule = async () => {
-    const domain = normalizeHostname(newRuleDomain);
-    if (!domain || !newRulePromptId) {
-      setRuleError(t('quickInjectDomainRequired'));
-      return;
-    }
-
-    if (settings.quickInjectRules.some((rule) => rule.domain === domain)) {
-      setRuleError(t('quickInjectDomainExists'));
-      return;
-    }
-
-    const nextRules = [...settings.quickInjectRules, { domain, promptId: newRulePromptId }];
-    await handleQuickInjectRulesChange(nextRules);
-    setNewRuleDomain('');
-    setNewRulePromptId('');
-  };
-
-  const handleRemoveQuickInjectRule = async (domain: string) => {
-    const nextRules = settings.quickInjectRules.filter((rule) => rule.domain !== domain);
-    await handleQuickInjectRulesChange(nextRules);
-  };
-
-  const handleUpdateQuickInjectRulePrompt = async (domain: string, promptId: string) => {
-    const nextRules = settings.quickInjectRules.map((rule) =>
-      rule.domain === domain ? { ...rule, promptId } : rule
-    );
-    await handleQuickInjectRulesChange(nextRules);
-  };
-
-  const getPromptTitle = (promptId: string) => {
-    return enabledPrompts.find((prompt) => prompt.id === promptId)?.title || promptId;
   };
 
   const handleReauthorizeExternal = async () => {
@@ -362,187 +296,6 @@ const GlobalSettingsPage: React.FC = () => {
           />
 
           <div className="px-5 py-4">
-            <div className="mb-3 flex items-center gap-2">
-              <img src={Logo} alt="" className="size-4 rounded-[4px]" />
-              <h3 className="text-sm font-medium text-foreground">{t('quickInjectSection')}</h3>
-            </div>
-
-            <div className="space-y-0 divide-y divide-border rounded-xl border border-border">
-              <SettingsRow
-                className="px-4"
-                title={t('quickInjectEnabled')}
-                description={t('quickInjectEnabledDescription')}
-                control={
-                  <Switch
-                    checked={settings.quickInjectEnabled}
-                    disabled={isSaving}
-                    onCheckedChange={(checked) => handleSettingChange('quickInjectEnabled', checked)}
-                    aria-label={t('quickInjectEnabled')}
-                  />
-                }
-              />
-
-              <SettingsRow
-                className="px-4"
-                title={t('quickInjectOnFocus')}
-                description={t('quickInjectOnFocusDescription')}
-                control={
-                  <Switch
-                    checked={settings.quickInjectOnFocus}
-                    disabled={isSaving || !settings.quickInjectEnabled}
-                    onCheckedChange={(checked) => handleSettingChange('quickInjectOnFocus', checked)}
-                    aria-label={t('quickInjectOnFocus')}
-                  />
-                }
-              />
-
-              <SettingsRow
-                className="px-4"
-                title={t('quickInjectMode')}
-                description={t('quickInjectModeDescription')}
-                control={
-                  <div className="flex overflow-hidden rounded-xl border border-border bg-muted p-1">
-                    {([
-                      { value: 'overwrite' as QuickInjectMode, label: t('quickInjectModeOverwrite') },
-                      { value: 'append' as QuickInjectMode, label: t('quickInjectModeAppend') },
-                    ]).map((option) => {
-                      const isActive = settings.quickInjectMode === option.value;
-                      return (
-                        <Button
-                          key={option.value}
-                          type="button"
-                          size="sm"
-                          variant={isActive ? "default" : "ghost"}
-                          disabled={isSaving || !settings.quickInjectEnabled}
-                          onClick={() => {
-                            if (!isActive) {
-                              void handleSettingChange('quickInjectMode', option.value);
-                            }
-                          }}
-                          className="rounded-lg"
-                        >
-                          {option.label}
-                        </Button>
-                      );
-                    })}
-                  </div>
-                }
-              />
-
-              <div className="space-y-3 px-4 py-4">
-                <div>
-                  <h4 className="text-sm font-medium text-foreground">{t('quickInjectRules')}</h4>
-                  <p className="mt-1 text-xs leading-5 text-muted-foreground">
-                    {t('quickInjectRulesDescription')}
-                  </p>
-                </div>
-
-                {settings.quickInjectRules.length === 0 ? (
-                  <p className="text-xs text-muted-foreground">{t('quickInjectNoRules')}</p>
-                ) : (
-                  <div className="space-y-2">
-                    {settings.quickInjectRules.map((rule) => (
-                      <div
-                        key={rule.domain}
-                        className="flex flex-col gap-2 rounded-xl border border-border bg-muted/30 p-3 sm:flex-row sm:items-center"
-                      >
-                        <div className="min-w-0 flex-1">
-                          <p className="truncate text-sm font-medium text-foreground">{rule.domain}</p>
-                          <p className="truncate text-xs text-muted-foreground">
-                            {getPromptTitle(rule.promptId)}
-                          </p>
-                        </div>
-                        <div className="flex items-center gap-2">
-                          <Select
-                            value={rule.promptId}
-                            onValueChange={(value) => {
-                              void handleUpdateQuickInjectRulePrompt(rule.domain, value);
-                            }}
-                            disabled={isSaving || !settings.quickInjectEnabled}
-                          >
-                            <SelectTrigger className="w-44">
-                              <SelectValue placeholder={t('quickInjectSelectPrompt')} />
-                            </SelectTrigger>
-                            <SelectContent>
-                              {enabledPrompts.map((prompt) => (
-                                <SelectItem key={prompt.id} value={prompt.id}>
-                                  {prompt.title}
-                                </SelectItem>
-                              ))}
-                              {!enabledPrompts.some((prompt) => prompt.id === rule.promptId) && (
-                                <SelectItem value={rule.promptId}>
-                                  {rule.promptId}
-                                </SelectItem>
-                              )}
-                            </SelectContent>
-                          </Select>
-                          <Button
-                            type="button"
-                            variant="outline"
-                            size="sm"
-                            disabled={isSaving}
-                            onClick={() => {
-                              void handleRemoveQuickInjectRule(rule.domain);
-                            }}
-                          >
-                            {t('quickInjectRemoveRule')}
-                          </Button>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                )}
-
-                <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
-                  <Input
-                    value={newRuleDomain}
-                    onChange={(event) => {
-                      setRuleError('');
-                      setNewRuleDomain(event.target.value);
-                    }}
-                    placeholder={t('quickInjectDomainPlaceholder')}
-                    disabled={isSaving || !settings.quickInjectEnabled}
-                    className="sm:max-w-56"
-                  />
-                  <Select
-                    value={newRulePromptId || undefined}
-                    onValueChange={(value) => {
-                      setRuleError('');
-                      setNewRulePromptId(value);
-                    }}
-                    disabled={isSaving || !settings.quickInjectEnabled || enabledPrompts.length === 0}
-                  >
-                    <SelectTrigger className="sm:w-56">
-                      <SelectValue placeholder={t('quickInjectSelectPrompt')} />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {enabledPrompts.map((prompt) => (
-                        <SelectItem key={prompt.id} value={prompt.id}>
-                          {prompt.title}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                  <Button
-                    type="button"
-                    size="sm"
-                    disabled={isSaving || !settings.quickInjectEnabled}
-                    onClick={() => {
-                      void handleAddQuickInjectRule();
-                    }}
-                  >
-                    {t('quickInjectAddRule')}
-                  </Button>
-                </div>
-
-                {ruleError && (
-                  <p className="text-xs text-destructive">{ruleError}</p>
-                )}
-              </div>
-            </div>
-          </div>
-
-          <div className="px-5 py-4">
             <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
               <div className="min-w-0">
                 <h3 className="text-sm font-medium text-foreground">{t('currentAttachmentStorageMode')}</h3>
@@ -681,4 +434,4 @@ const GlobalSettingsPage: React.FC = () => {
   );
 };
 
-export default GlobalSettingsPage; 
+export default GlobalSettingsPage;

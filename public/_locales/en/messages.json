@@ -231,6 +231,12 @@
   "quickInjectSection": {
     "message": "Quick Inject"
   },
+  "quickInjectPageDescription": {
+    "message": "Configure the per-domain quick-inject button and optional focus auto-inject"
+  },
+  "loadingQuickInjectSettings": {
+    "message": "Loading quick inject settings..."
+  },
   "quickInjectEnabled": {
     "message": "Enable quick inject"
   },

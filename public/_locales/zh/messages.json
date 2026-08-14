@@ -234,6 +234,12 @@
   "quickInjectSection": {
     "message": "快捷注入"
   },
+  "quickInjectPageDescription": {
+    "message": "按域名配置快捷注入按钮与可选的聚焦自动注入"
+  },
+  "loadingQuickInjectSettings": {
+    "message": "正在加载快捷注入设置..."
+  },
   "quickInjectEnabled": {
     "message": "启用快捷注入"
   },
