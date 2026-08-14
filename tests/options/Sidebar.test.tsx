@@ -136,6 +136,29 @@ describe("Sidebar", () => {
     expect(replaceState).not.toHaveBeenCalled();
   });
 
+  it("replaces the current history entry when cleaning query parameters on the same route", () => {
+    window.history.pushState({ from: "test" }, "", "/options.html?action=new&content=saved-text#/categories");
+    const pushState = vi.spyOn(window.history, "pushState");
+    const replaceState = vi.spyOn(window.history, "replaceState");
+
+    render(
+      <HashRouter>
+        <Sidebar />
+      </HashRouter>,
+    );
+    pushState.mockClear();
+    replaceState.mockClear();
+
+    fireEvent.click(screen.getByRole("link", { name: "Category management" }));
+
+    expect(pushState).not.toHaveBeenCalled();
+    expect(replaceState).toHaveBeenLastCalledWith(
+      expect.objectContaining({ from: "test" }),
+      document.title,
+      "/options.html#/categories",
+    );
+  });
+
   it("does not keep Global settings active when Quick Inject is selected", () => {
     window.history.pushState({}, "", "/options.html#/settings/quick-inject");
 
