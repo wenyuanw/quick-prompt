@@ -279,6 +279,12 @@
   "quickInjectRemoveRule": {
     "message": "Remove"
   },
+  "confirmDeleteQuickInjectRule": {
+    "message": "Confirm delete rule"
+  },
+  "confirmDeleteQuickInjectRuleMessage": {
+    "message": "Delete the quick-inject rule for \"$1\"? That domain will no longer show the quick-inject button."
+  },
   "quickInjectNoRules": {
     "message": "No domain rules yet"
   },

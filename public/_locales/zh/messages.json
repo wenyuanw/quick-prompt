@@ -282,6 +282,12 @@
   "quickInjectRemoveRule": {
     "message": "删除"
   },
+  "confirmDeleteQuickInjectRule": {
+    "message": "确认删除规则"
+  },
+  "confirmDeleteQuickInjectRuleMessage": {
+    "message": "确定要删除域名「$1」的快捷注入规则吗？删除后该域名将不再显示快捷注入按钮。"
+  },
   "quickInjectNoRules": {
     "message": "尚未添加域名规则"
   },

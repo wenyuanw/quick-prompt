@@ -28,6 +28,7 @@ import { PageSurface } from "@/components/layout/AppShell";
 import { cn } from "@/lib/utils";
 import { t, initLocale } from "@/utils/i18n";
 import type { PromptItem } from "@/utils/types";
+import ConfirmModal from "./ConfirmModal";
 
 const QuickInjectSettingsPage: React.FC = () => {
   const [settings, setSettings] = useState<GlobalSettings>({
@@ -43,6 +44,7 @@ const QuickInjectSettingsPage: React.FC = () => {
   const [newRuleDomain, setNewRuleDomain] = useState("");
   const [newRulePromptId, setNewRulePromptId] = useState("");
   const [ruleError, setRuleError] = useState("");
+  const [ruleToDelete, setRuleToDelete] = useState<string | null>(null);
 
   useEffect(() => {
     const loadSettings = async () => {
@@ -111,6 +113,16 @@ const QuickInjectSettingsPage: React.FC = () => {
   const handleRemoveQuickInjectRule = async (domain: string) => {
     const nextRules = settings.quickInjectRules.filter((rule) => rule.domain !== domain);
     await handleQuickInjectRulesChange(nextRules);
+  };
+
+  const handleConfirmDeleteRule = async () => {
+    if (!ruleToDelete) {
+      return;
+    }
+
+    const domain = ruleToDelete;
+    setRuleToDelete(null);
+    await handleRemoveQuickInjectRule(domain);
   };
 
   const handleUpdateQuickInjectRulePrompt = async (domain: string, promptId: string) => {
@@ -253,7 +265,7 @@ const QuickInjectSettingsPage: React.FC = () => {
                         size="sm"
                         disabled={isSaving}
                         onClick={() => {
-                          void handleRemoveQuickInjectRule(rule.domain);
+                          setRuleToDelete(rule.domain);
                         }}
                       >
                         {t("quickInjectRemoveRule")}
@@ -319,6 +331,18 @@ const QuickInjectSettingsPage: React.FC = () => {
           </>
         )}
       </div>
+
+      <ConfirmModal
+        isOpen={ruleToDelete !== null}
+        onClose={() => setRuleToDelete(null)}
+        onConfirm={() => {
+          void handleConfirmDeleteRule();
+        }}
+        title={t("confirmDeleteQuickInjectRule")}
+        message={t("confirmDeleteQuickInjectRuleMessage", [ruleToDelete || ""])}
+        confirmText={t("delete")}
+        cancelText={t("cancel")}
+      />
     </PageSurface>
   );
 };
