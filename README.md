@@ -182,3 +182,12 @@ MIT
 <a href="https://github.com/wenyuanw/quick-prompt/graphs/contributors">
   <img src="https://contrib.rocks/image?repo=wenyuanw/quick-prompt" />
 </a>
+## Star History
+
+<a href="https://star-history.dera.page/#wenyuanw/quick-prompt&type=date&legend=top-left">
+ <picture>
+   <source media="(prefers-color-scheme: dark)" srcset="https://star-history.dera.page/svg?repos=wenyuanw/quick-prompt&type=date&theme=dark&legend=top-left" />
+   <source media="(prefers-color-scheme: light)" srcset="https://star-history.dera.page/svg?repos=wenyuanw/quick-prompt&type=date&legend=top-left" />
+   <img alt="Star History Chart" src="https://star-history.dera.page/svg?repos=wenyuanw/quick-prompt&type=date&legend=top-left" />
+ </picture>
+</a>
