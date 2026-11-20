@@ -145,3 +145,16 @@ Pull requests and issues are welcome!
 3. Commit your changes (`git commit -m 'Add some amazing feature'`)
 4. Push to the branch (`git push origin feature/amazing-feature`)
 5. Open a Pull Request 
+
+## ☕ Support
+
+If Quick Prompt helps you, you can support the project via GitHub Sponsors or Buy Me a Coffee:
+
+<p align="center">
+  <a href="https://github.com/sponsors/wenyuanw">
+    <img src="https://img.shields.io/badge/GitHub%20Sponsors-Sponsor-EA4AAA?style=for-the-badge&logo=githubsponsors&logoColor=white" alt="GitHub Sponsors">
+  </a>
+  <a href="https://buymeacoffee.com/wenyuan">
+    <img src="https://img.shields.io/badge/Buy%20Me%20a%20Coffee-Support-FFDD00?style=for-the-badge&logo=buymeacoffee&logoColor=black" alt="Buy Me a Coffee">
+  </a>
+</p>

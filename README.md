@@ -175,6 +175,19 @@ MIT
 4. 推送到分支 (`git push origin feature/amazing-feature`)
 5. 打开一个 Pull Request
 
+## ☕ 支持项目
+
+如果 Quick Prompt 对你有帮助，欢迎通过 GitHub Sponsors 或 Buy Me a Coffee 支持作者：
+
+<p align="center">
+  <a href="https://github.com/sponsors/wenyuanw">
+    <img src="https://img.shields.io/badge/GitHub%20Sponsors-%E8%B5%9E%E5%8A%A9%E4%BD%9C%E8%80%85-EA4AAA?style=for-the-badge&logo=githubsponsors&logoColor=white" alt="GitHub Sponsors">
+  </a>
+  <a href="https://buymeacoffee.com/wenyuan">
+    <img src="https://img.shields.io/badge/Buy%20Me%20a%20Coffee-%E6%94%AF%E6%8C%81%E4%BD%9C%E8%80%85-FFDD00?style=for-the-badge&logo=buymeacoffee&logoColor=black" alt="Buy Me a Coffee">
+  </a>
+</p>
+
 ## 👏 贡献者名单
 
 感谢所有为项目做出贡献的开发者！
